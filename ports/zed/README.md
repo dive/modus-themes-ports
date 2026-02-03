@@ -22,3 +22,4 @@ Add to `$XDG_CONFIG_HOME/zed/settings.json`:
 
 ## Notes
 Themes are installed under `$XDG_CONFIG_HOME/zed/themes/`.
+There is also a Zed extension that provides Modus themes ports: https://github.com/vitallium/zed-modus-themes
