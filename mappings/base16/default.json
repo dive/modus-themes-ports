@@ -7,7 +7,7 @@
   "selection-foreground": "fg-main",
   "palette": {
     "0": "bg-main",
-    "1": "red",
+    "1": "red-faint",
     "2": "green",
     "3": "yellow",
     "4": "blue",

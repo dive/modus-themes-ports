@@ -33,6 +33,6 @@ overall = { fg = "#000000", bg = "#efe9dd" }
 perm_type = { fg = "#0031a9" }
 perm_read = { fg = "#006300" }
 perm_write = { fg = "#6d5000" }
-perm_exec = { fg = "#a60000" }
+perm_exec = { fg = "#7f0000" }
 progress_normal = { fg = "#006300" }
-progress_error = { fg = "#a60000" }
+progress_error = { fg = "#7f0000" }
