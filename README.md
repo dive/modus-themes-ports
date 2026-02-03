@@ -11,3 +11,7 @@ Modus themes are by [Protesilaos Stavrou](https://protesilaos.com/about/). They 
 ## Install
 - `python3 scripts/modus.py install --tool <tool>`
 - `python3 scripts/modus.py list`
+
+## Development
+See `DEVELOPMENT.md` for generation, validation, and how to add new ports.
+Adding a new port is intentionally straightforward, and contributions are welcome.
