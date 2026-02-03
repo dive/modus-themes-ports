@@ -25,3 +25,4 @@ fi
 
 "$SCRIPT_DIR/extract-palettes.sh"
 "$SCRIPT_DIR/render-ghostty-themes.sh"
+"$SCRIPT_DIR/render-lazygit-themes.sh"

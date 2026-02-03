@@ -1,0 +1,15 @@
+{
+  "name": "lazygit-default",
+  "activeBorderColor": ["blue", "bold"],
+  "inactiveBorderColor": ["border"],
+  "searchingActiveBorderColor": ["yellow", "bold"],
+  "optionsTextColor": ["blue"],
+  "selectedLineBgColor": ["bg-active"],
+  "inactiveViewSelectedLineBgColor": ["bg-dim"],
+  "cherryPickedCommitFgColor": ["blue"],
+  "cherryPickedCommitBgColor": ["bg-cyan-nuanced"],
+  "markedBaseCommitFgColor": ["yellow"],
+  "markedBaseCommitBgColor": ["bg-yellow-nuanced"],
+  "unstagedChangesColor": ["red"],
+  "defaultFgColor": ["fg-main"]
+}

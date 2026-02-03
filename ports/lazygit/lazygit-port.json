@@ -1,0 +1,15 @@
+{
+  "tool": "lazygit",
+  "theme_dir_rel": "ports/lazygit/themes",
+  "theme_ext": "",
+  "install_targets": [
+    "$XDG_CONFIG_HOME/lazygit/themes",
+    "$HOME/.config/lazygit/themes",
+    "$HOME/Library/Application Support/lazygit/themes"
+  ],
+  "config_locations": [
+    "$XDG_CONFIG_HOME/lazygit/config.yml",
+    "$HOME/.config/lazygit/config.yml",
+    "$HOME/Library/Application Support/lazygit/config.yml"
+  ]
+}
