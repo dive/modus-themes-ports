@@ -1,4 +1,6 @@
 gui:
+  authorColors:
+    '*': "#2fafff"
   theme:
     activeBorderColor:
       - "#2fafff"

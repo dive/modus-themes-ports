@@ -30,7 +30,20 @@ ORDER = [
 
 
 def render(theme_name, palette, mapping) -> str:
-    lines = ["gui:", "  theme:"]
+    if "authorColor" not in mapping:
+        raise KeyError("Missing mapping key: authorColor")
+
+    author_token = mapping["authorColor"]
+    author_value = palette.get(author_token, author_token)
+    if isinstance(author_value, str) and author_value.startswith("#"):
+        author_value = f"\"{author_value}\""
+
+    lines = [
+        "gui:",
+        "  authorColors:",
+        f"    '*': {author_value}",
+        "  theme:",
+    ]
 
     for key in ORDER:
         if key not in mapping:
@@ -52,6 +65,9 @@ def validate(text: str):
     found_keys = set()
     in_gui = False
     in_theme = False
+
+    if "authorColors:" not in text or "'*':" not in text:
+        return ["Missing authorColors"]
 
     for line in text.splitlines():
         if not line.strip() or line.lstrip().startswith("#"):

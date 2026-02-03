@@ -1,5 +1,6 @@
 {
   "name": "lazygit-default",
+  "authorColor": "blue",
   "activeBorderColor": ["blue", "bold"],
   "inactiveBorderColor": ["border"],
   "searchingActiveBorderColor": ["yellow", "bold"],
