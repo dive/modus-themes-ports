@@ -147,6 +147,18 @@ def tool_default_config_dir(manifest: dict) -> Path:
     raise SystemExit("Error: config_locations missing in manifest")
 
 
+def theme_title(name: str) -> str:
+    return " ".join([part.capitalize() for part in name.split("-")])
+
+
+def swap_modus_variant(name: str) -> str:
+    if "vivendi" in name:
+        return name.replace("vivendi", "operandi", 1)
+    if "operandi" in name:
+        return name.replace("operandi", "vivendi", 1)
+    return name
+
+
 def cmd_list(_args):
     registry = load_registry()
     tools = sorted(registry.keys())
@@ -369,6 +381,36 @@ def cmd_print_config(args):
         print(f"dark = \"{args.theme}\"")
         print(f"light = \"{args.theme}\"")
         print(f"# Config: {config_dir}")
+        return
+
+    if args.tool == "zed":
+        if "vivendi" in args.theme:
+            dark = theme_title(args.theme)
+            light = theme_title(swap_modus_variant(args.theme))
+        elif "operandi" in args.theme:
+            light = theme_title(args.theme)
+            dark = theme_title(swap_modus_variant(args.theme))
+        else:
+            light = theme_title(args.theme)
+            dark = theme_title(args.theme)
+        print("{")
+        print("  \"theme\": {")
+        print("    \"mode\": \"system\",")
+        print(f"    \"light\": \"{light}\",")
+        print(f"    \"dark\": \"{dark}\"")
+        print("  }")
+        print("}")
+        print(f"# Config: {config_dir}")
+        return
+
+    if args.tool == "ls-colors":
+        dest_dir = tool_default_themes_dir(manifest)
+        if sys.platform == "darwin":
+            print(f"# Add to {config_dir}")
+            print(f"source \"{dest_dir}/bsd/modus-theme\"")
+        else:
+            print(f"# Add to {config_dir}")
+            print(f"source \"{dest_dir}/{args.theme}\"")
         return
 
 
