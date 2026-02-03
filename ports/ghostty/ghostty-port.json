@@ -1,0 +1,14 @@
+{
+  "tool": "ghostty",
+  "theme_dir_rel": "ports/ghostty/themes",
+  "theme_ext": ".theme",
+  "install_targets": [
+    "$XDG_CONFIG_HOME/ghostty/themes",
+    "$HOME/.config/ghostty/themes"
+  ],
+  "config_locations": [
+    "$XDG_CONFIG_HOME/ghostty/config",
+    "$HOME/.config/ghostty/config",
+    "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
+  ]
+}
