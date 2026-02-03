@@ -27,5 +27,8 @@ Print the config block:
 Remove installed symlinks:
 - `scripts/install-modus.sh uninstall lazygit`
 
+## Config paths
+Uses `XDG_CONFIG_HOME` (or `~/.config`) only.
+
 ## Naming
 All ports use kebab-case filenames with no extension (e.g. `modus-operandi`).

@@ -28,3 +28,6 @@ Modus theme ports for the tools & editors in my workflow
 
 ## Naming
 All ported theme filenames use kebab-case with no extension (e.g. `modus-operandi`). Use the kebab-case name in tool configs.
+
+## Config paths
+All tooling defaults to `XDG_CONFIG_HOME` (or `~/.config`) and does not use `~/Library/Application Support`.

@@ -8,7 +8,6 @@
   ],
   "config_locations": [
     "$XDG_CONFIG_HOME/ghostty/config",
-    "$HOME/.config/ghostty/config",
-    "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
+    "$HOME/.config/ghostty/config"
   ]
 }

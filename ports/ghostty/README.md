@@ -23,6 +23,9 @@ Install a single theme:
 Print the config line:
 - `scripts/install-modus.sh print-config ghostty --theme "modus-operandi"`
 
+## Config paths
+Uses `XDG_CONFIG_HOME` (or `~/.config`) only.
+
 ## Naming
 All ports use kebab-case filenames with no extension (e.g. `modus-operandi`). Use that name in `theme = ...`.
 

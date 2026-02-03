@@ -117,10 +117,6 @@ resolve_ghostty_config_dir() {
     echo "$CONFIG_DIR"
     return
   fi
-  if [ -d "$HOME/Library/Application Support/com.mitchellh.ghostty" ]; then
-    echo "$HOME/Library/Application Support/com.mitchellh.ghostty"
-    return
-  fi
   base=${XDG_CONFIG_HOME:-"$HOME/.config"}
   echo "$base/ghostty"
 }
@@ -130,10 +126,6 @@ resolve_lazygit_themes_dir() {
     echo "$THEMES_DIR"
     return
   fi
-  if [ -d "$HOME/Library/Application Support/lazygit" ]; then
-    echo "$HOME/Library/Application Support/lazygit/themes"
-    return
-  fi
   base=${XDG_CONFIG_HOME:-"$HOME/.config"}
   echo "$base/lazygit/themes"
 }
@@ -141,10 +133,6 @@ resolve_lazygit_themes_dir() {
 resolve_lazygit_config_dir() {
   if [ -n "$CONFIG_DIR" ]; then
     echo "$CONFIG_DIR"
-    return
-  fi
-  if [ -d "$HOME/Library/Application Support/lazygit" ]; then
-    echo "$HOME/Library/Application Support/lazygit"
     return
   fi
   base=${XDG_CONFIG_HOME:-"$HOME/.config"}
