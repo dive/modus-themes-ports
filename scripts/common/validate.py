@@ -1,21 +1,40 @@
 #!/usr/bin/env python3
 import argparse
-import importlib.util
-import os
 import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from scripts.common import io
 
 
-def load_spec(path: str):
-    if not os.path.isfile(path):
-        raise FileNotFoundError(f"Spec not found: {path}")
-    spec = importlib.util.spec_from_file_location("tool_spec", path)
-    if spec is None or spec.loader is None:
-        raise RuntimeError(f"Failed to load spec: {path}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    if not hasattr(module, "validate"):
-        raise AttributeError("Spec missing validate(text) -> list[str]")
-    return module
+def validate_all(themes_dir: Path, spec_file: Path):
+    if not themes_dir.is_dir():
+        raise FileNotFoundError(f"Themes directory missing: {themes_dir}")
+
+    spec = io.load_spec(str(spec_file))
+    files = sorted(themes_dir.iterdir())
+    if not files:
+        raise FileNotFoundError("No theme files found to validate.")
+
+    errors = []
+    validated = 0
+
+    for path in files:
+        if path.name.startswith(".") or path.is_dir():
+            continue
+        text = path.read_text(encoding="utf-8")
+        issues = spec.validate(text)
+        if not isinstance(issues, list):
+            raise TypeError(f"validate() must return list, got {type(issues)} for {path}")
+        if issues:
+            errors.append((path, issues))
+        else:
+            validated += 1
+
+    return validated, errors
 
 
 def main() -> int:
@@ -24,42 +43,15 @@ def main() -> int:
     parser.add_argument("--spec", required=True)
     args = parser.parse_args()
 
-    if not os.path.isdir(args.themes_dir):
-        print(f"Error: themes directory missing: {args.themes_dir}", file=sys.stderr)
-        return 1
+    validated, errors = validate_all(Path(args.themes_dir), Path(args.spec))
 
-    spec = load_spec(args.spec)
-
-    files = sorted(os.listdir(args.themes_dir))
-    if not files:
-        print("Error: no theme files found to validate.", file=sys.stderr)
-        return 1
-
-    errors = 0
-    validated = 0
-
-    for filename in files:
-        if filename.startswith("."):
-            continue
-        path = os.path.join(args.themes_dir, filename)
-        if os.path.isdir(path):
-            continue
-        with open(path, "r", encoding="utf-8") as f:
-            text = f.read()
-        issues = spec.validate(text)
-        if not isinstance(issues, list):
-            print(f"Error: validate() must return list, got {type(issues)} for {path}", file=sys.stderr)
-            return 1
-        if issues:
-            errors += 1
-            print(f"Invalid theme: {path}")
-            for issue in issues:
-                print(f"  {issue}")
-            continue
-        validated += 1
+    for path, issues in errors:
+        print(f"Invalid theme: {path}")
+        for issue in issues:
+            print(f"  {issue}")
 
     if errors:
-        print(f"Validation failed for {errors} theme(s).", file=sys.stderr)
+        print(f"Validation failed for {len(errors)} theme(s).", file=sys.stderr)
         return 1
 
     print(f"Validated {validated} theme(s).")
@@ -67,4 +59,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

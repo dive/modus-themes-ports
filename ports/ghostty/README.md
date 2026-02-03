@@ -2,26 +2,26 @@
 
 ## Update Flow
 1. Update subtree and regenerate palettes + themes:
-   - `scripts/core/update-subtree.sh`
+   - `python3 scripts/modus.py update-subtree`
 
 2. If Emacs is not installed, download it once:
-   - `scripts/core/fetch-emacs.sh`
+   - `python3 scripts/modus.py fetch-emacs`
 
 3. Manually regenerate palettes:
-   - `scripts/core/extract-palettes.sh`
+   - `python3 scripts/modus.py extract-palettes`
 
 4. Render Ghostty themes:
-   - `scripts/tools/ghostty/render.sh`
+   - `python3 scripts/modus.py render --tool ghostty`
 
 ## Install
 Install all themes (symlink mode):
-- `scripts/core/install-modus.sh install ghostty`
+- `python3 scripts/modus.py install --tool ghostty`
 
 Install a single theme:
-- `scripts/core/install-modus.sh install ghostty --theme "modus-operandi"`
+- `python3 scripts/modus.py install --tool ghostty --theme "modus-operandi"`
 
 Print the config line:
-- `scripts/core/install-modus.sh print-config ghostty --theme "modus-operandi"`
+- `python3 scripts/modus.py print-config --tool ghostty --theme "modus-operandi"`
 
 ## Config paths
 Uses `XDG_CONFIG_HOME` (or `~/.config`) only.
@@ -31,4 +31,4 @@ All ports use kebab-case filenames with no extension (e.g. `modus-operandi`). Us
 
 ## Uninstall
 Remove installed symlinks:
-- `scripts/core/install-modus.sh uninstall ghostty`
+- `python3 scripts/modus.py uninstall --tool ghostty`

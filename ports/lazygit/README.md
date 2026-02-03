@@ -2,30 +2,30 @@
 
 ## Update Flow
 1. Update subtree and regenerate palettes + themes:
-   - `scripts/core/update-subtree.sh`
+   - `python3 scripts/modus.py update-subtree`
 
 2. If Emacs is not installed, download it once:
-   - `scripts/core/fetch-emacs.sh`
+   - `python3 scripts/modus.py fetch-emacs`
 
 3. Manually regenerate palettes:
-   - `scripts/core/extract-palettes.sh`
+   - `python3 scripts/modus.py extract-palettes`
 
 4. Render Lazygit themes:
-   - `scripts/tools/lazygit/render.sh`
+   - `python3 scripts/modus.py render --tool lazygit`
 
 ## Install
 Install all themes (symlink mode):
-- `scripts/core/install-modus.sh install lazygit`
+- `python3 scripts/modus.py install --tool lazygit`
 
 Install a single theme:
-- `scripts/core/install-modus.sh install lazygit --theme "modus-operandi"`
+- `python3 scripts/modus.py install --tool lazygit --theme "modus-operandi"`
 
 Print the config block:
-- `scripts/core/install-modus.sh print-config lazygit --theme "modus-operandi"`
+- `python3 scripts/modus.py print-config --tool lazygit --theme "modus-operandi"`
 
 ## Uninstall
 Remove installed symlinks:
-- `scripts/core/install-modus.sh uninstall lazygit`
+- `python3 scripts/modus.py uninstall --tool lazygit`
 
 ## Config paths
 Uses `XDG_CONFIG_HOME` (or `~/.config`) only.
