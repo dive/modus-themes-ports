@@ -1,0 +1,26 @@
+{
+  "name": "base16-default",
+  "background": "bg-main",
+  "foreground": "fg-main",
+  "cursor-color": "fg-main",
+  "selection-background": "bg-active",
+  "selection-foreground": "fg-main",
+  "palette": {
+    "0": "bg-main",
+    "1": "red",
+    "2": "green",
+    "3": "yellow",
+    "4": "blue",
+    "5": "magenta",
+    "6": "cyan",
+    "7": "fg-dim",
+    "8": "bg-dim",
+    "9": "red-intense",
+    "10": "green-intense",
+    "11": "yellow-intense",
+    "12": "blue-intense",
+    "13": "magenta-intense",
+    "14": "cyan-intense",
+    "15": "fg-main"
+  }
+}
