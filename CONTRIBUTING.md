@@ -2,6 +2,23 @@
 
 Short guide for adding ports and working on the project.
 
+## Quick Start (New Port)
+
+```sh
+# 1. Create port structure
+mkdir -p ports/mytool mappings/mytool
+
+# 2. Add manifest, mapping, and template
+#    See "Add a New Port (No-Code)" below for details
+
+# 3. Render and validate
+python3 scripts/modus.py render --tool mytool
+python3 scripts/modus.py validate --tool mytool
+
+# 4. Test install locally
+python3 scripts/modus.py install --tool mytool --link
+```
+
 ## Requirements
 - `python3`
 - `git` with `git subtree`

@@ -22,7 +22,6 @@ from scripts.common import render
 from scripts.common import template as template_utils
 from scripts.common import theme_ops
 from scripts.common import validate
-from scripts.common import validate_lazygit
 
 
 def palettes_dir() -> Path:
