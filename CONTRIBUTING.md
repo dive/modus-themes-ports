@@ -1,4 +1,6 @@
-# Development
+# Contributing
+
+Short guide for adding ports and working on the project.
 
 ## Requirements
 - `python3`
