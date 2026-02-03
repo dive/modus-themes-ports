@@ -28,4 +28,10 @@ if (( $+commands[bat] )); then
 fi
 ```
 
+Optional: align fzf UI colors with Modus (ANSI palette):
+
+```sh
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --color=fg:7,fg+:15,bg:0,bg+:8,hl:4,hl+:14,info:6,prompt:4,spinner:6,pointer:4,marker:2,header:8"
+```
+
 Themes are installed under `$XDG_CONFIG_HOME/bat/themes/`.
