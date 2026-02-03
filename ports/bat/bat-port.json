@@ -1,0 +1,17 @@
+{
+  "tool": "bat",
+  "theme_dir_rel": "ports/bat/themes",
+  "output_path_template": "ports/bat/themes/{theme}.tmTheme",
+  "mapping_path": "mappings/bat/default.json",
+  "template_path": "ports/shared/tmtheme.tmpl",
+  "template_format": "mini",
+  "required_keys": [],
+  "install_targets": [
+    "$XDG_CONFIG_HOME/bat/themes",
+    "$HOME/.config/bat/themes"
+  ],
+  "config_locations": [
+    "$XDG_CONFIG_HOME/bat/config",
+    "$HOME/.config/bat/config"
+  ]
+}

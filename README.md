@@ -6,6 +6,7 @@ Modus themes are by [Protesilaos Stavrou](https://protesilaos.com/about/). They 
 
 ## Supported Ports
 - [Ghostty](ports/ghostty/README.md)
+- [bat](ports/bat/README.md)
 - [Lazygit](ports/lazygit/README.md)
 - [LS_COLORS](ports/ls-colors/README.md)
 - [Yazi](ports/yazi/README.md)

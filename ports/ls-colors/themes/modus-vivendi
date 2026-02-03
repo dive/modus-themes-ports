@@ -1,6 +1,5 @@
 # Modus LS_COLORS
 # Generated from Modus palettes
-# Based on Catppuccin LS_COLORS
 
 export LS_COLORS="\
 no=0:\
