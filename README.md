@@ -23,3 +23,6 @@ Modus theme ports for the tools & editors in my workflow
 - `scripts/render-ghostty-themes.sh`: render `ports/ghostty/themes/*.theme`
 - `scripts/install-modus.sh`: install, uninstall, list themes
 - `scripts/validate-ghostty-themes.sh`: validate Ghostty theme files
+
+## Naming
+All ported theme filenames use kebab-case (e.g. `modus-operandi.theme`). Use the kebab-case name in tool configs.

@@ -18,10 +18,13 @@ Install all themes (symlink mode):
 - `scripts/install-modus.sh install ghostty`
 
 Install a single theme:
-- `scripts/install-modus.sh install ghostty --theme "Modus Operandi"`
+- `scripts/install-modus.sh install ghostty --theme "modus-operandi"`
 
 Print the config line:
-- `scripts/install-modus.sh print-config ghostty --theme "Modus Operandi"`
+- `scripts/install-modus.sh print-config ghostty --theme "modus-operandi"`
+
+## Naming
+All ports use kebab-case filenames (e.g. `modus-operandi.theme`). Use that name in `theme = ...`.
 
 ## Uninstall
 Remove installed symlinks:

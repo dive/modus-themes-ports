@@ -50,10 +50,6 @@ for key in required_map_keys:
         raise SystemExit(f"Missing mapping key: {key}")
 
 
-def display_name(theme_name: str) -> str:
-    return " ".join([part.capitalize() for part in theme_name.split("-")])
-
-
 def load_palette(path: str):
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -89,9 +85,7 @@ for filename in palette_files:
     path = os.path.join(palettes_dir, filename)
     theme_name, palette = load_palette(path)
     mapping = load_mapping(theme_name)
-
-    display = display_name(theme_name)
-    out_path = os.path.join(out_dir, f"{display}.theme")
+    out_path = os.path.join(out_dir, f"{theme_name}.theme")
 
     lines = []
     for key in required_map_keys[:-1]:
