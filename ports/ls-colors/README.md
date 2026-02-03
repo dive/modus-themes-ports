@@ -24,7 +24,7 @@ else
 fi
 ```
 
-## macOS Note
+## Notes
 BSD `ls` (the default on macOS) ignores `LS_COLORS` and cannot color file extensions. Use the BSD `LSCOLORS` themes instead:
 
 ```sh

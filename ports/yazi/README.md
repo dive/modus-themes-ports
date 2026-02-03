@@ -16,7 +16,6 @@ dark = "modus-vivendi"
 light = "modus-operandi"
 ```
 
-Flavors are installed under `$XDG_CONFIG_HOME/yazi/flavors/`.
-
 ## Notes
 This port ships `flavor.toml` and `tmtheme.xml` for each flavor.
+Flavors are installed under `$XDG_CONFIG_HOME/yazi/flavors/`.

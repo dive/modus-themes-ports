@@ -20,4 +20,5 @@ Add to `$XDG_CONFIG_HOME/zed/settings.json`:
 }
 ```
 
+## Notes
 Themes are installed under `$XDG_CONFIG_HOME/zed/themes/`.

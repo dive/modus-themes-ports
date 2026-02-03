@@ -7,15 +7,10 @@ Install all themes (symlink mode):
 Install a single theme:
 - `python3 scripts/modus.py install --tool lazygit --theme "modus-operandi"`
 
-## Config override
+## Activate
 Lazygit does not automatically load per-theme files. You must explicitly pass config paths via `--use-config-file`.
 
-Docs:
-- `https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md#overriding-default-config-file-location`
-
-Themes are installed under `$XDG_CONFIG_HOME/lazygit/themes/`. You can symlink one to `light-mode.yml`/`dark-mode.yml` or point your wrapper directly to a theme file.
-
-## Example: Wrapper (macOS, zsh)
+Example wrapper (macOS, zsh):
 ```sh
 if (( $+commands[lazygit] )); then
   function lazygit() {
@@ -29,3 +24,8 @@ if (( $+commands[lazygit] )); then
   }
 fi
 ```
+
+## Notes
+Docs: `https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md#overriding-default-config-file-location`
+Themes are installed under `$XDG_CONFIG_HOME/lazygit/themes/`.
+You can symlink one to `light-mode.yml`/`dark-mode.yml` or point your wrapper directly to a theme file.

@@ -20,7 +20,8 @@ Add to `$XDG_CONFIG_HOME/bat/config`:
 --theme="Modus Operandi"
 ```
 
-## zsh + fzf Preview (macOS)
+## Notes
+zsh + fzf preview (macOS):
 
 ```sh
 if (( $+commands[bat] )); then
