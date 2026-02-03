@@ -5,10 +5,22 @@
   "mapping_path": "mappings/ls-colors/default.json",
   "template_path": "ports/ls-colors/theme.tmpl",
   "template_format": "mini",
+  "extra_templates": [
+    {
+      "template_path": "ports/ls-colors/lscolors-bsd.tmpl",
+      "output_path_template": "ports/ls-colors/bsd/modus-theme"
+    }
+  ],
   "required_keys": [],
   "install_targets": [
     "$XDG_CONFIG_HOME/ls-colors",
     "$HOME/.config/ls-colors"
+  ],
+  "extra_install_dirs": [
+    {
+      "source_rel": "ports/ls-colors/bsd",
+      "dest_subdir": "bsd"
+    }
   ],
   "config_locations": [
     "$XDG_CONFIG_HOME/zsh/.zshrc"

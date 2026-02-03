@@ -77,6 +77,23 @@ def extra_templates(manifest: dict):
     return resolved
 
 
+def extra_install_dirs(manifest: dict):
+    entries = manifest.get("extra_install_dirs") or []
+    resolved = []
+    for entry in entries:
+        source_rel = entry.get("source_rel")
+        dest_subdir = entry.get("dest_subdir", "")
+        if not source_rel:
+            raise SystemExit("Error: extra_install_dirs entries require source_rel")
+        resolved.append(
+            {
+                "source_dir": resolve_path(REPO_ROOT, source_rel),
+                "dest_subdir": dest_subdir,
+            }
+        )
+    return resolved
+
+
 def tool_out_dir(manifest: dict, override: Optional[str]) -> Path:
     if override:
         return Path(override)
@@ -182,6 +199,7 @@ def cmd_render(args):
         template_text = template_path.read_text(encoding="utf-8")
         mapping_data = io.load_mapping(str(mapping))
         extra = extra_templates(manifest)
+        extra_written = set()
 
         palette_files = sorted(palettes_dir().glob("*.json"))
         if not palette_files:
@@ -204,6 +222,10 @@ def cmd_render(args):
                     extra_path = base_dir / Path(entry["output_path_template"]).name
                 else:
                     extra_path = REPO_ROOT / entry["output_path_template"].replace("{theme}", theme_name)
+                if "{theme}" not in entry["output_path_template"]:
+                    if str(extra_path) in extra_written:
+                        continue
+                    extra_written.add(str(extra_path))
                 io.write_output(str(extra_path), extra_content)
                 print(f"Wrote {extra_path}")
 
@@ -301,6 +323,10 @@ def cmd_install(args):
     mode = "copy" if args.copy else "link"
     theme_kind = manifest.get("theme_kind", "file")
     theme_ops.install_themes(src_dir, dest_dir, mode, args.theme, theme_kind=theme_kind)
+    for entry in extra_install_dirs(manifest):
+        extra_src = entry["source_dir"]
+        extra_dest = dest_dir / entry["dest_subdir"]
+        theme_ops.install_themes(extra_src, extra_dest, mode, None, theme_kind="file")
 
 
 def cmd_uninstall(args):
@@ -310,6 +336,10 @@ def cmd_uninstall(args):
     dest_dir = Path(args.themes_dir) if args.themes_dir else tool_default_themes_dir(manifest)
     theme_kind = manifest.get("theme_kind", "file")
     theme_ops.uninstall_themes(dest_dir, src_dir, args.theme, theme_kind=theme_kind)
+    for entry in extra_install_dirs(manifest):
+        extra_src = entry["source_dir"]
+        extra_dest = dest_dir / entry["dest_subdir"]
+        theme_ops.uninstall_themes(extra_dest, extra_src, None, theme_kind="file")
 
 
 def cmd_print_config(args):
