@@ -2,15 +2,18 @@
 
 Ports of the Modus themes for terminal tools.
 
-Modus themes are by [Protesilaos Stavrou](https://protesilaos.com/about/). They prioritize accessibility and high contrast, conforming to the WCAG AAA standard, with light/dark variants and additional variants such as tinted and color-deficiency friendly themes. For details, see the upstream repository and manual: `https://github.com/protesilaos/modus-themes` and `https://protesilaos.com/emacs/modus-themes`.
-
-## Requirements
-- `python3`
+Modus themes are by [Protesilaos Stavrou](https://protesilaos.com/about/). They prioritize accessibility and high contrast, conforming to WCAG AAA, and ship in light/dark variants with tinted and color-deficiency friendly flavors (deuteranopia, tritanopia). For details, see the upstream repository and manual: `https://github.com/protesilaos/modus-themes` and `https://protesilaos.com/emacs/modus-themes`.
 
 ## Supported Ports
 - [Ghostty](ports/ghostty/README.md)
 - [Lazygit](ports/lazygit/README.md)
 - [Yazi](ports/yazi/README.md)
+
+## How It Works
+Themes are generated from the original Emacs Modus palettes and rendered into tool-specific formats (a bit overengineered, but it works).
+
+## Requirements
+- `python3`
 
 ## Install
 - `python3 scripts/modus.py install --tool <tool>`
@@ -21,6 +24,3 @@ See each tool README for how to activate a theme.
 
 ## Contributing
 See `CONTRIBUTING.md` to add new ports (no-code templates supported).
-
-## License
-See `LICENSE`.
