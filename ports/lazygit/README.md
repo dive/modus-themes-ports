@@ -35,13 +35,17 @@ Docs:
 Themes are installed under `$XDG_CONFIG_HOME/lazygit/themes/`. You can symlink one to `light-mode.yml`/`dark-mode.yml` or point your wrapper directly to a theme file.
 
 ## Example: Wrapper
-Zsh example for `.zshrc`. Use installed themes from `$XDG_CONFIG_HOME/lazygit/themes/` and combine them with your main config.
+Zsh example for `.zshrc` on macOS. Uses system appearance (light/dark) to select a theme and combines it with your main config.
 
 ```sh
 if (( $+commands[lazygit] )); then
   function lazygit() {
-    local LG_THEME="${XDG_CONFIG_HOME}/lazygit/themes/modus-vivendi"
-    # For a light theme, use: ${XDG_CONFIG_HOME}/lazygit/themes/modus-operandi
+    local LG_THEME
+    if [[ $(defaults read -g AppleInterfaceStyle 2>/dev/null) == "Dark" ]]; then
+      LG_THEME="${XDG_CONFIG_HOME}/lazygit/themes/modus-vivendi"
+    else
+      LG_THEME="${XDG_CONFIG_HOME}/lazygit/themes/modus-operandi"
+    fi
     command lazygit --use-config-file="${XDG_CONFIG_HOME}/lazygit/config.yml,${LG_THEME}" "$@"
   }
 fi
