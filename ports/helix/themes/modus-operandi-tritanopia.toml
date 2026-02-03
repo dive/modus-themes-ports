@@ -80,7 +80,7 @@
 "ui.text.directory" = "#0000b0"
 "ui.text.focus" = { fg = "#000000", bg = "#afdfef", modifiers = ["bold"] }
 "ui.text.inactive" = { fg = "#595959" }
-"ui.text.info" = { fg = "#005e8b" }
+"ui.text.info" = { fg = "#000000" }
 "ui.virtual" = "#c4c4c4"
 "ui.virtual.ruler" = { bg = "#f2f2f2" }
 "ui.virtual.inlay-hint" = { fg = "#595959", modifiers = ["italic"] }
