@@ -23,9 +23,9 @@ import re
 import sys
 
 themes_dir = sys.argv[1]
-files = sorted(glob.glob(os.path.join(themes_dir, "*.theme")))
+files = sorted(glob.glob(os.path.join(themes_dir, "*")))
 if not files:
-    raise SystemExit("No .theme files found to validate.")
+    raise SystemExit("No theme files found to validate.")
 
 required_keys = {
     "background",
@@ -40,6 +40,10 @@ key_re = re.compile(r"^([a-zA-Z-]+)\s*=\s*(#?[0-9A-Fa-f]{6,8})$")
 
 errors = 0
 for path in files:
+    if os.path.isdir(path):
+        continue
+    if os.path.basename(path) == ".gitkeep":
+        continue
     with open(path, "r", encoding="utf-8") as f:
         lines = [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
 

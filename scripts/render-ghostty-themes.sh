@@ -85,7 +85,7 @@ for filename in palette_files:
     path = os.path.join(palettes_dir, filename)
     theme_name, palette = load_palette(path)
     mapping = load_mapping(theme_name)
-    out_path = os.path.join(out_dir, f"{theme_name}.theme")
+    out_path = os.path.join(out_dir, theme_name)
 
     lines = []
     for key in required_map_keys[:-1]:

@@ -24,7 +24,7 @@ Print the config line:
 - `scripts/install-modus.sh print-config ghostty --theme "modus-operandi"`
 
 ## Naming
-All ports use kebab-case filenames (e.g. `modus-operandi.theme`). Use that name in `theme = ...`.
+All ports use kebab-case filenames with no extension (e.g. `modus-operandi`). Use that name in `theme = ...`.
 
 ## Uninstall
 Remove installed symlinks:

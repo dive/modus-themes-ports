@@ -70,10 +70,11 @@ list_tools() {
   echo "Ghostty themes:"
   if [ -d "$REPO_ROOT/ports/ghostty/themes" ]; then
     found=0
-    for f in "$REPO_ROOT/ports/ghostty/themes"/*.theme; do
-      [ -e "$f" ] || continue
+    for f in "$REPO_ROOT/ports/ghostty/themes"/*; do
+      [ -f "$f" ] || continue
+      [ "$(basename "$f")" = ".gitkeep" ] && continue
       found=1
-      echo "- $(basename "$f" .theme)"
+      echo "- $(basename "$f")"
     done
     if [ $found -eq 0 ]; then
       echo "(none found, run scripts/render-ghostty-themes.sh)"
@@ -107,9 +108,9 @@ resolve_ghostty_config_dir() {
 
 find_theme_file() {
   theme_name=$1
-  for f in "$REPO_ROOT/ports/ghostty/themes"/*.theme; do
-    [ -e "$f" ] || continue
-    if [ "$(basename "$f" .theme)" = "$theme_name" ]; then
+  for f in "$REPO_ROOT/ports/ghostty/themes"/*; do
+    [ -f "$f" ] || continue
+    if [ "$(basename "$f")" = "$theme_name" ]; then
       echo "$f"
       return
     fi
@@ -136,7 +137,7 @@ install_ghostty() {
     fi
     set -- "$theme_file"
   else
-    set -- "$src_dir"/*.theme
+    set -- "$src_dir"/*
   fi
 
   if [ ! -e "$1" ]; then
@@ -145,6 +146,8 @@ install_ghostty() {
   fi
 
   for f in "$@"; do
+    [ -f "$f" ] || continue
+    [ "$(basename "$f")" = ".gitkeep" ] && continue
     dest="$dest_dir/$(basename "$f")"
     if [ -e "$dest" ]; then
       if [ -L "$dest" ] && [ "$(readlink "$dest")" = "$f" ]; then
@@ -180,9 +183,9 @@ uninstall_ghostty() {
   fi
 
   if [ -n "$THEME_NAME" ]; then
-    set -- "$dest_dir/$THEME_NAME.theme"
+    set -- "$dest_dir/$THEME_NAME"
   else
-    set -- "$dest_dir"/*.theme
+    set -- "$dest_dir"/*
   fi
 
   if [ ! -e "$1" ]; then
@@ -191,6 +194,8 @@ uninstall_ghostty() {
   fi
 
   for f in "$@"; do
+    [ -f "$f" ] || continue
+    [ "$(basename "$f")" = ".gitkeep" ] && continue
     [ -e "$f" ] || continue
     if [ -L "$f" ]; then
       link_target=$(readlink "$f")
