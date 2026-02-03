@@ -51,7 +51,15 @@ def find_theme_dir(src_dir: Path, theme_name: str, dir_suffix: str = ".yazi"):
 
 
 def install_themes(
-    src_dir: Path, dest_dir: Path, mode: str, theme_name=None, theme_kind: str = "file", theme_ext: str = "", dir_suffix: str = ".yazi"
+    src_dir: Path,
+    dest_dir: Path,
+    mode: str,
+    theme_name=None,
+    theme_kind: str = "file",
+    theme_ext: str = "",
+    dir_suffix: str = ".yazi",
+    theme_entry: str = "",
+    symlink_entry_only: bool = False,
 ):
     if not src_dir.is_dir():
         raise FileNotFoundError(f"Theme source directory missing: {src_dir}")
@@ -83,6 +91,22 @@ def install_themes(
 
     for src in theme_files:
         dest = dest_dir / src.name
+
+        # Handle symlink_entry_only mode for directory themes
+        if theme_kind == "dir" and mode == "link" and symlink_entry_only and theme_entry:
+            src_entry = src / theme_entry
+            dest_entry = dest / theme_entry
+            if dest_entry.exists():
+                if dest_entry.is_symlink() and dest_entry.resolve() == src_entry.resolve():
+                    print(f"Already installed: {src.name}")
+                    continue
+                print(f"Skipping existing file: {dest_entry}")
+                continue
+            dest.mkdir(parents=True, exist_ok=True)
+            os.symlink(src_entry, dest_entry)
+            print(f"Installed: {src.name}")
+            continue
+
         if dest.exists():
             if dest.is_symlink() and dest.resolve() == src.resolve():
                 print(f"Already installed: {src.name}")
@@ -107,7 +131,16 @@ def _trash_path(path: Path):
     subprocess.run(["trash", str(path)], check=True)
 
 
-def uninstall_themes(dest_dir: Path, src_dir: Path, theme_name=None, theme_kind: str = "file", theme_ext: str = "", dir_suffix: str = ".yazi"):
+def uninstall_themes(
+    dest_dir: Path,
+    src_dir: Path,
+    theme_name=None,
+    theme_kind: str = "file",
+    theme_ext: str = "",
+    dir_suffix: str = ".yazi",
+    theme_entry: str = "",
+    symlink_entry_only: bool = False,
+):
     if not dest_dir.is_dir():
         print(f"No themes directory found: {dest_dir}")
         return
@@ -142,6 +175,26 @@ def uninstall_themes(dest_dir: Path, src_dir: Path, theme_name=None, theme_kind:
     for target in targets:
         if not target.exists() or target.name == ".gitkeep":
             continue
+
+        # Handle symlink_entry_only mode for directory themes
+        if theme_kind == "dir" and symlink_entry_only and theme_entry:
+            entry_path = target / theme_entry
+            if entry_path.is_symlink():
+                link_target = (entry_path.parent / os.readlink(entry_path)).resolve()
+                try:
+                    link_target.relative_to(src_root)
+                except ValueError:
+                    print(f"Skipping non-modus symlink: {entry_path}")
+                    continue
+                _trash_path(entry_path)
+                # Remove the parent directory if empty
+                if target.is_dir() and not any(target.iterdir()):
+                    target.rmdir()
+                print(f"Removed: {target.name}")
+            elif entry_path.exists():
+                print(f"Skipping non-symlink file: {entry_path}")
+            continue
+
         if target.is_symlink():
             link_target = (target.parent / os.readlink(target)).resolve()
             try:

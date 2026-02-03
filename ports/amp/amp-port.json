@@ -5,6 +5,7 @@
   "theme_kind": "dir",
   "dir_suffix": "",
   "theme_entry": "colors.toml",
+  "symlink_entry_only": true,
   "output_path_template": "ports/amp/themes/{theme}/colors.toml",
   "mapping_path": "mappings/base16/default.json",
   "template_path": "ports/amp/theme.tmpl",

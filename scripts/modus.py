@@ -370,7 +370,19 @@ def cmd_install(args):
     theme_kind = manifest.get("theme_kind", "file")
     theme_ext = manifest.get("theme_ext", "")
     dir_suffix = manifest.get("dir_suffix", ".yazi")
-    theme_ops.install_themes(src_dir, dest_dir, mode, args.theme, theme_kind=theme_kind, theme_ext=theme_ext, dir_suffix=dir_suffix)
+    theme_entry = manifest.get("theme_entry", "")
+    symlink_entry_only = manifest.get("symlink_entry_only", False)
+    theme_ops.install_themes(
+        src_dir,
+        dest_dir,
+        mode,
+        args.theme,
+        theme_kind=theme_kind,
+        theme_ext=theme_ext,
+        dir_suffix=dir_suffix,
+        theme_entry=theme_entry,
+        symlink_entry_only=symlink_entry_only,
+    )
     for entry in extra_install_dirs(manifest):
         extra_src = entry["source_dir"]
         extra_dest = dest_dir / entry["dest_subdir"]
@@ -385,7 +397,18 @@ def cmd_uninstall(args):
     theme_kind = manifest.get("theme_kind", "file")
     theme_ext = manifest.get("theme_ext", "")
     dir_suffix = manifest.get("dir_suffix", ".yazi")
-    theme_ops.uninstall_themes(dest_dir, src_dir, args.theme, theme_kind=theme_kind, theme_ext=theme_ext, dir_suffix=dir_suffix)
+    theme_entry = manifest.get("theme_entry", "")
+    symlink_entry_only = manifest.get("symlink_entry_only", False)
+    theme_ops.uninstall_themes(
+        dest_dir,
+        src_dir,
+        args.theme,
+        theme_kind=theme_kind,
+        theme_ext=theme_ext,
+        dir_suffix=dir_suffix,
+        theme_entry=theme_entry,
+        symlink_entry_only=symlink_entry_only,
+    )
     for entry in extra_install_dirs(manifest):
         extra_src = entry["source_dir"]
         extra_dest = dest_dir / entry["dest_subdir"]
