@@ -34,6 +34,8 @@ Key fields:
 - `install_targets`: suggested install locations
 - `config_locations`: suggested config locations
 - `extra_install_dirs`: additional install sources copied under a subdirectory
+- `validate_json`: enable JSON validation for template outputs
+- `required_fields`: dot-paths required in JSON outputs (e.g., `themes.0.style`)
 
 ## Add a New Port (No-Code)
 1. Create folder:

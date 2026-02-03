@@ -5,6 +5,16 @@
   "mapping_path": "mappings/zed/default.json",
   "template_path": "ports/zed/theme.tmpl",
   "template_format": "mini",
+  "validate_json": true,
+  "required_fields": [
+    "name",
+    "author",
+    "themes",
+    "themes.0.appearance",
+    "themes.0.name",
+    "themes.0.style",
+    "themes.0.style.syntax"
+  ],
   "required_keys": [],
   "install_targets": [
     "$XDG_CONFIG_HOME/zed/themes",

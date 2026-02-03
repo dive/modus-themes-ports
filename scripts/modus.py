@@ -159,6 +159,25 @@ def swap_modus_variant(name: str) -> str:
     return name
 
 
+def json_path_exists(data, path: str) -> bool:
+    current = data
+    for segment in path.split("."):
+        if isinstance(current, list):
+            if not segment.isdigit():
+                return False
+            index = int(segment)
+            if index >= len(current):
+                return False
+            current = current[index]
+            continue
+        if not isinstance(current, dict):
+            return False
+        if segment not in current:
+            return False
+        current = current[segment]
+    return current is not None
+
+
 def cmd_list(_args):
     registry = load_registry()
     tools = sorted(registry.keys())
@@ -251,6 +270,8 @@ def cmd_validate(args):
         spec = tool_spec(manifest)
         themes_dir = tool_out_dir(manifest, args.themes_dir)
         required_keys = manifest.get("required_keys", [])
+        validate_json = manifest.get("validate_json", False)
+        required_fields = manifest.get("required_fields", [])
 
         if spec:
             validated, errors = validate.validate_all(themes_dir, spec, theme=args.theme)
@@ -295,6 +316,15 @@ def cmd_validate(args):
                 issues = validate_lazygit.validate(text, required_keys)
             else:
                 issues = []
+                if validate_json:
+                    try:
+                        data = json.loads(text)
+                    except json.JSONDecodeError as exc:
+                        issues.append(f"Invalid JSON: {exc}")
+                    else:
+                        for field in required_fields:
+                            if not json_path_exists(data, field):
+                                issues.append(f"Missing field: {field}")
                 for key in required_keys:
                     if key == "palette":
                         if "palette =" not in text:
