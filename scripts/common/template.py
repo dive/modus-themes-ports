@@ -45,6 +45,8 @@ def render_template(template: str, palette: dict, mapping: dict, theme_name: str
                 return theme_name
             if key == "theme_title":
                 return _theme_title(theme_name)
+            if key == "appearance":
+                return "light" if theme_name.startswith("modus-operandi") else "dark"
             raise KeyError(f"Unknown meta key: {key}")
         raise KeyError(f"Unknown token kind: {kind}")
 

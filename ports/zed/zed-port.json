@@ -1,0 +1,17 @@
+{
+  "tool": "zed",
+  "theme_dir_rel": "ports/zed/themes",
+  "output_path_template": "ports/zed/themes/{theme}.json",
+  "mapping_path": "mappings/zed/default.json",
+  "template_path": "ports/zed/theme.tmpl",
+  "template_format": "mini",
+  "required_keys": [],
+  "install_targets": [
+    "$XDG_CONFIG_HOME/zed/themes",
+    "$HOME/.config/zed/themes"
+  ],
+  "config_locations": [
+    "$XDG_CONFIG_HOME/zed/settings.json",
+    "$HOME/.config/zed/settings.json"
+  ]
+}
