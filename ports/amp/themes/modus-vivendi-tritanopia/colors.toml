@@ -1,0 +1,29 @@
+name = "Modus Vivendi Tritanopia"
+mode = "dark"
+
+[colors]
+background = "#000000"
+foreground = "#ffffff"
+primary = "#00bcff"
+secondary = "#b6a0ff"
+accent = "#6ae4b9"
+success = "#44bc44"
+warning = "#ffa00f"
+info = "#00d3d0"
+destructive = "#ff5f59"
+
+[ui]
+cursor = "#ffffff"
+border = "#646464"
+selection = "#5a5a5a"
+muted_foreground = "#989898"
+
+[syntax]
+keyword = "#b6a0ff"
+string = "#79a8ff"
+number = "#ffffff"
+comment = "#989898"
+function = "#feacd0"
+variable = "#00d3d0"
+type = "#6ae4b9"
+operator = "#ffffff"

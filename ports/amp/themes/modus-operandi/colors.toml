@@ -1,0 +1,29 @@
+name = "Modus Operandi"
+mode = "light"
+
+[colors]
+background = "#ffffff"
+foreground = "#000000"
+primary = "#0000b0"
+secondary = "#531ab6"
+accent = "#005f5f"
+success = "#006800"
+warning = "#884900"
+info = "#005e8b"
+destructive = "#a60000"
+
+[ui]
+cursor = "#000000"
+border = "#9f9f9f"
+selection = "#bdbdbd"
+muted_foreground = "#595959"
+
+[syntax]
+keyword = "#531ab6"
+string = "#3548cf"
+number = "#000000"
+comment = "#595959"
+function = "#721045"
+variable = "#005e8b"
+type = "#005f5f"
+operator = "#000000"

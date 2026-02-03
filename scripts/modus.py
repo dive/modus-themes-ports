@@ -192,7 +192,8 @@ def cmd_list(_args):
         manifest = registry[tool]
         theme_kind = manifest.get("theme_kind", "file")
         theme_ext = manifest.get("theme_ext", "")
-        themes = theme_ops.list_themes(tool_src_dir(manifest), theme_kind=theme_kind, theme_ext=theme_ext)
+        dir_suffix = manifest.get("dir_suffix", ".yazi")
+        themes = theme_ops.list_themes(tool_src_dir(manifest), theme_kind=theme_kind, theme_ext=theme_ext, dir_suffix=dir_suffix)
         if not themes:
             print("(none found)")
         else:
@@ -368,7 +369,8 @@ def cmd_install(args):
     mode = "copy" if args.copy else "link"
     theme_kind = manifest.get("theme_kind", "file")
     theme_ext = manifest.get("theme_ext", "")
-    theme_ops.install_themes(src_dir, dest_dir, mode, args.theme, theme_kind=theme_kind, theme_ext=theme_ext)
+    dir_suffix = manifest.get("dir_suffix", ".yazi")
+    theme_ops.install_themes(src_dir, dest_dir, mode, args.theme, theme_kind=theme_kind, theme_ext=theme_ext, dir_suffix=dir_suffix)
     for entry in extra_install_dirs(manifest):
         extra_src = entry["source_dir"]
         extra_dest = dest_dir / entry["dest_subdir"]
@@ -382,7 +384,8 @@ def cmd_uninstall(args):
     dest_dir = Path(args.themes_dir) if args.themes_dir else tool_default_themes_dir(manifest)
     theme_kind = manifest.get("theme_kind", "file")
     theme_ext = manifest.get("theme_ext", "")
-    theme_ops.uninstall_themes(dest_dir, src_dir, args.theme, theme_kind=theme_kind, theme_ext=theme_ext)
+    dir_suffix = manifest.get("dir_suffix", ".yazi")
+    theme_ops.uninstall_themes(dest_dir, src_dir, args.theme, theme_kind=theme_kind, theme_ext=theme_ext, dir_suffix=dir_suffix)
     for entry in extra_install_dirs(manifest):
         extra_src = entry["source_dir"]
         extra_dest = dest_dir / entry["dest_subdir"]

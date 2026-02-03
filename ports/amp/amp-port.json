@@ -1,0 +1,21 @@
+{
+  "tool": "amp",
+  "theme_dir_rel": "ports/amp/themes",
+  "theme_ext": "",
+  "theme_kind": "dir",
+  "dir_suffix": "",
+  "theme_entry": "colors.toml",
+  "output_path_template": "ports/amp/themes/{theme}/colors.toml",
+  "mapping_path": "mappings/base16/default.json",
+  "template_path": "ports/amp/theme.tmpl",
+  "template_format": "mini",
+  "required_keys": [],
+  "install_targets": [
+    "$XDG_CONFIG_HOME/amp/themes",
+    "$HOME/.config/amp/themes"
+  ],
+  "config_locations": [
+    "$XDG_CONFIG_HOME/amp/settings.json",
+    "$HOME/.config/amp/settings.json"
+  ]
+}

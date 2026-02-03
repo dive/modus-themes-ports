@@ -11,6 +11,7 @@ Modus themes are designed by [Protesilaos Stavrou](https://protesilaos.com/about
 
 | Tool | Description |
 |------|-------------|
+| [Amp](ports/amp/README.md) | AI coding agent CLI |
 | [Ghostty](ports/ghostty/README.md) | Terminal emulator |
 | [Helix](ports/helix/README.md) | Modal text editor |
 | [bat](ports/bat/README.md) | Cat clone with syntax highlighting |

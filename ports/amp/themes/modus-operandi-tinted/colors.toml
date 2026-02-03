@@ -1,0 +1,29 @@
+name = "Modus Operandi Tinted"
+mode = "light"
+
+[colors]
+background = "#fbf7f0"
+foreground = "#000000"
+primary = "#0000b0"
+secondary = "#531ab6"
+accent = "#005f5f"
+success = "#006300"
+warning = "#894000"
+info = "#00598b"
+destructive = "#a60000"
+
+[ui]
+cursor = "#000000"
+border = "#9f9690"
+selection = "#c2bcb5"
+muted_foreground = "#595959"
+
+[syntax]
+keyword = "#531ab6"
+string = "#3546c2"
+number = "#000000"
+comment = "#595959"
+function = "#721045"
+variable = "#00598b"
+type = "#005f5f"
+operator = "#000000"
