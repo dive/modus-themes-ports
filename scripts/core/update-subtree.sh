@@ -2,7 +2,7 @@
 set -eu
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
-REPO_ROOT=$(cd "$SCRIPT_DIR/.." && pwd)
+REPO_ROOT=$(cd "$SCRIPT_DIR/../.." && pwd)
 
 REMOTE_URL="https://github.com/protesilaos/modus-themes"
 PREFIX="vendor/modus-themes"
@@ -24,5 +24,5 @@ else
 fi
 
 "$SCRIPT_DIR/extract-palettes.sh"
-"$SCRIPT_DIR/render-ghostty-themes.sh"
-"$SCRIPT_DIR/render-lazygit-themes.sh"
+"$REPO_ROOT/scripts/tools/ghostty/render.sh"
+"$REPO_ROOT/scripts/tools/lazygit/render.sh"
