@@ -12,6 +12,7 @@ Modus themes are designed by [Protesilaos Stavrou](https://protesilaos.com/about
 | Tool | Description |
 |------|-------------|
 | [Ghostty](ports/ghostty/README.md) | Terminal emulator |
+| [Helix](ports/helix/README.md) | Modal text editor |
 | [bat](ports/bat/README.md) | Cat clone with syntax highlighting |
 | [Lazygit](ports/lazygit/README.md) | Terminal UI for git |
 | [LS_COLORS](ports/ls-colors/README.md) | Colors for `ls` and compatible tools |
