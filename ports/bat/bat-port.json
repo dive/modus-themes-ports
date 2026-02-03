@@ -1,6 +1,7 @@
 {
   "tool": "bat",
   "theme_dir_rel": "ports/bat/themes",
+  "theme_ext": ".tmTheme",
   "output_path_template": "ports/bat/themes/{theme}.tmTheme",
   "mapping_path": "mappings/bat/default.json",
   "template_path": "ports/shared/tmtheme.tmpl",

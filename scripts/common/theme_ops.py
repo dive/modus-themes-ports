@@ -5,7 +5,7 @@ import subprocess
 from pathlib import Path
 
 
-def list_themes(dir_path: Path, theme_kind: str = "file"):
+def list_themes(dir_path: Path, theme_kind: str = "file", theme_ext: str = ""):
     if not dir_path.is_dir():
         return []
     items = []
@@ -17,14 +17,21 @@ def list_themes(dir_path: Path, theme_kind: str = "file"):
                 items.append(entry.name[:-5])
         else:
             if entry.is_file():
-                items.append(entry.name)
+                name = entry.name
+                if theme_ext and name.endswith(theme_ext):
+                    name = name[: -len(theme_ext)]
+                items.append(name)
     return items
 
 
-def find_theme_file(src_dir: Path, theme_name: str):
+def find_theme_file(src_dir: Path, theme_name: str, theme_ext: str = ""):
     candidate = src_dir / theme_name
     if candidate.is_file():
         return candidate
+    if theme_ext and not theme_name.endswith(theme_ext):
+        candidate = src_dir / f"{theme_name}{theme_ext}"
+        if candidate.is_file():
+            return candidate
     return None
 
 
@@ -38,7 +45,9 @@ def find_theme_dir(src_dir: Path, theme_name: str):
     return None
 
 
-def install_themes(src_dir: Path, dest_dir: Path, mode: str, theme_name=None, theme_kind: str = "file"):
+def install_themes(
+    src_dir: Path, dest_dir: Path, mode: str, theme_name=None, theme_kind: str = "file", theme_ext: str = ""
+):
     if not src_dir.is_dir():
         raise FileNotFoundError(f"Theme source directory missing: {src_dir}")
 
@@ -54,7 +63,7 @@ def install_themes(src_dir: Path, dest_dir: Path, mode: str, theme_name=None, th
             theme_files = [p for p in src_dir.iterdir() if p.is_dir() and p.name.endswith(".yazi")]
     else:
         if theme_name:
-            theme_file = find_theme_file(src_dir, theme_name)
+            theme_file = find_theme_file(src_dir, theme_name, theme_ext)
             if theme_file is None:
                 raise FileNotFoundError(f"Theme not found: {theme_name}")
             theme_files = [theme_file]
@@ -90,7 +99,7 @@ def _trash_path(path: Path):
     subprocess.run(["trash", str(path)], check=True)
 
 
-def uninstall_themes(dest_dir: Path, src_dir: Path, theme_name=None, theme_kind: str = "file"):
+def uninstall_themes(dest_dir: Path, src_dir: Path, theme_name=None, theme_kind: str = "file", theme_ext: str = ""):
     if not dest_dir.is_dir():
         print(f"No themes directory found: {dest_dir}")
         return
@@ -103,7 +112,10 @@ def uninstall_themes(dest_dir: Path, src_dir: Path, theme_name=None, theme_kind:
             targets = [p for p in dest_dir.iterdir() if p.is_dir() and p.name.endswith(".yazi")]
     else:
         if theme_name:
-            targets = [dest_dir / theme_name]
+            name = theme_name
+            if theme_ext and not name.endswith(theme_ext):
+                name = f"{name}{theme_ext}"
+            targets = [dest_dir / name]
         else:
             targets = [p for p in dest_dir.iterdir() if p.is_file() and p.name != ".gitkeep"]
 

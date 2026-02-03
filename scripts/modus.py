@@ -114,17 +114,20 @@ def resolve_output_path(manifest: dict, theme_name: str, out_dir_override: Optio
     theme_kind = manifest.get("theme_kind", "file")
     entry = manifest.get("theme_entry", "flavor.toml")
     template = manifest.get("output_path_template")
+    theme_ext = manifest.get("theme_ext", "")
 
     if out_dir_override:
         base = Path(out_dir_override)
         if theme_kind == "dir":
             return base / f"{theme_name}.yazi" / entry
-        return base / theme_name
+        suffix = theme_ext if theme_ext else ""
+        return base / f"{theme_name}{suffix}"
 
     if template:
         return REPO_ROOT / template.replace("{theme}", theme_name)
 
-    return tool_out_dir(manifest, None) / theme_name
+    suffix = theme_ext if theme_ext else ""
+    return tool_out_dir(manifest, None) / f"{theme_name}{suffix}"
 
 
 def tool_default_themes_dir(manifest: dict) -> Path:
@@ -189,7 +192,8 @@ def cmd_list(_args):
         print("\n" + f"{tool.capitalize()} themes:")
         manifest = registry[tool]
         theme_kind = manifest.get("theme_kind", "file")
-        themes = theme_ops.list_themes(tool_src_dir(manifest), theme_kind=theme_kind)
+        theme_ext = manifest.get("theme_ext", "")
+        themes = theme_ops.list_themes(tool_src_dir(manifest), theme_kind=theme_kind, theme_ext=theme_ext)
         if not themes:
             print("(none found)")
         else:
@@ -364,7 +368,8 @@ def cmd_install(args):
         raise SystemExit("Error: choose either --copy or --link")
     mode = "copy" if args.copy else "link"
     theme_kind = manifest.get("theme_kind", "file")
-    theme_ops.install_themes(src_dir, dest_dir, mode, args.theme, theme_kind=theme_kind)
+    theme_ext = manifest.get("theme_ext", "")
+    theme_ops.install_themes(src_dir, dest_dir, mode, args.theme, theme_kind=theme_kind, theme_ext=theme_ext)
     for entry in extra_install_dirs(manifest):
         extra_src = entry["source_dir"]
         extra_dest = dest_dir / entry["dest_subdir"]
@@ -377,7 +382,8 @@ def cmd_uninstall(args):
     src_dir = tool_src_dir(manifest)
     dest_dir = Path(args.themes_dir) if args.themes_dir else tool_default_themes_dir(manifest)
     theme_kind = manifest.get("theme_kind", "file")
-    theme_ops.uninstall_themes(dest_dir, src_dir, args.theme, theme_kind=theme_kind)
+    theme_ext = manifest.get("theme_ext", "")
+    theme_ops.uninstall_themes(dest_dir, src_dir, args.theme, theme_kind=theme_kind, theme_ext=theme_ext)
     for entry in extra_install_dirs(manifest):
         extra_src = entry["source_dir"]
         extra_dest = dest_dir / entry["dest_subdir"]
@@ -399,7 +405,8 @@ def cmd_print_config(args):
 
     if args.tool == "lazygit":
         src_dir = tool_src_dir(manifest)
-        theme_file = theme_ops.find_theme_file(src_dir, args.theme)
+        theme_ext = manifest.get("theme_ext", "")
+        theme_file = theme_ops.find_theme_file(src_dir, args.theme, theme_ext)
         if theme_file is None:
             raise SystemExit(f"Error: theme not found: {args.theme}")
         print(f"# Paste into {config_dir}/config.yml")

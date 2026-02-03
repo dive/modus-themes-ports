@@ -1,6 +1,7 @@
 {
   "tool": "zed",
   "theme_dir_rel": "ports/zed/themes",
+  "theme_ext": ".json",
   "output_path_template": "ports/zed/themes/{theme}.json",
   "mapping_path": "mappings/zed/default.json",
   "template_path": "ports/zed/theme.tmpl",
