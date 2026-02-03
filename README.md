@@ -18,6 +18,8 @@ Modus themes are designed by [Protesilaos Stavrou](https://protesilaos.com/about
 | [Zed](ports/zed/README.md) | Code editor |
 | [Yazi](ports/yazi/README.md) | Terminal file manager |
 
+Screenshots: [SCREENSHOTS.md](SCREENSHOTS.md)
+
 ## Quick Start
 
 ```sh
