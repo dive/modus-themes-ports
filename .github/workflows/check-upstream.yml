@@ -1,0 +1,112 @@
+name: Check Upstream Updates
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday at 9:00 UTC
+  workflow_dispatch:
+
+jobs:
+  check-upstream:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for upstream updates
+        id: check
+        run: |
+          UPSTREAM_REPO="https://github.com/protesilaos/modus-themes"
+          SUBTREE_PREFIX="vendor/modus-themes"
+
+          # Get current subtree commit (last squash merge)
+          CURRENT_COMMIT=$(git log --oneline --all | grep "Squashed '$SUBTREE_PREFIX/'" | head -1 | grep -oE '[a-f0-9]{7,}$' || echo "")
+          
+          if [ -z "$CURRENT_COMMIT" ]; then
+            # Fallback: check the subtree directory's last update
+            CURRENT_COMMIT=$(git log -1 --format=%H -- "$SUBTREE_PREFIX")
+          fi
+
+          # Get latest upstream commit
+          UPSTREAM_COMMIT=$(git ls-remote "$UPSTREAM_REPO" HEAD | cut -f1)
+          UPSTREAM_SHORT="${UPSTREAM_COMMIT:0:7}"
+
+          echo "current=$CURRENT_COMMIT" >> $GITHUB_OUTPUT
+          echo "upstream=$UPSTREAM_COMMIT" >> $GITHUB_OUTPUT
+          echo "upstream_short=$UPSTREAM_SHORT" >> $GITHUB_OUTPUT
+
+          # Fetch upstream to compare
+          git remote add upstream "$UPSTREAM_REPO" 2>/dev/null || true
+          git fetch upstream main --depth=50
+
+          # Check if we're behind
+          COMMITS_BEHIND=$(git rev-list --count HEAD.."upstream/main" -- 2>/dev/null || echo "unknown")
+          
+          # Compare by checking if upstream HEAD is reachable from our subtree
+          if git merge-base --is-ancestor "$UPSTREAM_COMMIT" HEAD 2>/dev/null; then
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+            echo "✅ Subtree is up to date with upstream"
+          else
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            echo "behind=$COMMITS_BEHIND" >> $GITHUB_OUTPUT
+            echo "⚠️ Subtree is behind upstream (approximately $COMMITS_BEHIND commits)"
+            
+            # Get recent upstream commits for the issue
+            RECENT_COMMITS=$(git log upstream/main --oneline -10 --no-walk=unsorted 2>/dev/null | head -10 || echo "Unable to fetch commits")
+            echo "recent_commits<<EOF" >> $GITHUB_OUTPUT
+            echo "$RECENT_COMMITS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for existing issue
+        if: steps.check.outputs.needs_update == 'true'
+        id: existing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh issue list --label "upstream-update" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            echo "issue_exists=true" >> $GITHUB_OUTPUT
+            echo "issue_number=$EXISTING" >> $GITHUB_OUTPUT
+            echo "ℹ️ Issue #$EXISTING already exists"
+          else
+            echo "issue_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create update issue
+        if: steps.check.outputs.needs_update == 'true' && steps.existing.outputs.issue_exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "Update vendor/modus-themes to upstream (${{ steps.check.outputs.upstream_short }})" \
+            --label "upstream-update" \
+            --body "## Upstream Update Available
+
+          The [modus-themes](https://github.com/protesilaos/modus-themes) upstream repository has new commits.
+
+          **Upstream HEAD:** \`${{ steps.check.outputs.upstream }}\`
+
+          ### How to Update
+
+          Run the update command:
+
+          \`\`\`sh
+          python3 scripts/modus.py update-subtree
+          \`\`\`
+
+          This will:
+          1. Pull the latest changes from upstream via git subtree
+          2. Regenerate palettes from the updated source
+          3. Re-render all themes
+
+          After updating, verify the changes:
+
+          \`\`\`sh
+          python3 scripts/modus.py validate --tool all
+          \`\`\`
+
+          ---
+          *This issue was automatically created by the upstream check workflow.*"
