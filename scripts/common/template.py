@@ -1,11 +1,27 @@
 #!/usr/bin/env python3
 import re
 
-TOKEN_RE = re.compile(r"\{(color|value|meta):([A-Za-z0-9_-]+)\}")
+TOKEN_RE = re.compile(r"\{(color|value|meta|rgb):([A-Za-z0-9_-]+)\}")
 
 
 def _theme_title(theme: str) -> str:
     return " ".join([part.capitalize() for part in theme.split("-")])
+
+
+def _hex_to_rgb(value: str) -> str:
+    if not isinstance(value, str) or not value.startswith("#") or len(value) != 7:
+        raise ValueError(f"Expected #RRGGBB value, got: {value}")
+    r = int(value[1:3], 16)
+    g = int(value[3:5], 16)
+    b = int(value[5:7], 16)
+    return f"{r};{g};{b}"
+
+
+def _resolve_palette_value(palette: dict, key: str):
+    value = palette[key]
+    if isinstance(value, str) and value in palette:
+        return palette[value]
+    return value
 
 
 def render_template(template: str, palette: dict, mapping: dict, theme_name: str) -> str:
@@ -19,6 +35,11 @@ def render_template(template: str, palette: dict, mapping: dict, theme_name: str
             if key not in mapping:
                 raise KeyError(f"Missing mapping key: {key}")
             return str(mapping[key])
+        if kind == "rgb":
+            if key not in palette:
+                raise KeyError(f"Missing palette key: {key}")
+            value = _resolve_palette_value(palette, key)
+            return _hex_to_rgb(value)
         if kind == "meta":
             if key == "theme":
                 return theme_name

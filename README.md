@@ -7,6 +7,7 @@ Modus themes are by [Protesilaos Stavrou](https://protesilaos.com/about/). They 
 ## Supported Ports
 - [Ghostty](ports/ghostty/README.md)
 - [Lazygit](ports/lazygit/README.md)
+- [LS_COLORS](ports/ls-colors/README.md)
 - [Yazi](ports/yazi/README.md)
 
 ## How It Works
@@ -19,7 +20,7 @@ Themes are generated from the original Emacs Modus palettes and rendered into to
 - `python3 scripts/modus.py install --tool <tool>`
 - `python3 scripts/modus.py list`
 
-By default, install symlinks themes into `$XDG_CONFIG_HOME/<tool>/themes`.
+By default, install symlinked themes into `$XDG_CONFIG_HOME` (see each tool README for the exact path).
 See each tool README for how to activate a theme.
 
 ## Contributing

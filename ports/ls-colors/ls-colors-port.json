@@ -1,0 +1,16 @@
+{
+  "tool": "ls-colors",
+  "theme_dir_rel": "ports/ls-colors/themes",
+  "output_path_template": "ports/ls-colors/themes/{theme}",
+  "mapping_path": "mappings/ls-colors/default.json",
+  "template_path": "ports/ls-colors/theme.tmpl",
+  "template_format": "mini",
+  "required_keys": [],
+  "install_targets": [
+    "$XDG_CONFIG_HOME/ls-colors",
+    "$HOME/.config/ls-colors"
+  ],
+  "config_locations": [
+    "$XDG_CONFIG_HOME/zsh/.zshrc"
+  ]
+}

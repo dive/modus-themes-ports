@@ -48,6 +48,7 @@ Key fields:
 Template tokens:
 - `{color:<palette-key>}` inserts a palette color
 - `{value:<mapping-key>}` inserts a mapping value
+- `{rgb:<palette-key>}` inserts a palette color as `R;G;B`
 
 ## Add a New Port (Spec-Based)
 If templates are insufficient, add:
