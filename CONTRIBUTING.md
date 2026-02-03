@@ -28,10 +28,12 @@ Key fields:
 - `mapping_path`: mapping JSON for the tool
 - `template_path`: template file for no-code ports
 - `template_format`: currently `mini`
+- `extra_templates`: extra rendered outputs (e.g., `tmtheme.xml`)
 - `required_keys`: used by validation for template ports
 - `spec_path`: optional Python spec for advanced ports
 - `install_targets`: suggested install locations
 - `config_locations`: suggested config locations
+- `extra_install_dirs`: additional install sources copied under a subdirectory
 
 ## Add a New Port (No-Code)
 1. Create folder:
