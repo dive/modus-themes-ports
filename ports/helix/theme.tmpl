@@ -1,0 +1,124 @@
+# {meta:theme_title}
+# A port of the Modus Themes by Protesilaos Stavrou
+
+# Syntax highlighting
+"type" = "{color:cyan-cooler}"
+"constructor" = "{color:cyan-cooler}"
+"constant" = "{color:blue-cooler}"
+"constant.character.escape" = "{color:magenta}"
+"string" = "{color:blue-warmer}"
+"string.regexp" = "{color:magenta-faint}"
+"string.special" = "{color:blue-faint}"
+"comment" = "{color:fg-dim}"
+"variable.parameter" = "{color:cyan}"
+"variable.builtin" = "{color:magenta-warmer}"
+"label" = "{color:fg-dim}"
+"keyword" = "{color:magenta-cooler}"
+"keyword.directive" = "{color:red-cooler}"
+"function" = "{color:magenta}"
+"function.macro" = "{color:red-cooler}"
+"punctuation" = "{color:fg-dim}"
+"tag" = "{color:magenta-cooler}"
+"attribute" = "{color:cyan}"
+"namespace" = "{color:cyan}"
+"special" = "{color:red-cooler}"
+
+# Markup
+"markup.heading.marker" = "{color:fg-dim}"
+"markup.heading.1" = { fg = "{color:fg-main}", modifiers = ["bold"] }
+"markup.heading.2" = { fg = "{color:yellow-faint}", modifiers = ["bold"] }
+"markup.heading.3" = { fg = "{color:fg-alt}", modifiers = ["bold"] }
+"markup.heading.4" = { fg = "{color:magenta}", modifiers = ["bold"] }
+"markup.heading.5" = { fg = "{color:green-faint}", modifiers = ["bold"] }
+"markup.heading.6" = { fg = "{color:red-faint}", modifiers = ["bold"] }
+"markup.list" = "{color:fg-dim}"
+"markup.list.checked" = { fg = "{color:yellow-warmer}" }
+"markup.list.unchecked" = { fg = "{color:yellow-warmer}" }
+"markup.bold" = { modifiers = ["bold"] }
+"markup.italic" = { modifiers = ["italic"] }
+"markup.strikethrough" = { modifiers = ["crossed_out"] }
+"markup.link.url" = { fg = "{color:cyan}" }
+"markup.link.text" = { fg = "{color:blue-warmer}", modifiers = ["underlined"] }
+"markup.raw.block" = { bg = "{color:bg-dim}" }
+"markup.raw.inline" = { fg = "{color:green-cooler}" }
+
+# Diff
+"diff.plus" = { fg = "{color:fg-added}", bg = "{color:bg-added}" }
+"diff.plus.gutter" = "{color:green-intense}"
+"diff.minus" = { fg = "{color:fg-removed}", bg = "{color:bg-removed}" }
+"diff.minus.gutter" = "{color:red-intense}"
+"diff.delta" = { fg = "{color:fg-changed}", bg = "{color:bg-changed}" }
+"diff.delta.gutter" = "{color:yellow-intense}"
+
+# UI
+"ui.background" = { bg = "{color:bg-main}" }
+"ui.background.separator" = { fg = "{color:fg-dim}" }
+"ui.linenr" = { fg = "{color:fg-dim}" }
+"ui.linenr.selected" = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
+"ui.statusline" = { fg = "{color:fg-mode-line-active}", bg = "{color:bg-mode-line-active}" }
+"ui.statusline.inactive" = { fg = "{color:fg-mode-line-inactive}", bg = "{color:bg-mode-line-inactive}" }
+"ui.statusline.normal" = { fg = "{color:blue-warmer}" }
+"ui.statusline.insert" = { fg = "{color:green-warmer}" }
+"ui.statusline.select" = { fg = "{color:magenta-warmer}" }
+"ui.statusline.separator" = { fg = "{color:border-mode-line-active}" }
+"ui.bufferline" = { bg = "{color:bg-tab-bar}" }
+"ui.bufferline.active" = { bg = "{color:bg-main}", fg = "{color:fg-mode-line-active}" }
+"ui.bufferline.background" = { bg = "{color:bg-tab-bar}" }
+"ui.popup" = { fg = "{color:fg-main}", bg = "{color:bg-dim}" }
+"ui.popup.info" = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
+"ui.picker.header" = { fg = "{color:fg-main}", bg = "{color:bg-active}", modifiers = ["bold"] }
+"ui.picker.header.column" = { fg = "{color:fg-dim}", bg = "{color:bg-active}" }
+"ui.picker.header.column.active" = { fg = "{color:fg-main}", bg = "{color:bg-active}", modifiers = ["bold"] }
+"ui.window" = { fg = "{color:fg-dim}" }
+"ui.help" = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
+"ui.gutter" = { }
+"ui.gutter.selected" = { bg = "{color:bg-active}" }
+"ui.debug.breakpoint" = { fg = "{color:red-intense}" }
+"ui.debug.active" = { fg = "{color:yellow-intense}" }
+"ui.debug" = { fg = "{color:yellow-intense}" }
+"ui.text" = "{color:fg-main}"
+"ui.text.directory" = "{color:blue-cooler}"
+"ui.text.focus" = { fg = "{color:fg-main}", bg = "{color:bg-completion}", modifiers = ["bold"] }
+"ui.text.inactive" = { fg = "{color:fg-dim}" }
+"ui.text.info" = { fg = "{color:cyan}" }
+"ui.virtual" = "{color:bg-active}"
+"ui.virtual.ruler" = { bg = "{color:bg-dim}" }
+"ui.virtual.inlay-hint" = { fg = "{color:fg-dim}", modifiers = ["italic"] }
+"ui.virtual.inlay-hint.parameter" = { fg = "{color:fg-dim}", modifiers = ["italic"] }
+"ui.virtual.inlay-hint.type" = { fg = "{color:fg-dim}", modifiers = ["italic"] }
+"ui.virtual.indent-guide" = { fg = "{color:fg-dim}" }
+"ui.virtual.whitespace" = { fg = "{color:fg-dim}" }
+"ui.virtual.wrap" = { fg = "{color:fg-dim}" }
+"ui.virtual.jump-label" = { fg = "{color:yellow-cooler}", modifiers = ["bold"] }
+"ui.selection" = { bg = "{color:bg-inactive}" }
+"ui.selection.primary" = { bg = "{color:bg-active}" }
+"ui.cursor" = { fg = "{color:bg-main}", bg = "{color:fg-main}" }
+"ui.cursor.normal" = { fg = "{color:bg-main}", bg = "{color:fg-main}" }
+"ui.cursor.insert" = { fg = "{color:bg-main}", bg = "{color:fg-main}" }
+"ui.cursor.select" = { fg = "{color:bg-main}", bg = "{color:fg-main}" }
+"ui.cursor.primary" = { fg = "{color:bg-main}", bg = "{color:fg-dim}" }
+"ui.cursor.primary.normal" = { fg = "{color:bg-main}", bg = "{color:fg-dim}" }
+"ui.cursor.primary.insert" = { fg = "{color:bg-main}", bg = "{color:fg-dim}" }
+"ui.cursor.primary.select" = { fg = "{color:bg-main}", bg = "{color:fg-dim}" }
+"ui.cursor.match" = { fg = "{color:fg-main}", bg = "{color:bg-paren-match}" }
+"ui.cursorline.primary" = { bg = "{color:bg-hl-line}" }
+"ui.highlight" = { bg = "{color:bg-hl-line}" }
+"ui.highlight.frameline" = { bg = "{color:bg-paren-match}" }
+"ui.menu" = { fg = "{color:fg-main}", bg = "{color:bg-dim}" }
+"ui.menu.selected" = { fg = "{color:fg-main}", bg = "{color:bg-completion}", modifiers = ["bold"] }
+"ui.menu.scroll" = { fg = "{color:fg-dim}", bg = "{color:bg-cyan-intense}" }
+
+# Diagnostics
+"diagnostic.error" = { underline = { color = "{color:red-intense}", style = "curl" } }
+"diagnostic.warning" = { underline = { color = "{color:yellow-intense}", style = "curl" } }
+"diagnostic.info" = { underline = { color = "{color:cyan-intense}", style = "curl" } }
+"diagnostic.hint" = { underline = { color = "{color:blue-intense}", style = "curl" } }
+"diagnostic.unnecessary" = { modifiers = ["dim"] }
+"diagnostic.deprecated" = { modifiers = ["crossed_out"] }
+
+"error" = "{color:red}"
+"warning" = "{color:yellow-warmer}"
+"info" = "{color:cyan-cooler}"
+"hint" = "{color:blue-cooler}"
+
+[palette]

@@ -1,0 +1,124 @@
+# Modus Operandi Tritanopia
+# A port of the Modus Themes by Protesilaos Stavrou
+
+# Syntax highlighting
+"type" = "#005f5f"
+"constructor" = "#005f5f"
+"constant" = "#0000b0"
+"constant.character.escape" = "#721045"
+"string" = "#3548cf"
+"string.regexp" = "#7c318f"
+"string.special" = "#003497"
+"comment" = "#595959"
+"variable.parameter" = "#005e8b"
+"variable.builtin" = "#8f0075"
+"label" = "#595959"
+"keyword" = "#531ab6"
+"keyword.directive" = "#a0132f"
+"function" = "#721045"
+"function.macro" = "#a0132f"
+"punctuation" = "#595959"
+"tag" = "#531ab6"
+"attribute" = "#005e8b"
+"namespace" = "#005e8b"
+"special" = "#a0132f"
+
+# Markup
+"markup.heading.marker" = "#595959"
+"markup.heading.1" = { fg = "#000000", modifiers = ["bold"] }
+"markup.heading.2" = { fg = "#624416", modifiers = ["bold"] }
+"markup.heading.3" = { fg = "#224960", modifiers = ["bold"] }
+"markup.heading.4" = { fg = "#721045", modifiers = ["bold"] }
+"markup.heading.5" = { fg = "#2a5045", modifiers = ["bold"] }
+"markup.heading.6" = { fg = "#702000", modifiers = ["bold"] }
+"markup.list" = "#595959"
+"markup.list.checked" = { fg = "#973300" }
+"markup.list.unchecked" = { fg = "#973300" }
+"markup.bold" = { modifiers = ["bold"] }
+"markup.italic" = { modifiers = ["italic"] }
+"markup.strikethrough" = { modifiers = ["crossed_out"] }
+"markup.link.url" = { fg = "#005e8b" }
+"markup.link.text" = { fg = "#3548cf", modifiers = ["underlined"] }
+"markup.raw.block" = { bg = "#f2f2f2" }
+"markup.raw.inline" = { fg = "#00663f" }
+
+# Diff
+"diff.plus" = { fg = "#005079", bg = "#b5e7ff" }
+"diff.plus.gutter" = "#008900"
+"diff.minus" = { fg = "#8f1313", bg = "#ffd8d5" }
+"diff.minus.gutter" = "#d00000"
+"diff.delta" = { fg = "#6f1343", bg = "#eecfdf" }
+"diff.delta.gutter" = "#808000"
+
+# UI
+"ui.background" = { bg = "#ffffff" }
+"ui.background.separator" = { fg = "#595959" }
+"ui.linenr" = { fg = "#595959" }
+"ui.linenr.selected" = { fg = "#000000", bg = "#c4c4c4" }
+"ui.statusline" = { fg = "#0f0f0f", bg = "#afe0f2" }
+"ui.statusline.inactive" = { fg = "#585858", bg = "#e6e6e6" }
+"ui.statusline.normal" = { fg = "#3548cf" }
+"ui.statusline.insert" = { fg = "#316500" }
+"ui.statusline.select" = { fg = "#8f0075" }
+"ui.statusline.separator" = { fg = "#2f4f44" }
+"ui.bufferline" = { bg = "#dfdfdf" }
+"ui.bufferline.active" = { bg = "#ffffff", fg = "#0f0f0f" }
+"ui.bufferline.background" = { bg = "#dfdfdf" }
+"ui.popup" = { fg = "#000000", bg = "#f2f2f2" }
+"ui.popup.info" = { fg = "#000000", bg = "#c4c4c4" }
+"ui.picker.header" = { fg = "#000000", bg = "#c4c4c4", modifiers = ["bold"] }
+"ui.picker.header.column" = { fg = "#595959", bg = "#c4c4c4" }
+"ui.picker.header.column.active" = { fg = "#000000", bg = "#c4c4c4", modifiers = ["bold"] }
+"ui.window" = { fg = "#595959" }
+"ui.help" = { fg = "#000000", bg = "#c4c4c4" }
+"ui.gutter" = { }
+"ui.gutter.selected" = { bg = "#c4c4c4" }
+"ui.debug.breakpoint" = { fg = "#d00000" }
+"ui.debug.active" = { fg = "#808000" }
+"ui.debug" = { fg = "#808000" }
+"ui.text" = "#000000"
+"ui.text.directory" = "#0000b0"
+"ui.text.focus" = { fg = "#000000", bg = "#afdfef", modifiers = ["bold"] }
+"ui.text.inactive" = { fg = "#595959" }
+"ui.text.info" = { fg = "#005e8b" }
+"ui.virtual" = "#c4c4c4"
+"ui.virtual.ruler" = { bg = "#f2f2f2" }
+"ui.virtual.inlay-hint" = { fg = "#595959", modifiers = ["italic"] }
+"ui.virtual.inlay-hint.parameter" = { fg = "#595959", modifiers = ["italic"] }
+"ui.virtual.inlay-hint.type" = { fg = "#595959", modifiers = ["italic"] }
+"ui.virtual.indent-guide" = { fg = "#595959" }
+"ui.virtual.whitespace" = { fg = "#595959" }
+"ui.virtual.wrap" = { fg = "#595959" }
+"ui.virtual.jump-label" = { fg = "#77492f", modifiers = ["bold"] }
+"ui.selection" = { bg = "#e0e0e0" }
+"ui.selection.primary" = { bg = "#c4c4c4" }
+"ui.cursor" = { fg = "#ffffff", bg = "#000000" }
+"ui.cursor.normal" = { fg = "#ffffff", bg = "#000000" }
+"ui.cursor.insert" = { fg = "#ffffff", bg = "#000000" }
+"ui.cursor.select" = { fg = "#ffffff", bg = "#000000" }
+"ui.cursor.primary" = { fg = "#ffffff", bg = "#595959" }
+"ui.cursor.primary.normal" = { fg = "#ffffff", bg = "#595959" }
+"ui.cursor.primary.insert" = { fg = "#ffffff", bg = "#595959" }
+"ui.cursor.primary.select" = { fg = "#ffffff", bg = "#595959" }
+"ui.cursor.match" = { fg = "#000000", bg = "#5fcfff" }
+"ui.cursorline.primary" = { bg = "#dfeaec" }
+"ui.highlight" = { bg = "#dfeaec" }
+"ui.highlight.frameline" = { bg = "#5fcfff" }
+"ui.menu" = { fg = "#000000", bg = "#f2f2f2" }
+"ui.menu.selected" = { fg = "#000000", bg = "#afdfef", modifiers = ["bold"] }
+"ui.menu.scroll" = { fg = "#595959", bg = "#a4d5f9" }
+
+# Diagnostics
+"diagnostic.error" = { underline = { color = "#d00000", style = "curl" } }
+"diagnostic.warning" = { underline = { color = "#808000", style = "curl" } }
+"diagnostic.info" = { underline = { color = "#008899", style = "curl" } }
+"diagnostic.hint" = { underline = { color = "#0000ff", style = "curl" } }
+"diagnostic.unnecessary" = { modifiers = ["dim"] }
+"diagnostic.deprecated" = { modifiers = ["crossed_out"] }
+
+"error" = "#a60000"
+"warning" = "#973300"
+"info" = "#005f5f"
+"hint" = "#0000b0"
+
+[palette]

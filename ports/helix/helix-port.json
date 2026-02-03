@@ -1,0 +1,18 @@
+{
+  "tool": "helix",
+  "theme_dir_rel": "ports/helix/themes",
+  "theme_ext": ".toml",
+  "output_path_template": "ports/helix/themes/{theme}.toml",
+  "mapping_path": "mappings/base16/default.json",
+  "template_path": "ports/helix/theme.tmpl",
+  "template_format": "mini",
+  "required_keys": [],
+  "install_targets": [
+    "$XDG_CONFIG_HOME/helix/themes",
+    "$HOME/.config/helix/themes"
+  ],
+  "config_locations": [
+    "$XDG_CONFIG_HOME/helix/config.toml",
+    "$HOME/.config/helix/config.toml"
+  ]
+}

@@ -1,0 +1,124 @@
+# Modus Vivendi Tinted
+# A port of the Modus Themes by Protesilaos Stavrou
+
+# Syntax highlighting
+"type" = "#6ae4b9"
+"constructor" = "#6ae4b9"
+"constant" = "#00bcff"
+"constant.character.escape" = "#feacd0"
+"string" = "#79a8ff"
+"string.regexp" = "#caa6df"
+"string.special" = "#82b0ec"
+"comment" = "#989898"
+"variable.parameter" = "#00d3d0"
+"variable.builtin" = "#f78fe7"
+"label" = "#989898"
+"keyword" = "#b6a0ff"
+"keyword.directive" = "#ff7f86"
+"function" = "#feacd0"
+"function.macro" = "#ff7f86"
+"punctuation" = "#989898"
+"tag" = "#b6a0ff"
+"attribute" = "#00d3d0"
+"namespace" = "#00d3d0"
+"special" = "#ff7f86"
+
+# Markup
+"markup.heading.marker" = "#989898"
+"markup.heading.1" = { fg = "#ffffff", modifiers = ["bold"] }
+"markup.heading.2" = { fg = "#d2b580", modifiers = ["bold"] }
+"markup.heading.3" = { fg = "#c6daff", modifiers = ["bold"] }
+"markup.heading.4" = { fg = "#feacd0", modifiers = ["bold"] }
+"markup.heading.5" = { fg = "#88ca9f", modifiers = ["bold"] }
+"markup.heading.6" = { fg = "#ef8386", modifiers = ["bold"] }
+"markup.list" = "#989898"
+"markup.list.checked" = { fg = "#fec43f" }
+"markup.list.unchecked" = { fg = "#fec43f" }
+"markup.bold" = { modifiers = ["bold"] }
+"markup.italic" = { modifiers = ["italic"] }
+"markup.strikethrough" = { modifiers = ["crossed_out"] }
+"markup.link.url" = { fg = "#00d3d0" }
+"markup.link.text" = { fg = "#79a8ff", modifiers = ["underlined"] }
+"markup.raw.block" = { bg = "#1d2235" }
+"markup.raw.inline" = { fg = "#11c777" }
+
+# Diff
+"diff.plus" = { fg = "#a0e0a0", bg = "#003a2f" }
+"diff.plus.gutter" = "#44df44"
+"diff.minus" = { fg = "#ffbfbf", bg = "#4f1127" }
+"diff.minus.gutter" = "#ff5f5f"
+"diff.delta" = { fg = "#efef80", bg = "#363300" }
+"diff.delta.gutter" = "#efef00"
+
+# UI
+"ui.background" = { bg = "#0d0e1c" }
+"ui.background.separator" = { fg = "#989898" }
+"ui.linenr" = { fg = "#989898" }
+"ui.linenr.selected" = { fg = "#ffffff", bg = "#4a4f69" }
+"ui.statusline" = { fg = "#ffffff", bg = "#484d67" }
+"ui.statusline.inactive" = { fg = "#969696", bg = "#292d48" }
+"ui.statusline.normal" = { fg = "#79a8ff" }
+"ui.statusline.insert" = { fg = "#75c13e" }
+"ui.statusline.select" = { fg = "#f78fe7" }
+"ui.statusline.separator" = { fg = "#979797" }
+"ui.bufferline" = { bg = "#2c3045" }
+"ui.bufferline.active" = { bg = "#0d0e1c", fg = "#ffffff" }
+"ui.bufferline.background" = { bg = "#2c3045" }
+"ui.popup" = { fg = "#ffffff", bg = "#1d2235" }
+"ui.popup.info" = { fg = "#ffffff", bg = "#4a4f69" }
+"ui.picker.header" = { fg = "#ffffff", bg = "#4a4f69", modifiers = ["bold"] }
+"ui.picker.header.column" = { fg = "#989898", bg = "#4a4f69" }
+"ui.picker.header.column.active" = { fg = "#ffffff", bg = "#4a4f69", modifiers = ["bold"] }
+"ui.window" = { fg = "#989898" }
+"ui.help" = { fg = "#ffffff", bg = "#4a4f69" }
+"ui.gutter" = { }
+"ui.gutter.selected" = { bg = "#4a4f69" }
+"ui.debug.breakpoint" = { fg = "#ff5f5f" }
+"ui.debug.active" = { fg = "#efef00" }
+"ui.debug" = { fg = "#efef00" }
+"ui.text" = "#ffffff"
+"ui.text.directory" = "#00bcff"
+"ui.text.focus" = { fg = "#ffffff", bg = "#483d8a", modifiers = ["bold"] }
+"ui.text.inactive" = { fg = "#989898" }
+"ui.text.info" = { fg = "#00d3d0" }
+"ui.virtual" = "#4a4f69"
+"ui.virtual.ruler" = { bg = "#1d2235" }
+"ui.virtual.inlay-hint" = { fg = "#989898", modifiers = ["italic"] }
+"ui.virtual.inlay-hint.parameter" = { fg = "#989898", modifiers = ["italic"] }
+"ui.virtual.inlay-hint.type" = { fg = "#989898", modifiers = ["italic"] }
+"ui.virtual.indent-guide" = { fg = "#989898" }
+"ui.virtual.whitespace" = { fg = "#989898" }
+"ui.virtual.wrap" = { fg = "#989898" }
+"ui.virtual.jump-label" = { fg = "#dfaf7a", modifiers = ["bold"] }
+"ui.selection" = { bg = "#2b3045" }
+"ui.selection.primary" = { bg = "#4a4f69" }
+"ui.cursor" = { fg = "#0d0e1c", bg = "#ffffff" }
+"ui.cursor.normal" = { fg = "#0d0e1c", bg = "#ffffff" }
+"ui.cursor.insert" = { fg = "#0d0e1c", bg = "#ffffff" }
+"ui.cursor.select" = { fg = "#0d0e1c", bg = "#ffffff" }
+"ui.cursor.primary" = { fg = "#0d0e1c", bg = "#989898" }
+"ui.cursor.primary.normal" = { fg = "#0d0e1c", bg = "#989898" }
+"ui.cursor.primary.insert" = { fg = "#0d0e1c", bg = "#989898" }
+"ui.cursor.primary.select" = { fg = "#0d0e1c", bg = "#989898" }
+"ui.cursor.match" = { fg = "#ffffff", bg = "#4f7f9f" }
+"ui.cursorline.primary" = { bg = "#303a6f" }
+"ui.highlight" = { bg = "#303a6f" }
+"ui.highlight.frameline" = { bg = "#4f7f9f" }
+"ui.menu" = { fg = "#ffffff", bg = "#1d2235" }
+"ui.menu.selected" = { fg = "#ffffff", bg = "#483d8a", modifiers = ["bold"] }
+"ui.menu.scroll" = { fg = "#989898", bg = "#2266ae" }
+
+# Diagnostics
+"diagnostic.error" = { underline = { color = "#ff5f5f", style = "curl" } }
+"diagnostic.warning" = { underline = { color = "#efef00", style = "curl" } }
+"diagnostic.info" = { underline = { color = "#00eff0", style = "curl" } }
+"diagnostic.hint" = { underline = { color = "#338fff", style = "curl" } }
+"diagnostic.unnecessary" = { modifiers = ["dim"] }
+"diagnostic.deprecated" = { modifiers = ["crossed_out"] }
+
+"error" = "#ff5f59"
+"warning" = "#fec43f"
+"info" = "#6ae4b9"
+"hint" = "#00bcff"
+
+[palette]
