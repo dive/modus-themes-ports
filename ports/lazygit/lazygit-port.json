@@ -2,6 +2,24 @@
   "tool": "lazygit",
   "theme_dir_rel": "ports/lazygit/themes",
   "theme_ext": "",
+  "mapping_path": "mappings/lazygit/default.json",
+  "template_path": "ports/lazygit/theme.tmpl",
+  "template_format": "mini",
+  "required_keys": [
+    "activeBorderColor",
+    "inactiveBorderColor",
+    "searchingActiveBorderColor",
+    "optionsTextColor",
+    "selectedLineBgColor",
+    "inactiveViewSelectedLineBgColor",
+    "cherryPickedCommitFgColor",
+    "cherryPickedCommitBgColor",
+    "markedBaseCommitFgColor",
+    "markedBaseCommitBgColor",
+    "unstagedChangesColor",
+    "defaultFgColor"
+  ],
+  "spec_path": "scripts/tools/lazygit/spec.py",
   "install_targets": [
     "$XDG_CONFIG_HOME/lazygit/themes",
     "$HOME/.config/lazygit/themes"

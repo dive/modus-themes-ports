@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import json
 import os
 import shutil
 import subprocess
@@ -13,63 +14,97 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from scripts.common import git as git_utils
+from scripts.common import io
 from scripts.common import paths
+from scripts.common import registry as registry_utils
 from scripts.common import render
+from scripts.common import template as template_utils
 from scripts.common import theme_ops
 from scripts.common import validate
-
-TOOLS = ["ghostty", "lazygit"]
-
-
-def require_tool(tool: str):
-    if tool not in TOOLS:
-        raise ValueError(f"Unknown tool: {tool}")
+from scripts.common import validate_lazygit
 
 
 def palettes_dir() -> Path:
     return REPO_ROOT / "palettes"
 
 
-def tool_spec(tool: str) -> Path:
-    return paths.spec_path(tool, REPO_ROOT)
+def load_registry():
+    return registry_utils.load_registry(REPO_ROOT)
 
 
-def tool_mapping(tool: str, override: Optional[str]) -> Path:
-    return Path(override) if override else paths.default_mapping(tool, REPO_ROOT)
+def resolve_path(repo_root: Path, value: Optional[str]) -> Optional[Path]:
+    if value is None:
+        return None
+    return repo_root / value
 
 
-def tool_out_dir(tool: str, override: Optional[str]) -> Path:
-    return Path(override) if override else paths.default_output_dir(tool, REPO_ROOT)
+def tool_manifest(registry: dict, tool: str) -> dict:
+    return registry_utils.get_tool(registry, tool)
 
 
-def tool_src_dir(tool: str) -> Path:
-    return REPO_ROOT / "ports" / tool / "themes"
+def tool_spec(manifest: dict) -> Optional[Path]:
+    return resolve_path(REPO_ROOT, manifest.get("spec_path"))
 
 
-def tool_default_themes_dir(tool: str) -> Path:
-    if tool == "ghostty":
-        return paths.ghostty_themes_dir()
-    if tool == "lazygit":
-        return paths.lazygit_themes_dir()
-    raise ValueError(f"Unknown tool: {tool}")
+def tool_mapping(manifest: dict, override: Optional[str]) -> Path:
+    if override:
+        return Path(override)
+    mapping_path = manifest.get("mapping_path")
+    if not mapping_path:
+        raise SystemExit("Error: mapping_path missing in manifest")
+    return resolve_path(REPO_ROOT, mapping_path)
 
 
-def tool_default_config_dir(tool: str) -> Path:
-    if tool == "ghostty":
-        return paths.ghostty_config_dir()
-    if tool == "lazygit":
-        return paths.lazygit_config_dir()
-    raise ValueError(f"Unknown tool: {tool}")
+def tool_template(manifest: dict) -> Optional[Path]:
+    return resolve_path(REPO_ROOT, manifest.get("template_path"))
+
+
+def tool_out_dir(manifest: dict, override: Optional[str]) -> Path:
+    if override:
+        return Path(override)
+    theme_dir = manifest.get("theme_dir_rel")
+    if not theme_dir:
+        raise SystemExit("Error: theme_dir_rel missing in manifest")
+    return resolve_path(REPO_ROOT, theme_dir)
+
+
+def tool_src_dir(manifest: dict) -> Path:
+    theme_dir = manifest.get("theme_dir_rel")
+    if not theme_dir:
+        raise SystemExit("Error: theme_dir_rel missing in manifest")
+    return resolve_path(REPO_ROOT, theme_dir)
+
+
+def tool_default_themes_dir(manifest: dict) -> Path:
+    install_targets = manifest.get("install_targets") or []
+    for target in install_targets:
+        if "$XDG_CONFIG_HOME" in target:
+            return Path(target.replace("$XDG_CONFIG_HOME", str(paths.xdg_config_home())))
+    if install_targets:
+        return Path(os.path.expandvars(install_targets[0])).expanduser()
+    raise SystemExit("Error: install_targets missing in manifest")
+
+
+def tool_default_config_dir(manifest: dict) -> Path:
+    config_locations = manifest.get("config_locations") or []
+    for target in config_locations:
+        if "$XDG_CONFIG_HOME" in target:
+            return Path(target.replace("$XDG_CONFIG_HOME", str(paths.xdg_config_home())))
+    if config_locations:
+        return Path(os.path.expandvars(config_locations[0])).expanduser()
+    raise SystemExit("Error: config_locations missing in manifest")
 
 
 def cmd_list(_args):
+    registry = load_registry()
+    tools = sorted(registry.keys())
     print("Tools:")
-    for tool in TOOLS:
+    for tool in tools:
         print(f"- {tool}")
 
-    for tool in TOOLS:
+    for tool in tools:
         print("\n" + f"{tool.capitalize()} themes:")
-        themes = theme_ops.list_themes(tool_src_dir(tool))
+        themes = theme_ops.list_themes(tool_src_dir(registry[tool]))
         if not themes:
             print("(none found)")
         else:
@@ -77,40 +112,115 @@ def cmd_list(_args):
                 print(f"- {name}")
 
 
+def render_with_template(manifest: dict, palette: dict, mapping: dict, template_text: str) -> str:
+    return template_utils.render_template(template_text, palette, mapping)
+
+
 def cmd_render(args):
-    require_tool(args.tool)
-    outputs = render.render_all(
-        palettes_dir(),
-        tool_mapping(args.tool, args.mapping),
-        tool_out_dir(args.tool, args.out_dir),
-        tool_spec(args.tool),
-    )
-    for output in outputs:
-        print(f"Wrote {output}")
+    registry = load_registry()
+    tools = sorted(registry.keys()) if args.tool == "all" else [args.tool]
+
+    for tool in tools:
+        manifest = tool_manifest(registry, tool)
+        spec = tool_spec(manifest)
+        mapping = tool_mapping(manifest, args.mapping)
+        out_dir = tool_out_dir(manifest, args.out_dir)
+
+        if spec:
+            outputs = render.render_all(
+                palettes_dir(),
+                mapping,
+                out_dir,
+                spec,
+                theme=args.theme,
+            )
+            for output in outputs:
+                print(f"Wrote {output}")
+            continue
+
+        template_path = tool_template(manifest)
+        if not template_path:
+            raise SystemExit(f"Error: no spec_path or template_path for {tool}")
+
+        template_text = template_path.read_text(encoding="utf-8")
+        mapping_data = io.load_mapping(str(mapping))
+
+        palette_files = sorted(palettes_dir().glob("*.json"))
+        if not palette_files:
+            raise SystemExit("Error: no palettes found. Run extract-palettes first.")
+
+        out_dir.mkdir(parents=True, exist_ok=True)
+        for palette_path in palette_files:
+            theme_name, palette = io.load_palette(str(palette_path))
+            if args.theme and theme_name != args.theme:
+                continue
+            content = render_with_template(manifest, palette, mapping_data, template_text)
+            output_path = out_dir / theme_name
+            io.write_output(str(output_path), content)
+            print(f"Wrote {output_path}")
 
 
 def cmd_validate(args):
-    require_tool(args.tool)
-    validated, errors = validate.validate_all(
-        tool_out_dir(args.tool, args.themes_dir),
-        tool_spec(args.tool),
-    )
+    registry = load_registry()
+    tools = sorted(registry.keys()) if args.tool == "all" else [args.tool]
 
-    for path, issues in errors:
-        print(f"Invalid theme: {path}")
-        for issue in issues:
-            print(f"  {issue}")
+    for tool in tools:
+        manifest = tool_manifest(registry, tool)
+        spec = tool_spec(manifest)
+        themes_dir = tool_out_dir(manifest, args.themes_dir)
+        required_keys = manifest.get("required_keys", [])
 
-    if errors:
-        raise SystemExit(f"Validation failed for {len(errors)} theme(s).")
+        if spec:
+            validated, errors = validate.validate_all(themes_dir, spec, theme=args.theme)
+            for path, issues in errors:
+                print(f"Invalid theme: {path}")
+                for issue in issues:
+                    print(f"  {issue}")
+            if errors:
+                raise SystemExit(f"Validation failed for {len(errors)} theme(s).")
+            print(f"Validated {validated} theme(s).")
+            continue
 
-    print(f"Validated {validated} theme(s).")
+        # Template-based validation (key presence)
+        errors = []
+        for path in sorted(themes_dir.iterdir()):
+            if path.is_dir() or path.name.startswith("."):
+                continue
+            if args.theme and path.name != args.theme:
+                continue
+            text = path.read_text(encoding="utf-8")
+            if tool == "lazygit":
+                issues = validate_lazygit.validate(text, required_keys)
+            else:
+                issues = []
+                for key in required_keys:
+                    if key == "palette":
+                        if "palette =" not in text:
+                            issues.append("Missing palette entries")
+                    elif f"{key} =" not in text:
+                        issues.append(f"Missing key: {key}")
+            if issues:
+                errors.append((path, issues))
+
+        for path, issues in errors:
+            print(f"Invalid theme: {path}")
+            for issue in issues:
+                print(f"  {issue}")
+
+        if errors:
+            raise SystemExit(f"Validation failed for {len(errors)} theme(s).")
+
+        total = len([p for p in themes_dir.iterdir() if p.is_file() and not p.name.startswith('.')])
+        if args.theme:
+            total = 1 if (themes_dir / args.theme).is_file() else 0
+        print(f"Validated {total} theme(s).")
 
 
 def cmd_install(args):
-    require_tool(args.tool)
-    src_dir = tool_src_dir(args.tool)
-    dest_dir = Path(args.themes_dir) if args.themes_dir else tool_default_themes_dir(args.tool)
+    registry = load_registry()
+    manifest = tool_manifest(registry, args.tool)
+    src_dir = tool_src_dir(manifest)
+    dest_dir = Path(args.themes_dir) if args.themes_dir else tool_default_themes_dir(manifest)
     if args.copy and args.link:
         raise SystemExit("Error: choose either --copy or --link")
     mode = "copy" if args.copy else "link"
@@ -118,18 +228,20 @@ def cmd_install(args):
 
 
 def cmd_uninstall(args):
-    require_tool(args.tool)
-    src_dir = tool_src_dir(args.tool)
-    dest_dir = Path(args.themes_dir) if args.themes_dir else tool_default_themes_dir(args.tool)
+    registry = load_registry()
+    manifest = tool_manifest(registry, args.tool)
+    src_dir = tool_src_dir(manifest)
+    dest_dir = Path(args.themes_dir) if args.themes_dir else tool_default_themes_dir(manifest)
     theme_ops.uninstall_themes(dest_dir, src_dir, args.theme)
 
 
 def cmd_print_config(args):
-    require_tool(args.tool)
+    registry = load_registry()
+    manifest = tool_manifest(registry, args.tool)
     if not args.theme:
         raise SystemExit("Error: --theme is required for print-config")
 
-    config_dir = Path(args.config_dir) if args.config_dir else tool_default_config_dir(args.tool)
+    config_dir = Path(args.config_dir) if args.config_dir else tool_default_config_dir(manifest)
 
     if args.tool == "ghostty":
         print(f"theme = {args.theme}")
@@ -137,7 +249,7 @@ def cmd_print_config(args):
         return
 
     if args.tool == "lazygit":
-        src_dir = tool_src_dir(args.tool)
+        src_dir = tool_src_dir(manifest)
         theme_file = theme_ops.find_theme_file(src_dir, args.theme)
         if theme_file is None:
             raise SystemExit(f"Error: theme not found: {args.theme}")
@@ -228,8 +340,34 @@ def cmd_update_subtree(_args):
     prefix = "vendor/modus-themes"
     git_utils.subtree_update(str(REPO_ROOT), remote_url, prefix)
     cmd_extract_palettes(None)
-    cmd_render(argparse.Namespace(tool="ghostty", mapping=None, out_dir=None))
-    cmd_render(argparse.Namespace(tool="lazygit", mapping=None, out_dir=None))
+    cmd_render(argparse.Namespace(tool="all", mapping=None, out_dir=None))
+
+
+def cmd_doctor(_args):
+    issues = []
+
+    if shutil.which("git") is None:
+        issues.append("git not found")
+    if shutil.which("python3") is None:
+        issues.append("python3 not found")
+    if shutil.which("trash") is None:
+        issues.append("trash not found (needed for uninstall)")
+
+    try:
+        emacs_bin()
+    except FileNotFoundError:
+        issues.append("emacs not found (run: python3 scripts/modus.py fetch-emacs)")
+
+    if not (REPO_ROOT / "palettes").is_dir():
+        issues.append("palettes directory missing (run: python3 scripts/modus.py extract-palettes)")
+
+    if issues:
+        print("Doctor found issues:")
+        for issue in issues:
+            print(f"- {issue}")
+        raise SystemExit("Doctor failed.")
+
+    print("Doctor passed.")
 
 
 def build_parser():
@@ -242,11 +380,13 @@ def build_parser():
     render_cmd.add_argument("--tool", required=True)
     render_cmd.add_argument("--mapping")
     render_cmd.add_argument("--out-dir")
+    render_cmd.add_argument("--theme")
     render_cmd.set_defaults(func=cmd_render)
 
     validate_cmd = sub.add_parser("validate")
     validate_cmd.add_argument("--tool", required=True)
     validate_cmd.add_argument("--themes-dir")
+    validate_cmd.add_argument("--theme")
     validate_cmd.set_defaults(func=cmd_validate)
 
     install_cmd = sub.add_parser("install")
@@ -273,6 +413,7 @@ def build_parser():
     sub.add_parser("extract-palettes").set_defaults(func=cmd_extract_palettes)
     sub.add_parser("fetch-emacs").set_defaults(func=cmd_fetch_emacs)
     sub.add_parser("update-subtree").set_defaults(func=cmd_update_subtree)
+    sub.add_parser("doctor").set_defaults(func=cmd_doctor)
 
     return parser
 

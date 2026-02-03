@@ -10,7 +10,10 @@ if str(REPO_ROOT) not in sys.path:
 from scripts.common import io
 
 
-def render_all(palettes_dir: Path, mapping_file: Path, out_dir: Path, spec_file: Path):
+from typing import Optional
+
+
+def render_all(palettes_dir: Path, mapping_file: Path, out_dir: Path, spec_file: Path, theme: Optional[str] = None):
     if not palettes_dir.is_dir():
         raise FileNotFoundError(f"Palettes directory missing: {palettes_dir}")
     mapping = io.load_mapping(str(mapping_file))
@@ -23,6 +26,8 @@ def render_all(palettes_dir: Path, mapping_file: Path, out_dir: Path, spec_file:
     outputs = []
     for palette_path in palette_files:
         theme_name, palette = io.load_palette(str(palette_path))
+        if theme and theme_name != theme:
+            continue
         content = spec.render(theme_name, palette, mapping)
         output_path = out_dir / theme_name
         io.write_output(str(output_path), content)

@@ -10,7 +10,10 @@ if str(REPO_ROOT) not in sys.path:
 from scripts.common import io
 
 
-def validate_all(themes_dir: Path, spec_file: Path):
+from typing import Optional
+
+
+def validate_all(themes_dir: Path, spec_file: Path, theme: Optional[str] = None):
     if not themes_dir.is_dir():
         raise FileNotFoundError(f"Themes directory missing: {themes_dir}")
 
@@ -24,6 +27,8 @@ def validate_all(themes_dir: Path, spec_file: Path):
 
     for path in files:
         if path.name.startswith(".") or path.is_dir():
+            continue
+        if theme and path.name != theme:
             continue
         text = path.read_text(encoding="utf-8")
         issues = spec.validate(text)

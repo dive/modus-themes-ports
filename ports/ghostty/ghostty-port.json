@@ -2,6 +2,18 @@
   "tool": "ghostty",
   "theme_dir_rel": "ports/ghostty/themes",
   "theme_ext": "",
+  "mapping_path": "mappings/base16/default.json",
+  "template_path": "ports/ghostty/theme.tmpl",
+  "template_format": "mini",
+  "required_keys": [
+    "background",
+    "foreground",
+    "cursor-color",
+    "selection-background",
+    "selection-foreground",
+    "palette"
+  ],
+  "spec_path": "scripts/tools/ghostty/spec.py",
   "install_targets": [
     "$XDG_CONFIG_HOME/ghostty/themes",
     "$HOME/.config/ghostty/themes"

@@ -13,6 +13,9 @@
 4. Render Ghostty themes:
    - `python3 scripts/modus.py render --tool ghostty`
 
+Render all tools:
+- `python3 scripts/modus.py render --tool all`
+
 ## Install
 Install all themes (symlink mode):
 - `python3 scripts/modus.py install --tool ghostty`
