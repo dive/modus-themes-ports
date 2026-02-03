@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>Modus Operandi</string>
+  <key>settings</key>
+  <array>
+    <dict>
+      <key>settings</key>
+      <dict>
+        <key>background</key>
+        <string>#ffffff</string>
+        <key>foreground</key>
+        <string>#000000</string>
+        <key>caret</key>
+        <string>#000000</string>
+        <key>selection</key>
+        <string>#c4c4c4</string>
+        <key>selectionForeground</key>
+        <string>#000000</string>
+        <key>lineHighlight</key>
+        <string>#f2f2f2</string>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>

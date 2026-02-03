@@ -1,0 +1,38 @@
+[app]
+overall = { bg = "#000000" }
+
+[mgr]
+cwd = { fg = "#2fafff" }
+border_style = { fg = "#646464" }
+marker_selected = { fg = "#ffffff", bg = "#535353", bold = true }
+marker_marked = { fg = "#feacd0", bold = true }
+count_selected = { fg = "#ffffff", bg = "#535353" }
+find_keyword = { fg = "#cabf00", bold = true }
+find_position = { fg = "#c6daff" }
+
+[indicator]
+parent = { fg = "#989898" }
+current = { fg = "#ffffff", bg = "#535353" }
+preview = { fg = "#989898", bg = "#1e1e1e" }
+padding = { open = " ", close = " " }
+
+[tabs]
+active = { fg = "#ffffff", bg = "#535353", bold = true }
+inactive = { fg = "#989898" }
+
+[mode]
+normal_main = { fg = "#ffffff", bg = "#535353" }
+normal_alt  = { fg = "#989898" }
+select_main = { fg = "#ffffff", bg = "#535353" }
+select_alt  = { fg = "#989898" }
+unset_main  = { fg = "#ffffff" }
+unset_alt   = { fg = "#989898" }
+
+[status]
+overall = { fg = "#ffffff", bg = "#1e1e1e" }
+perm_type = { fg = "#2fafff" }
+perm_read = { fg = "#44bc44" }
+perm_write = { fg = "#cabf00" }
+perm_exec = { fg = "#ff5f59" }
+progress_normal = { fg = "#44bc44" }
+progress_error = { fg = "#ff5f59" }

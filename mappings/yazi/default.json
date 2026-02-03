@@ -1,0 +1,16 @@
+{
+  "name": "yazi-default",
+  "bg-main": "bg-main",
+  "bg-dim": "bg-dim",
+  "bg-active": "bg-active",
+  "fg-main": "fg-main",
+  "fg-dim": "fg-dim",
+  "fg-alt": "fg-alt",
+  "border": "border",
+  "blue": "blue",
+  "green": "green",
+  "yellow": "yellow",
+  "red": "red",
+  "magenta": "magenta",
+  "cyan": "cyan"
+}

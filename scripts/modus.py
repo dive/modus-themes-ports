@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -59,6 +60,23 @@ def tool_template(manifest: dict) -> Optional[Path]:
     return resolve_path(REPO_ROOT, manifest.get("template_path"))
 
 
+def extra_templates(manifest: dict):
+    entries = manifest.get("extra_templates") or []
+    resolved = []
+    for entry in entries:
+        template_path = resolve_path(REPO_ROOT, entry.get("template_path"))
+        output_path = entry.get("output_path_template")
+        if not template_path or not output_path:
+            raise SystemExit("Error: extra_templates entries require template_path and output_path_template")
+        resolved.append(
+            {
+                "template_path": template_path,
+                "output_path_template": output_path,
+            }
+        )
+    return resolved
+
+
 def tool_out_dir(manifest: dict, override: Optional[str]) -> Path:
     if override:
         return Path(override)
@@ -73,6 +91,23 @@ def tool_src_dir(manifest: dict) -> Path:
     if not theme_dir:
         raise SystemExit("Error: theme_dir_rel missing in manifest")
     return resolve_path(REPO_ROOT, theme_dir)
+
+
+def resolve_output_path(manifest: dict, theme_name: str, out_dir_override: Optional[str]) -> Path:
+    theme_kind = manifest.get("theme_kind", "file")
+    entry = manifest.get("theme_entry", "flavor.toml")
+    template = manifest.get("output_path_template")
+
+    if out_dir_override:
+        base = Path(out_dir_override)
+        if theme_kind == "dir":
+            return base / f"{theme_name}.yazi" / entry
+        return base / theme_name
+
+    if template:
+        return REPO_ROOT / template.replace("{theme}", theme_name)
+
+    return tool_out_dir(manifest, None) / theme_name
 
 
 def tool_default_themes_dir(manifest: dict) -> Path:
@@ -104,7 +139,9 @@ def cmd_list(_args):
 
     for tool in tools:
         print("\n" + f"{tool.capitalize()} themes:")
-        themes = theme_ops.list_themes(tool_src_dir(registry[tool]))
+        manifest = registry[tool]
+        theme_kind = manifest.get("theme_kind", "file")
+        themes = theme_ops.list_themes(tool_src_dir(manifest), theme_kind=theme_kind)
         if not themes:
             print("(none found)")
         else:
@@ -112,8 +149,8 @@ def cmd_list(_args):
                 print(f"- {name}")
 
 
-def render_with_template(manifest: dict, palette: dict, mapping: dict, template_text: str) -> str:
-    return template_utils.render_template(template_text, palette, mapping)
+def render_with_template(manifest: dict, palette: dict, mapping: dict, template_text: str, theme_name: str) -> str:
+    return template_utils.render_template(template_text, palette, mapping, theme_name)
 
 
 def cmd_render(args):
@@ -144,6 +181,7 @@ def cmd_render(args):
 
         template_text = template_path.read_text(encoding="utf-8")
         mapping_data = io.load_mapping(str(mapping))
+        extra = extra_templates(manifest)
 
         palette_files = sorted(palettes_dir().glob("*.json"))
         if not palette_files:
@@ -154,10 +192,20 @@ def cmd_render(args):
             theme_name, palette = io.load_palette(str(palette_path))
             if args.theme and theme_name != args.theme:
                 continue
-            content = render_with_template(manifest, palette, mapping_data, template_text)
-            output_path = out_dir / theme_name
+            content = render_with_template(manifest, palette, mapping_data, template_text, theme_name)
+            output_path = resolve_output_path(manifest, theme_name, args.out_dir)
             io.write_output(str(output_path), content)
             print(f"Wrote {output_path}")
+            for entry in extra:
+                extra_text = entry["template_path"].read_text(encoding="utf-8")
+                extra_content = render_with_template(manifest, palette, mapping_data, extra_text, theme_name)
+                if args.out_dir:
+                    base_dir = output_path.parent
+                    extra_path = base_dir / Path(entry["output_path_template"]).name
+                else:
+                    extra_path = REPO_ROOT / entry["output_path_template"].replace("{theme}", theme_name)
+                io.write_output(str(extra_path), extra_content)
+                print(f"Wrote {extra_path}")
 
 
 def cmd_validate(args):
@@ -183,12 +231,32 @@ def cmd_validate(args):
 
         # Template-based validation (key presence)
         errors = []
+        theme_kind = manifest.get("theme_kind", "file")
+        theme_entry = manifest.get("theme_entry", "flavor.toml")
+
         for path in sorted(themes_dir.iterdir()):
-            if path.is_dir() or path.name.startswith("."):
+            if path.name.startswith("."):
                 continue
-            if args.theme and path.name != args.theme:
-                continue
-            text = path.read_text(encoding="utf-8")
+            if theme_kind == "dir":
+                if not path.is_dir():
+                    continue
+                if not path.name.endswith(".yazi"):
+                    continue
+                candidate = path / theme_entry
+                if not candidate.is_file():
+                    errors.append((path, ["Missing flavor.toml"]))
+                    continue
+                text = candidate.read_text(encoding="utf-8")
+            else:
+                if path.is_dir():
+                    continue
+                if args.theme and path.name != args.theme:
+                    continue
+                text = path.read_text(encoding="utf-8")
+            if args.theme and theme_kind == "dir":
+                expected = args.theme if args.theme.endswith(".yazi") else f"{args.theme}.yazi"
+                if path.name != expected:
+                    continue
             if tool == "lazygit":
                 issues = validate_lazygit.validate(text, required_keys)
             else:
@@ -197,8 +265,9 @@ def cmd_validate(args):
                     if key == "palette":
                         if "palette =" not in text:
                             issues.append("Missing palette entries")
-                    elif f"{key} =" not in text:
-                        issues.append(f"Missing key: {key}")
+                    else:
+                        if not re.search(rf"^\s*{re.escape(key)}\s*=", text, re.MULTILINE):
+                            issues.append(f"Missing key: {key}")
             if issues:
                 errors.append((path, issues))
 
@@ -210,9 +279,15 @@ def cmd_validate(args):
         if errors:
             raise SystemExit(f"Validation failed for {len(errors)} theme(s).")
 
-        total = len([p for p in themes_dir.iterdir() if p.is_file() and not p.name.startswith('.')])
-        if args.theme:
-            total = 1 if (themes_dir / args.theme).is_file() else 0
+        if theme_kind == "dir":
+            total = len([p for p in themes_dir.iterdir() if p.is_dir() and p.name.endswith(".yazi")])
+            if args.theme:
+                name = args.theme if args.theme.endswith(".yazi") else f"{args.theme}.yazi"
+                total = 1 if (themes_dir / name).is_dir() else 0
+        else:
+            total = len([p for p in themes_dir.iterdir() if p.is_file() and not p.name.startswith('.')])
+            if args.theme:
+                total = 1 if (themes_dir / args.theme).is_file() else 0
         print(f"Validated {total} theme(s).")
 
 
@@ -224,7 +299,8 @@ def cmd_install(args):
     if args.copy and args.link:
         raise SystemExit("Error: choose either --copy or --link")
     mode = "copy" if args.copy else "link"
-    theme_ops.install_themes(src_dir, dest_dir, mode, args.theme)
+    theme_kind = manifest.get("theme_kind", "file")
+    theme_ops.install_themes(src_dir, dest_dir, mode, args.theme, theme_kind=theme_kind)
 
 
 def cmd_uninstall(args):
@@ -232,7 +308,8 @@ def cmd_uninstall(args):
     manifest = tool_manifest(registry, args.tool)
     src_dir = tool_src_dir(manifest)
     dest_dir = Path(args.themes_dir) if args.themes_dir else tool_default_themes_dir(manifest)
-    theme_ops.uninstall_themes(dest_dir, src_dir, args.theme)
+    theme_kind = manifest.get("theme_kind", "file")
+    theme_ops.uninstall_themes(dest_dir, src_dir, args.theme, theme_kind=theme_kind)
 
 
 def cmd_print_config(args):
@@ -255,6 +332,13 @@ def cmd_print_config(args):
             raise SystemExit(f"Error: theme not found: {args.theme}")
         print(f"# Paste into {config_dir}/config.yml")
         print(theme_file.read_text(encoding="utf-8"), end="")
+        return
+
+    if args.tool == "yazi":
+        print("[flavor]")
+        print(f"dark = \"{args.theme}\"")
+        print(f"light = \"{args.theme}\"")
+        print(f"# Config: {config_dir}")
         return
 
 

@@ -1,0 +1,51 @@
+{
+  "tool": "yazi",
+  "theme_kind": "dir",
+  "theme_entry": "flavor.toml",
+  "theme_dir_rel": "ports/yazi/flavors",
+  "output_path_template": "ports/yazi/flavors/{theme}.yazi/flavor.toml",
+  "mapping_path": "mappings/yazi/default.json",
+  "template_path": "ports/yazi/flavor.tmpl",
+  "template_format": "mini",
+  "extra_templates": [
+    {
+      "template_path": "ports/yazi/tmtheme.tmpl",
+      "output_path_template": "ports/yazi/flavors/{theme}.yazi/tmtheme.xml"
+    }
+  ],
+  "required_keys": [
+    "overall",
+    "cwd",
+    "border_style",
+    "marker_selected",
+    "marker_marked",
+    "count_selected",
+    "find_keyword",
+    "find_position",
+    "parent",
+    "current",
+    "preview",
+    "active",
+    "inactive",
+    "normal_main",
+    "normal_alt",
+    "select_main",
+    "select_alt",
+    "unset_main",
+    "unset_alt",
+    "perm_type",
+    "perm_read",
+    "perm_write",
+    "perm_exec",
+    "progress_normal",
+    "progress_error"
+  ],
+  "install_targets": [
+    "$XDG_CONFIG_HOME/yazi/flavors",
+    "$HOME/.config/yazi/flavors"
+  ],
+  "config_locations": [
+    "$XDG_CONFIG_HOME/yazi/theme.toml",
+    "$HOME/.config/yazi/theme.toml"
+  ]
+}

@@ -1,0 +1,38 @@
+[app]
+overall = { bg = "{color:bg-main}" }
+
+[mgr]
+cwd = { fg = "{color:blue}" }
+border_style = { fg = "{color:border}" }
+marker_selected = { fg = "{color:fg-main}", bg = "{color:bg-active}", bold = true }
+marker_marked = { fg = "{color:magenta}", bold = true }
+count_selected = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
+find_keyword = { fg = "{color:yellow}", bold = true }
+find_position = { fg = "{color:fg-alt}" }
+
+[indicator]
+parent = { fg = "{color:fg-dim}" }
+current = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
+preview = { fg = "{color:fg-dim}", bg = "{color:bg-dim}" }
+padding = { open = " ", close = " " }
+
+[tabs]
+active = { fg = "{color:fg-main}", bg = "{color:bg-active}", bold = true }
+inactive = { fg = "{color:fg-dim}" }
+
+[mode]
+normal_main = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
+normal_alt  = { fg = "{color:fg-dim}" }
+select_main = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
+select_alt  = { fg = "{color:fg-dim}" }
+unset_main  = { fg = "{color:fg-main}" }
+unset_alt   = { fg = "{color:fg-dim}" }
+
+[status]
+overall = { fg = "{color:fg-main}", bg = "{color:bg-dim}" }
+perm_type = { fg = "{color:blue}" }
+perm_read = { fg = "{color:green}" }
+perm_write = { fg = "{color:yellow}" }
+perm_exec = { fg = "{color:red}" }
+progress_normal = { fg = "{color:green}" }
+progress_error = { fg = "{color:red}" }

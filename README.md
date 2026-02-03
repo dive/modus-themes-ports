@@ -10,6 +10,7 @@ Modus themes are by [Protesilaos Stavrou](https://protesilaos.com/about/). They 
 ## Supported Ports
 - [Ghostty](ports/ghostty/README.md)
 - [Lazygit](ports/lazygit/README.md)
+- [Yazi](ports/yazi/README.md)
 
 ## Install
 - `python3 scripts/modus.py install --tool <tool>`
