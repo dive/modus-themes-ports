@@ -12,11 +12,18 @@
    ((symbolp value) (symbol-name value))
    (t (format "%S" value))))
 
+(defun modus-themes--entry-value (entry)
+  (let ((raw (cdr entry)))
+    (cond
+     ((and (consp raw) (null (cdr raw))) (car raw))
+     ((consp raw) (car raw))
+     (t raw))))
+
 (defun modus-themes--normalize-palette (palette)
   (let (items)
     (dolist (entry palette)
       (let ((key (car entry))
-            (val (cdr entry)))
+            (val (modus-themes--entry-value entry)))
         (when (symbolp key)
           (push (cons (symbol-name key) (modus-themes--normalize-value val)) items))))
     (sort items (lambda (a b) (string< (car a) (car b))))))
