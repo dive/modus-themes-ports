@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
+"""Template rendering for Modus theme ports."""
+
 import re
+from typing import Any
 
 TOKEN_RE = re.compile(r"\{(color|value|meta|rgb):([A-Za-z0-9_-]+)\}")
 
@@ -17,14 +20,20 @@ def _hex_to_rgb(value: str) -> str:
     return f"{r};{g};{b}"
 
 
-def _resolve_palette_value(palette: dict, key: str):
+def _resolve_palette_value(palette: dict[str, str], key: str) -> str:
+    """Resolve a palette value, following one level of indirection if needed."""
     value = palette[key]
     if isinstance(value, str) and value in palette:
         return palette[value]
     return value
 
 
-def render_template(template: str, palette: dict, mapping: dict, theme_name: str) -> str:
+def render_template(
+    template: str,
+    palette: dict[str, str],
+    mapping: dict[str, Any],
+    theme_name: str,
+) -> str:
     def replace(match):
         kind, key = match.group(1), match.group(2)
         if kind == "color":
