@@ -4,9 +4,6 @@ overall = { bg = "#ffffff" }
 [mgr]
 cwd = { fg = "#0031a9" }
 
-hovered = { bg = "#c4c4c4" }
-preview_hovered = { bg = "#c4c4c4" }
-
 find_keyword = { fg = "#695500", bold = true, italic = true, underline = true }
 find_position = { fg = "#224960", bg = "reset", bold = true, italic = true }
 
@@ -23,10 +20,10 @@ border_symbol = "│"
 border_style = { fg = "#9f9f9f" }
 
 [indicator]
-overall = { fg = "#595959" }
 parent = { fg = "#595959" }
-current = { fg = "#0031a9" }
+current = { fg = "#000000", bg = "#c4c4c4" }
 preview = { fg = "#595959" }
+padding = { open = " ", close = " " }
 
 [tabs]
 active = { fg = "#000000", bg = "#c4c4c4", bold = true }
@@ -107,4 +104,3 @@ rules = [
   { url = "*", fg = "#000000" },
   { url = "*/", fg = "#0031a9" },
 ]
-

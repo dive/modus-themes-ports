@@ -4,9 +4,6 @@ overall = { bg = "{color:bg-main}" }
 [mgr]
 cwd = { fg = "{color:blue}" }
 
-hovered = { bg = "{color:bg-active}" }
-preview_hovered = { bg = "{color:bg-active}" }
-
 find_keyword = { fg = "{color:yellow}", bold = true, italic = true, underline = true }
 find_position = { fg = "{color:fg-alt}", bg = "reset", bold = true, italic = true }
 
@@ -23,10 +20,10 @@ border_symbol = "│"
 border_style = { fg = "{color:border}" }
 
 [indicator]
-overall = { fg = "{color:fg-dim}" }
 parent = { fg = "{color:fg-dim}" }
-current = { fg = "{color:blue}" }
+current = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
 preview = { fg = "{color:fg-dim}" }
+padding = { open = " ", close = " " }
 
 [tabs]
 active = { fg = "{color:fg-main}", bg = "{color:bg-active}", bold = true }
@@ -107,4 +104,3 @@ rules = [
   { url = "*", fg = "{color:fg-main}" },
   { url = "*/", fg = "{color:blue}" },
 ]
-
