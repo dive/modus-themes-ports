@@ -1,38 +1,98 @@
-[app]
-overall = { bg = "{color:bg-main}" }
-
 [mgr]
 cwd = { fg = "{color:blue}" }
-border_style = { fg = "{color:border}" }
-marker_selected = { fg = "{color:fg-main}", bg = "{color:bg-active}", bold = true }
-marker_marked = { fg = "{color:magenta}", bold = true }
-count_selected = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
-find_keyword = { fg = "{color:yellow}", bold = true }
-find_position = { fg = "{color:fg-alt}" }
 
-[indicator]
-parent = { fg = "{color:fg-dim}" }
-current = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
-preview = { fg = "{color:fg-dim}", bg = "{color:bg-dim}" }
-padding = { open = " ", close = " " }
+find_keyword = { fg = "{color:yellow}", bold = true, italic = true, underline = true }
+find_position = { fg = "{color:fg-alt}", bg = "reset", bold = true, italic = true }
+
+marker_copied = { fg = "{color:green}", bg = "{color:bg-green-subtle}" }
+marker_cut = { fg = "{color:red}", bg = "{color:bg-red-subtle}" }
+marker_marked = { fg = "{color:magenta}", bg = "{color:bg-magenta-subtle}" }
+marker_selected = { fg = "{color:cyan}", bg = "{color:bg-cyan-subtle}" }
+
+count_copied = { fg = "{color:green}", bg = "{color:bg-green-subtle}" }
+count_cut = { fg = "{color:red}", bg = "{color:bg-red-subtle}" }
+count_selected = { fg = "{color:cyan}", bg = "{color:bg-cyan-subtle}" }
+
+border_symbol = "│"
+border_style = { fg = "{color:border}" }
 
 [tabs]
 active = { fg = "{color:fg-main}", bg = "{color:bg-active}", bold = true }
-inactive = { fg = "{color:fg-dim}" }
+inactive = { fg = "{color:fg-dim}", bg = "{color:bg-dim}" }
 
 [mode]
-normal_main = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
-normal_alt  = { fg = "{color:fg-dim}" }
-select_main = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
-select_alt  = { fg = "{color:fg-dim}" }
-unset_main  = { fg = "{color:fg-main}" }
-unset_alt   = { fg = "{color:fg-dim}" }
+normal_main = { fg = "{color:fg-main}", bg = "{color:bg-active}", bold = true }
+normal_alt = { fg = "{color:fg-dim}", bg = "{color:bg-dim}" }
+
+select_main = { fg = "{color:fg-main}", bg = "{color:bg-cyan-subtle}", bold = true }
+select_alt = { fg = "{color:fg-dim}", bg = "{color:bg-dim}" }
+
+unset_main = { fg = "{color:fg-main}", bg = "{color:bg-yellow-subtle}", bold = true }
+unset_alt = { fg = "{color:fg-dim}", bg = "{color:bg-dim}" }
 
 [status]
-overall = { fg = "{color:fg-main}", bg = "{color:bg-dim}" }
+perm_sep = { fg = "{color:fg-dim}" }
 perm_type = { fg = "{color:blue}" }
 perm_read = { fg = "{color:green}" }
 perm_write = { fg = "{color:yellow}" }
-perm_exec = { fg = "{color:red-faint}" }
-progress_normal = { fg = "{color:green}" }
-progress_error = { fg = "{color:red-faint}" }
+perm_exec = { fg = "{color:red}" }
+
+progress_label = { fg = "{color:fg-main}", bold = true }
+progress_normal = { fg = "{color:green}", bg = "{color:bg-dim}" }
+progress_error = { fg = "{color:red}", bg = "{color:bg-dim}" }
+
+[pick]
+border = { fg = "{color:border}" }
+active = { fg = "{color:fg-main}", bold = true }
+inactive = {}
+
+[input]
+border = { fg = "{color:border}" }
+title = {}
+value = {}
+selected = { reversed = true }
+
+[cmp]
+border = { fg = "{color:border}" }
+
+[tasks]
+border = { fg = "{color:border}" }
+title = {}
+hovered = { fg = "{color:fg-main}", bold = true }
+
+[which]
+mask = { bg = "{color:bg-dim}" }
+cand = { fg = "{color:cyan}" }
+rest = { fg = "{color:fg-dim}" }
+desc = { fg = "{color:fg-main}" }
+separator = "  "
+separator_style = { fg = "{color:fg-dim}" }
+
+[help]
+on = { fg = "{color:green}" }
+run = { fg = "{color:magenta}" }
+hovered = { reversed = true, bold = true }
+footer = { fg = "{color:fg-dim}", bg = "{color:bg-dim}" }
+
+[spot]
+border = { fg = "{color:border}" }
+title = { fg = "{color:fg-main}" }
+tbl_col = { fg = "{color:fg-alt}" }
+tbl_cell = { fg = "{color:fg-main}", bg = "{color:bg-dim}" }
+
+[notify]
+title_info = { fg = "{color:blue}" }
+title_warn = { fg = "{color:yellow}" }
+title_error = { fg = "{color:red}" }
+
+[filetype]
+rules = [
+  { mime = "image/*", fg = "{color:magenta-warmer}" },
+  { mime = "{audio,video}/*", fg = "{color:magenta}" },
+  { mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "{color:cyan}" },
+  { mime = "application/{pdf,doc,rtf}", fg = "{color:red}" },
+  { mime = "vfs/{absent,stale}", fg = "{color:fg-dim}" },
+  { url = "*", fg = "{color:fg-main}" },
+  { url = "*/", fg = "{color:blue}" },
+]
+
