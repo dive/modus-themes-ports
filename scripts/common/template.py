@@ -30,7 +30,12 @@ def render_template(template: str, palette: dict, mapping: dict, theme_name: str
         if kind == "color":
             if key not in palette:
                 raise KeyError(f"Missing palette key: {key}")
-            return str(palette[key])
+            value = palette[key]
+            if value == "unspecified":
+                raise ValueError(
+                    f"Palette key '{key}' is unspecified and cannot be used in templates"
+                )
+            return str(value)
         if kind == "value":
             if key not in mapping:
                 raise KeyError(f"Missing mapping key: {key}")
@@ -39,6 +44,10 @@ def render_template(template: str, palette: dict, mapping: dict, theme_name: str
             if key not in palette:
                 raise KeyError(f"Missing palette key: {key}")
             value = _resolve_palette_value(palette, key)
+            if value == "unspecified":
+                raise ValueError(
+                    f"Palette key '{key}' is unspecified and cannot be used in templates"
+                )
             return _hex_to_rgb(value)
         if kind == "meta":
             if key == "theme":
