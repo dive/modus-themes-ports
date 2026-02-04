@@ -54,7 +54,7 @@
 "ui.background" = { bg = "#ffffff" }
 "ui.background.separator" = { fg = "#595959" }
 "ui.linenr" = { fg = "#595959" }
-"ui.linenr.selected" = { fg = "#000000", bg = "#c4c4c4" }
+"ui.linenr.selected" = { fg = "#000000", bg = "#f2f2f2" }
 "ui.statusline" = { fg = "#0f0f0f", bg = "#e0e0e0" }
 "ui.statusline.inactive" = { fg = "#585858", bg = "#f2f2f2" }
 "ui.statusline.normal" = { fg = "#3548cf" }
@@ -72,7 +72,7 @@
 "ui.window" = { fg = "#595959" }
 "ui.help" = { fg = "#000000", bg = "#c4c4c4" }
 "ui.gutter" = { }
-"ui.gutter.selected" = { bg = "#c4c4c4" }
+"ui.gutter.selected" = { bg = "#f2f2f2" }
 "ui.debug.breakpoint" = { fg = "#d00000" }
 "ui.debug.active" = { fg = "#808000" }
 "ui.debug" = { fg = "#808000" }
