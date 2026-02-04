@@ -4,6 +4,9 @@ overall = { bg = "#000000" }
 [mgr]
 cwd = { fg = "#2fafff" }
 
+hovered = { bg = "#535353" }
+preview_hovered = { bg = "#535353" }
+
 find_keyword = { fg = "#cabf00", bold = true, italic = true, underline = true }
 find_position = { fg = "#a0d7f2", bg = "reset", bold = true, italic = true }
 
