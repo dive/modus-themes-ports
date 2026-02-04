@@ -23,43 +23,59 @@ jobs:
           UPSTREAM_REPO="https://github.com/protesilaos/modus-themes"
           SUBTREE_PREFIX="vendor/modus-themes"
 
-          # Get current subtree commit (last squash merge)
-          CURRENT_COMMIT=$(git log --oneline --all | grep "Squashed '$SUBTREE_PREFIX/'" | head -1 | grep -oE '[a-f0-9]{7,}$' || echo "")
+          # Get current subtree commit from the last squash merge message
+          # Format: "Squashed 'vendor/modus-themes/' changes from abc1234..def5678"
+          CURRENT_COMMIT=$(git log --all --grep="Squashed '$SUBTREE_PREFIX/'" --format=%s | head -1 | grep -oE '[a-f0-9]{7,40}$' || echo "")
           
           if [ -z "$CURRENT_COMMIT" ]; then
-            # Fallback: check the subtree directory's last update
-            CURRENT_COMMIT=$(git log -1 --format=%H -- "$SUBTREE_PREFIX")
+            echo "❌ Could not find subtree commit hash in git history"
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+            exit 0
           fi
 
+          echo "current=$CURRENT_COMMIT" >> $GITHUB_OUTPUT
+          echo "📌 Current subtree commit: $CURRENT_COMMIT"
+
+          # Fetch upstream with enough depth to find our current commit
+          git remote add upstream "$UPSTREAM_REPO" 2>/dev/null || true
+          git fetch upstream main --depth=200
+
           # Get latest upstream commit
-          UPSTREAM_COMMIT=$(git ls-remote "$UPSTREAM_REPO" HEAD | cut -f1)
+          UPSTREAM_COMMIT=$(git rev-parse upstream/main)
           UPSTREAM_SHORT="${UPSTREAM_COMMIT:0:7}"
 
-          echo "current=$CURRENT_COMMIT" >> $GITHUB_OUTPUT
           echo "upstream=$UPSTREAM_COMMIT" >> $GITHUB_OUTPUT
           echo "upstream_short=$UPSTREAM_SHORT" >> $GITHUB_OUTPUT
+          echo "📌 Upstream HEAD: $UPSTREAM_SHORT"
 
-          # Fetch upstream to compare
-          git remote add upstream "$UPSTREAM_REPO" 2>/dev/null || true
-          git fetch upstream main --depth=50
+          # Check if current subtree commit exists in upstream history
+          if ! git cat-file -e "$CURRENT_COMMIT" 2>/dev/null; then
+            echo "⚠️ Current commit not in fetched history, fetching more..."
+            git fetch upstream main --unshallow 2>/dev/null || git fetch upstream main --depth=500
+          fi
 
-          # Check if we're behind
-          COMMITS_BEHIND=$(git rev-list --count HEAD.."upstream/main" -- 2>/dev/null || echo "unknown")
-          
-          # Compare by checking if upstream HEAD is reachable from our subtree
-          if git merge-base --is-ancestor "$UPSTREAM_COMMIT" HEAD 2>/dev/null; then
-            echo "needs_update=false" >> $GITHUB_OUTPUT
-            echo "✅ Subtree is up to date with upstream"
-          else
-            echo "needs_update=true" >> $GITHUB_OUTPUT
-            echo "behind=$COMMITS_BEHIND" >> $GITHUB_OUTPUT
-            echo "⚠️ Subtree is behind upstream (approximately $COMMITS_BEHIND commits)"
+          # Compare within upstream's history: count commits from our subtree commit to upstream HEAD
+          if git merge-base --is-ancestor "$CURRENT_COMMIT" upstream/main 2>/dev/null; then
+            COMMITS_BEHIND=$(git rev-list --count "$CURRENT_COMMIT"..upstream/main 2>/dev/null || echo "unknown")
             
-            # Get recent upstream commits for the issue
-            RECENT_COMMITS=$(git log upstream/main --oneline -10 --no-walk=unsorted 2>/dev/null | head -10 || echo "Unable to fetch commits")
-            echo "recent_commits<<EOF" >> $GITHUB_OUTPUT
-            echo "$RECENT_COMMITS" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
+            if [ "$COMMITS_BEHIND" = "0" ]; then
+              echo "needs_update=false" >> $GITHUB_OUTPUT
+              echo "✅ Subtree is up to date with upstream"
+            else
+              echo "needs_update=true" >> $GITHUB_OUTPUT
+              echo "behind=$COMMITS_BEHIND" >> $GITHUB_OUTPUT
+              echo "⚠️ Subtree is behind upstream by $COMMITS_BEHIND commits"
+              
+              # Get recent upstream commits for the issue
+              RECENT_COMMITS=$(git log "$CURRENT_COMMIT"..upstream/main --oneline -10 2>/dev/null || echo "Unable to fetch commits")
+              echo "recent_commits<<EOF" >> $GITHUB_OUTPUT
+              echo "$RECENT_COMMITS" >> $GITHUB_OUTPUT
+              echo "EOF" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "⚠️ Could not verify commit ancestry (history may have been rewritten)"
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            echo "behind=unknown" >> $GITHUB_OUTPUT
           fi
 
       - name: Ensure upstream-update label
