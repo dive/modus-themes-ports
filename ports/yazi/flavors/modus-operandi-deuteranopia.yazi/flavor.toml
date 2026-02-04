@@ -1,3 +1,6 @@
+[app]
+overall = { bg = "#ffffff" }
+
 [mgr]
 cwd = { fg = "#0031a9" }
 
@@ -15,6 +18,12 @@ count_selected = { fg = "#005e8b", bg = "#bfefff" }
 
 border_symbol = "│"
 border_style = { fg = "#9f9f9f" }
+
+[indicator]
+overall = { fg = "#595959" }
+parent = { fg = "#595959" }
+current = { fg = "#0031a9" }
+preview = { fg = "#595959" }
 
 [tabs]
 active = { fg = "#000000", bg = "#c4c4c4", bold = true }

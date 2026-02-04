@@ -1,3 +1,6 @@
+[app]
+overall = { bg = "{color:bg-main}" }
+
 [mgr]
 cwd = { fg = "{color:blue}" }
 
@@ -15,6 +18,12 @@ count_selected = { fg = "{color:cyan}", bg = "{color:bg-cyan-subtle}" }
 
 border_symbol = "│"
 border_style = { fg = "{color:border}" }
+
+[indicator]
+overall = { fg = "{color:fg-dim}" }
+parent = { fg = "{color:fg-dim}" }
+current = { fg = "{color:blue}" }
+preview = { fg = "{color:fg-dim}" }
 
 [tabs]
 active = { fg = "{color:fg-main}", bg = "{color:bg-active}", bold = true }
