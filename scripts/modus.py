@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""Modus themes port management CLI."""
+
+from __future__ import annotations
+
 import argparse
 import json
 import os
@@ -8,7 +12,7 @@ import subprocess
 import sys
 import urllib.request
 from pathlib import Path
-from typing import Optional
+from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -29,25 +33,25 @@ def palettes_dir() -> Path:
     return REPO_ROOT / "palettes"
 
 
-def load_registry():
+def load_registry() -> dict[str, dict[str, Any]]:
     return registry_utils.load_registry(REPO_ROOT)
 
 
-def resolve_path(repo_root: Path, value: Optional[str]) -> Optional[Path]:
+def resolve_path(repo_root: Path, value: str | None) -> Path | None:
     if value is None:
         return None
     return repo_root / value
 
 
-def tool_manifest(registry: dict, tool: str) -> dict:
+def tool_manifest(registry: dict[str, dict[str, Any]], tool: str) -> dict[str, Any]:
     return registry_utils.get_tool(registry, tool)
 
 
-def tool_spec(manifest: dict) -> Optional[Path]:
+def tool_spec(manifest: dict[str, Any]) -> Path | None:
     return resolve_path(REPO_ROOT, manifest.get("spec_path"))
 
 
-def tool_mapping(manifest: dict, override: Optional[str]) -> Path:
+def tool_mapping(manifest: dict[str, Any], override: str | None) -> Path:
     if override:
         return Path(override)
     mapping_path = manifest.get("mapping_path")
@@ -56,13 +60,13 @@ def tool_mapping(manifest: dict, override: Optional[str]) -> Path:
     return resolve_path(REPO_ROOT, mapping_path)
 
 
-def tool_template(manifest: dict) -> Optional[Path]:
+def tool_template(manifest: dict[str, Any]) -> Path | None:
     return resolve_path(REPO_ROOT, manifest.get("template_path"))
 
 
-def extra_templates(manifest: dict):
+def extra_templates(manifest: dict[str, Any]) -> list[dict[str, Any]]:
     entries = manifest.get("extra_templates") or []
-    resolved = []
+    resolved: list[dict[str, Any]] = []
     for entry in entries:
         template_path = resolve_path(REPO_ROOT, entry.get("template_path"))
         output_path = entry.get("output_path_template")
@@ -77,9 +81,9 @@ def extra_templates(manifest: dict):
     return resolved
 
 
-def extra_install_dirs(manifest: dict):
+def extra_install_dirs(manifest: dict[str, Any]) -> list[dict[str, Any]]:
     entries = manifest.get("extra_install_dirs") or []
-    resolved = []
+    resolved: list[dict[str, Any]] = []
     for entry in entries:
         source_rel = entry.get("source_rel")
         dest_subdir = entry.get("dest_subdir", "")
@@ -94,7 +98,7 @@ def extra_install_dirs(manifest: dict):
     return resolved
 
 
-def tool_out_dir(manifest: dict, override: Optional[str]) -> Path:
+def tool_out_dir(manifest: dict[str, Any], override: str | None) -> Path:
     if override:
         return Path(override)
     theme_dir = manifest.get("theme_dir_rel")
@@ -103,14 +107,14 @@ def tool_out_dir(manifest: dict, override: Optional[str]) -> Path:
     return resolve_path(REPO_ROOT, theme_dir)
 
 
-def tool_src_dir(manifest: dict) -> Path:
+def tool_src_dir(manifest: dict[str, Any]) -> Path:
     theme_dir = manifest.get("theme_dir_rel")
     if not theme_dir:
         raise SystemExit("Error: theme_dir_rel missing in manifest")
     return resolve_path(REPO_ROOT, theme_dir)
 
 
-def resolve_output_path(manifest: dict, theme_name: str, out_dir_override: Optional[str]) -> Path:
+def resolve_output_path(manifest: dict[str, Any], theme_name: str, out_dir_override: str | None) -> Path:
     theme_kind = manifest.get("theme_kind", "file")
     entry = manifest.get("theme_entry", "flavor.toml")
     template = manifest.get("output_path_template")
@@ -130,7 +134,7 @@ def resolve_output_path(manifest: dict, theme_name: str, out_dir_override: Optio
     return tool_out_dir(manifest, None) / f"{theme_name}{suffix}"
 
 
-def tool_default_themes_dir(manifest: dict) -> Path:
+def tool_default_themes_dir(manifest: dict[str, Any]) -> Path:
     install_targets = manifest.get("install_targets") or []
     for target in install_targets:
         if "$XDG_CONFIG_HOME" in target:
@@ -140,7 +144,7 @@ def tool_default_themes_dir(manifest: dict) -> Path:
     raise SystemExit("Error: install_targets missing in manifest")
 
 
-def tool_default_config_dir(manifest: dict) -> Path:
+def tool_default_config_dir(manifest: dict[str, Any]) -> Path:
     config_locations = manifest.get("config_locations") or []
     for target in config_locations:
         if "$XDG_CONFIG_HOME" in target:
@@ -162,7 +166,7 @@ def swap_modus_variant(name: str) -> str:
     return name
 
 
-def json_path_exists(data, path: str) -> bool:
+def json_path_exists(data: Any, path: str) -> bool:
     current = data
     for segment in path.split("."):
         if isinstance(current, list):
@@ -181,7 +185,7 @@ def json_path_exists(data, path: str) -> bool:
     return current is not None
 
 
-def cmd_list(_args):
+def cmd_list(_args: argparse.Namespace) -> None:
     registry = load_registry()
     tools = sorted(registry.keys())
     print("Tools:")
@@ -202,11 +206,17 @@ def cmd_list(_args):
                 print(f"- {name}")
 
 
-def render_with_template(manifest: dict, palette: dict, mapping: dict, template_text: str, theme_name: str) -> str:
+def render_with_template(
+    manifest: dict[str, Any],
+    palette: dict[str, str],
+    mapping: dict[str, str],
+    template_text: str,
+    theme_name: str,
+) -> str:
     return template_utils.render_template(template_text, palette, mapping, theme_name)
 
 
-def cmd_render(args):
+def cmd_render(args: argparse.Namespace) -> None:
     registry = load_registry()
     tools = sorted(registry.keys()) if args.tool == "all" else [args.tool]
 
@@ -266,7 +276,7 @@ def cmd_render(args):
                 print(f"Wrote {extra_path}")
 
 
-def cmd_validate(args):
+def cmd_validate(args: argparse.Namespace) -> None:
     registry = load_registry()
     tools = sorted(registry.keys()) if args.tool == "all" else [args.tool]
 
@@ -370,7 +380,7 @@ def cmd_validate(args):
         print(f"Validated {total} theme(s).")
 
 
-def cmd_install(args):
+def cmd_install(args: argparse.Namespace) -> None:
     registry = load_registry()
     manifest = tool_manifest(registry, args.tool)
     src_dir = tool_src_dir(manifest)
@@ -400,7 +410,7 @@ def cmd_install(args):
         theme_ops.install_themes(extra_src, extra_dest, mode, None, theme_kind="file")
 
 
-def cmd_uninstall(args):
+def cmd_uninstall(args: argparse.Namespace) -> None:
     registry = load_registry()
     manifest = tool_manifest(registry, args.tool)
     src_dir = tool_src_dir(manifest)
@@ -426,7 +436,7 @@ def cmd_uninstall(args):
         theme_ops.uninstall_themes(extra_dest, extra_src, None, theme_kind="file")
 
 
-def cmd_print_config(args):
+def cmd_print_config(args: argparse.Namespace) -> None:
     registry = load_registry()
     manifest = tool_manifest(registry, args.tool)
     if not args.theme:
@@ -496,7 +506,7 @@ def emacs_bin() -> Path:
     raise FileNotFoundError("Emacs not found. Run: python3 scripts/modus.py fetch-emacs")
 
 
-def cmd_extract_palettes(_args):
+def cmd_extract_palettes(_args: argparse.Namespace | None) -> None:
     vendor_dir = REPO_ROOT / "vendor" / "modus-themes"
     out_dir = REPO_ROOT / "palettes"
     if not vendor_dir.is_dir():
@@ -516,7 +526,7 @@ def cmd_extract_palettes(_args):
     )
 
 
-def cmd_fetch_emacs(_args):
+def cmd_fetch_emacs(_args: argparse.Namespace) -> None:
     if sys.platform != "darwin":
         raise SystemExit("Error: fetch-emacs is only supported on macOS.")
 
@@ -564,7 +574,7 @@ def cmd_fetch_emacs(_args):
         subprocess.run(["hdiutil", "detach", mount_point, "-quiet"], check=False)
 
 
-def cmd_update_subtree(_args):
+def cmd_update_subtree(_args: argparse.Namespace) -> None:
     remote_url = "https://github.com/protesilaos/modus-themes"
     prefix = "vendor/modus-themes"
     git_utils.subtree_update(str(REPO_ROOT), remote_url, prefix)
@@ -572,7 +582,7 @@ def cmd_update_subtree(_args):
     cmd_render(argparse.Namespace(tool="all", mapping=None, out_dir=None, theme=None))
 
 
-def cmd_doctor(_args):
+def cmd_doctor(_args: argparse.Namespace) -> None:
     issues = []
 
     if shutil.which("git") is None:
@@ -634,7 +644,7 @@ def cmd_doctor(_args):
     print("Doctor passed.")
 
 
-def build_parser():
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
 
