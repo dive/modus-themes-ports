@@ -220,7 +220,7 @@
         "terminal.ansi.dim_yellow": null,
         "terminal.ansi.green": "#006800",
         "terminal.ansi.magenta": "#721045",
-        "terminal.ansi.red": "#7f0000",
+        "terminal.ansi.red": "#a60000",
         "terminal.ansi.white": "#a6a6a6",
         "terminal.ansi.yellow": "#6f5500",
         "terminal.background": "#ffffff",
