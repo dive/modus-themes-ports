@@ -76,6 +76,9 @@ Template tokens:
 - `{meta:theme_title}` inserts a title-cased theme name
 - `{meta:appearance}` inserts `light`/`dark` based on the theme name
 
+Terminal palettes:
+- For ANSI 0–15 slots, map to `fg-term-*` and `fg-term-*-bright` (avoid UI colors like `bg-dim`/`fg-dim`).
+
 ## Add a New Port (Spec-Based)
 If templates are insufficient, add:
 - `scripts/tools/<tool>/spec.py` implementing:
