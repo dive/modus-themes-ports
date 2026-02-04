@@ -65,7 +65,7 @@
 "ui.bufferline.active" = { bg = "#fbf7f0", fg = "#000000" }
 "ui.bufferline.background" = { bg = "#dfd5cf" }
 "ui.popup" = { fg = "#000000", bg = "#efe9dd" }
-"ui.popup.info" = { fg = "#000000", bg = "#c9b9b0" }
+"ui.popup.info" = { fg = "#000000", bg = "#fbf7f0" }
 "ui.picker.header" = { fg = "#000000", bg = "#c9b9b0", modifiers = ["bold"] }
 "ui.picker.header.column" = { fg = "#595959", bg = "#c9b9b0" }
 "ui.picker.header.column.active" = { fg = "#000000", bg = "#c9b9b0", modifiers = ["bold"] }

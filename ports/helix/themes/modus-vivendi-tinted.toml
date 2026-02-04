@@ -65,7 +65,7 @@
 "ui.bufferline.active" = { bg = "#0d0e1c", fg = "#ffffff" }
 "ui.bufferline.background" = { bg = "#2b3045" }
 "ui.popup" = { fg = "#ffffff", bg = "#1d2235" }
-"ui.popup.info" = { fg = "#ffffff", bg = "#4a4f69" }
+"ui.popup.info" = { fg = "#ffffff", bg = "#0d0e1c" }
 "ui.picker.header" = { fg = "#ffffff", bg = "#4a4f69", modifiers = ["bold"] }
 "ui.picker.header.column" = { fg = "#989898", bg = "#4a4f69" }
 "ui.picker.header.column.active" = { fg = "#ffffff", bg = "#4a4f69", modifiers = ["bold"] }
