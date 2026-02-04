@@ -29,6 +29,8 @@ python3 scripts/modus.py install --tool mytool --link
   - `python3 scripts/modus.py update-subtree`
 - Extract palettes only:
   - `python3 scripts/modus.py extract-palettes`
+  - Note: palette extraction applies the Modus faint preset.
+  - Regenerate hue previews with `python3 scripts/render-hue-previews.py`.
 - Render themes:
   - `python3 scripts/modus.py render --tool <tool>`
 - Validate themes:

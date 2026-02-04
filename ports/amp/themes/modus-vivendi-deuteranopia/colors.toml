@@ -15,7 +15,7 @@ destructive = "#ff5f59"
 [ui]
 cursor = "#ffffff"
 border = "#646464"
-selection = "#5a5a5a"
+selection = "bg-active"
 muted_foreground = "#989898"
 
 [syntax]

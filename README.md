@@ -51,8 +51,11 @@ Themes are symlinked into `$XDG_CONFIG_HOME` by default. See each tool's README 
 ## Accent Hue Reference
 
 Preview of the core accent foreground hues by variant (base, warmer, cooler, faint, intense).
-Docs: https://protesilaos.com/emacs/modus-themes
-Regenerate previews: `python3 scripts/render-hue-previews.py`
+
+> [!NOTE]
+> This repo uses the Modus faint preset by default for palette extraction.
+
+Docs: [Modus palette overrides](https://protesilaos.com/emacs/modus-themes#h:34c7a691-19bb-4037-8d2f-67a07edab150)
 
 ![Modus Operandi accent hues](screenshots/hues/modus-operandi.svg)
 
