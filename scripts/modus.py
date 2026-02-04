@@ -558,7 +558,7 @@ def cmd_update_subtree(_args):
     prefix = "vendor/modus-themes"
     git_utils.subtree_update(str(REPO_ROOT), remote_url, prefix)
     cmd_extract_palettes(None)
-    cmd_render(argparse.Namespace(tool="all", mapping=None, out_dir=None))
+    cmd_render(argparse.Namespace(tool="all", mapping=None, out_dir=None, theme=None))
 
 
 def cmd_doctor(_args):
