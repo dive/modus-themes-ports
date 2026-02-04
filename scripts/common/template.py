@@ -69,3 +69,44 @@ def render_template(
         raise KeyError(f"Unknown token kind: {kind}")
 
     return TOKEN_RE.sub(replace, template)
+
+
+# Valid meta keys that can be used in templates
+_VALID_META_KEYS = {"theme", "theme_title", "appearance"}
+
+
+def validate_template(
+    template: str,
+    palette_keys: set[str],
+    mapping_keys: set[str],
+) -> list[str]:
+    """Validate that all template tokens reference valid keys.
+
+    Args:
+        template: The template string to validate.
+        palette_keys: Set of valid palette key names.
+        mapping_keys: Set of valid mapping key names.
+
+    Returns:
+        A list of error messages (empty if valid).
+    """
+    errors: list[str] = []
+    seen: set[tuple[str, str]] = set()
+
+    for match in TOKEN_RE.finditer(template):
+        kind, key = match.group(1), match.group(2)
+        if (kind, key) in seen:
+            continue
+        seen.add((kind, key))
+
+        if kind == "color" or kind == "rgb":
+            if key not in palette_keys:
+                errors.append(f"Unknown palette key: {key}")
+        elif kind == "value":
+            if key not in mapping_keys:
+                errors.append(f"Unknown mapping key: {key}")
+        elif kind == "meta":
+            if key not in _VALID_META_KEYS:
+                errors.append(f"Unknown meta key: {key}")
+
+    return errors

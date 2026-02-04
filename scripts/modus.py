@@ -589,6 +589,29 @@ def cmd_doctor(_args):
     if not (REPO_ROOT / "palettes").is_dir():
         issues.append("palettes directory missing (run: python3 scripts/modus.py extract-palettes)")
 
+    # Validate all templates reference valid palette keys
+    palette_files = list(palettes_dir().glob("*.json"))
+    if palette_files:
+        # Use the first palette to get the set of valid keys
+        _, sample_palette = io.load_palette(str(palette_files[0]))
+        palette_keys = set(sample_palette.keys())
+
+        registry = load_registry()
+        for tool, manifest in registry.items():
+            template_path = tool_template(manifest)
+            if template_path and template_path.is_file():
+                template_text = template_path.read_text(encoding="utf-8")
+                mapping_path = manifest.get("mapping_path")
+                mapping_keys: set[str] = set()
+                if mapping_path:
+                    mapping = io.load_mapping(str(REPO_ROOT / mapping_path))
+                    mapping_keys = set(mapping.keys())
+                errors = template_utils.validate_template(
+                    template_text, palette_keys, mapping_keys
+                )
+                for error in errors:
+                    issues.append(f"{tool}: {error}")
+
     if issues:
         print("Doctor found issues:")
         for issue in issues:
