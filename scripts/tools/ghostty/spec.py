@@ -1,4 +1,9 @@
+"""Ghostty theme spec for Modus theme ports."""
+
+from __future__ import annotations
+
 import re
+from typing import Any
 
 REQUIRED_KEYS = {
     "background",
@@ -9,7 +14,21 @@ REQUIRED_KEYS = {
 }
 
 
-def render(theme_name, palette, mapping) -> str:
+def render(
+    theme_name: str,
+    palette: dict[str, str],
+    mapping: dict[str, Any],
+) -> str:
+    """Render a Ghostty theme file.
+
+    Args:
+        theme_name: Name of the theme (unused but required by spec interface).
+        palette: Resolved palette dictionary.
+        mapping: Mapping configuration with color assignments.
+
+    Returns:
+        Rendered Ghostty theme content.
+    """
     required_map_keys = [
         "background",
         "foreground",
@@ -27,7 +46,7 @@ def render(theme_name, palette, mapping) -> str:
             raise KeyError(f"Missing palette key: {palette_key}")
         return palette[palette_key]
 
-    lines = []
+    lines: list[str] = []
     for key in required_map_keys[:-1]:
         palette_key = mapping[key]
         color = resolve(palette_key)
@@ -44,10 +63,18 @@ def render(theme_name, palette, mapping) -> str:
     return "\n".join(lines) + "\n"
 
 
-def validate(text: str):
+def validate(text: str) -> list[str]:
+    """Validate a Ghostty theme file.
+
+    Args:
+        text: Theme file content.
+
+    Returns:
+        List of validation error messages (empty if valid).
+    """
     lines = [line.strip() for line in text.splitlines()]
-    found_keys = set()
-    palette_indices = set()
+    found_keys: set[str] = set()
+    palette_indices: set[int] = set()
 
     palette_re = re.compile(r"^palette\s*=\s*(\d+)\s*=\s*(#[0-9A-Fa-f]{6,8})$")
     key_re = re.compile(r"^([a-zA-Z-]+)\s*=\s*(#[0-9A-Fa-f]{6,8})$")
@@ -63,7 +90,7 @@ def validate(text: str):
         if m:
             found_keys.add(m.group(1))
 
-    errors = []
+    errors: list[str] = []
     missing_keys = REQUIRED_KEYS - found_keys
     if missing_keys:
         errors.append(f"Missing keys: {', '.join(sorted(missing_keys))}")
