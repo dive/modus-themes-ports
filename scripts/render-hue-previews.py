@@ -17,7 +17,7 @@ ROW_HEIGHT = 36
 SWATCH_SIZE = 12
 
 
-def make_svg(theme_name: str, palette: dict) -> str:
+def make_svg(theme_name: str, palette: dict[str, str]) -> str:
     cols = len(HEADERS)
     rows = len(HUES)
     width = START_X * 2 + COL_WIDTH * cols
