@@ -37,6 +37,7 @@ python3 scripts/modus.py install --tool mytool --link
   - `python3 scripts/modus.py validate --tool <tool>`
 - Environment check:
   - `python3 scripts/modus.py doctor`
+  - Validates: dependencies, palettes, template tokens, WCAG contrast
 
 ## Registry Overview
 Tools are discovered from `ports/*/*-port.json`.
@@ -92,7 +93,18 @@ All theme filenames are kebab-case with no extension (e.g. `modus-operandi`).
 ## Config Paths
 Use `XDG_CONFIG_HOME` (or `~/.config`). Do not use `~/Library/Application Support`.
 
+## Accessibility
+
+Modus themes are designed to meet WCAG AAA (7:1 contrast ratio). The `doctor` command checks contrast for all palette colors. Warnings for tinted variants may be intentional design choices.
+
+Key foreground colors to check against `bg-main`:
+- `fg-main`, `fg-dim`, `fg-alt`
+- Named colors: `red`, `green`, `blue`, `yellow`, `magenta`, `cyan`
+- Variants: `*-warmer`, `*-cooler`, `*-faint`
+
 ## Testing
+
 Recommended checks:
 - `python3 scripts/modus.py render --tool all`
 - `python3 scripts/modus.py validate --tool all`
+- `python3 scripts/modus.py doctor`
