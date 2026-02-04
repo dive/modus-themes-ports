@@ -55,15 +55,15 @@
 "ui.background.separator" = { fg = "#595959" }
 "ui.linenr" = { fg = "#595959" }
 "ui.linenr.selected" = { fg = "#000000", bg = "#c9b9b0" }
-"ui.statusline" = { fg = "#000000", bg = "bg-inactive" }
-"ui.statusline.inactive" = { fg = "#585858", bg = "bg-dim" }
+"ui.statusline" = { fg = "#000000", bg = "#dfd5cf" }
+"ui.statusline.inactive" = { fg = "#585858", bg = "#efe9dd" }
 "ui.statusline.normal" = { fg = "#3546c2" }
 "ui.statusline.insert" = { fg = "#306010" }
 "ui.statusline.select" = { fg = "#8f0075" }
-"ui.statusline.separator" = { fg = "fg-dim" }
-"ui.bufferline" = { bg = "bg-inactive" }
+"ui.statusline.separator" = { fg = "#595959" }
+"ui.bufferline" = { bg = "#dfd5cf" }
 "ui.bufferline.active" = { bg = "#fbf7f0", fg = "#000000" }
-"ui.bufferline.background" = { bg = "bg-inactive" }
+"ui.bufferline.background" = { bg = "#dfd5cf" }
 "ui.popup" = { fg = "#000000", bg = "#efe9dd" }
 "ui.popup.info" = { fg = "#000000", bg = "#c9b9b0" }
 "ui.picker.header" = { fg = "#000000", bg = "#c9b9b0", modifiers = ["bold"] }
@@ -78,7 +78,7 @@
 "ui.debug" = { fg = "#808000" }
 "ui.text" = "#000000"
 "ui.text.directory" = "#0000b0"
-"ui.text.focus" = { fg = "#000000", bg = "bg-inactive", modifiers = ["bold"] }
+"ui.text.focus" = { fg = "#000000", bg = "#dfd5cf", modifiers = ["bold"] }
 "ui.text.inactive" = { fg = "#595959" }
 "ui.text.info" = { fg = "#000000" }
 "ui.virtual" = "#c9b9b0"
@@ -100,12 +100,12 @@
 "ui.cursor.primary.normal" = { fg = "#fbf7f0", bg = "#595959" }
 "ui.cursor.primary.insert" = { fg = "#fbf7f0", bg = "#595959" }
 "ui.cursor.primary.select" = { fg = "#fbf7f0", bg = "#595959" }
-"ui.cursor.match" = { fg = "#000000", bg = "bg-cyan-subtle" }
-"ui.cursorline.primary" = { bg = "bg-dim" }
-"ui.highlight" = { bg = "bg-dim" }
-"ui.highlight.frameline" = { bg = "bg-cyan-subtle" }
+"ui.cursor.match" = { fg = "#000000", bg = "#bfefff" }
+"ui.cursorline.primary" = { bg = "#efe9dd" }
+"ui.highlight" = { bg = "#efe9dd" }
+"ui.highlight.frameline" = { bg = "#bfefff" }
 "ui.menu" = { fg = "#000000", bg = "#efe9dd" }
-"ui.menu.selected" = { fg = "#000000", bg = "bg-inactive", modifiers = ["bold"] }
+"ui.menu.selected" = { fg = "#000000", bg = "#dfd5cf", modifiers = ["bold"] }
 "ui.menu.scroll" = { fg = "#595959", bg = "#a4d5f9" }
 
 # Diagnostics

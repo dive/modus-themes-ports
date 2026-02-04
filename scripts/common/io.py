@@ -25,6 +25,28 @@ def load_mapping(path: str):
         return json.load(f)
 
 
+def _resolve_palette_value(palette: dict, key: str, resolved: dict, stack: list):
+    if key in resolved:
+        return resolved[key]
+    if key in stack:
+        cycle = " -> ".join(stack + [key])
+        raise ValueError(f"Circular palette reference: {cycle}")
+    stack.append(key)
+    value = palette[key]
+    if isinstance(value, str) and value in palette:
+        value = _resolve_palette_value(palette, value, resolved, stack)
+    resolved[key] = value
+    stack.pop()
+    return value
+
+
+def resolve_palette(palette: dict) -> dict:
+    resolved = {}
+    for key in palette:
+        _resolve_palette_value(palette, key, resolved, [])
+    return resolved
+
+
 def load_palette(path: str):
     palette_path = Path(path)
     with palette_path.open("r", encoding="utf-8") as f:
@@ -37,7 +59,8 @@ def load_palette(path: str):
         palette = data
     if not isinstance(palette, dict):
         raise ValueError(f"Palette must be an object: {palette_path}")
-    return name, palette
+    # NOTE: Resolve palette references so rendered themes never contain alias names.
+    return name, resolve_palette(palette)
 
 
 def write_output(path: str, content: str):

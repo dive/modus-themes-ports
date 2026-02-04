@@ -28,7 +28,7 @@
           <key>accent</key>
           <string>#b6a0ff</string>
           <key>selection</key>
-          <string>bg-active</string>
+          <string>#535353</string>
           <key>activeGuide</key>
           <string>#535353</string>
           <key>findHighlight</key>
