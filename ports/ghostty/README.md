@@ -13,4 +13,4 @@ Set the theme in Ghostty config:
 
 ## Notes
 Themes are installed under `$XDG_CONFIG_HOME/ghostty/themes/`.
-Ghostty uses Modus terminal palette (`fg-term-*` and `fg-term-*-bright`) for ANSI slots.
+Ghostty uses Modus faint hues for ANSI colors, with bright slots mapped to the non-faint variants.
