@@ -2,7 +2,7 @@
   "tool": "ghostty",
   "theme_dir_rel": "ports/ghostty/themes",
   "theme_ext": "",
-  "mapping_path": "mappings/base16/default.json",
+  "mapping_path": "mappings/ghostty/default.json",
   "template_path": "ports/ghostty/theme.tmpl",
   "template_format": "mini",
   "required_keys": [

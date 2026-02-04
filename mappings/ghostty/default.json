@@ -1,0 +1,26 @@
+{
+  "name": "ghostty-default",
+  "background": "bg-main",
+  "foreground": "fg-main",
+  "cursor-color": "fg-main",
+  "selection-background": "bg-active",
+  "selection-foreground": "fg-main",
+  "palette": {
+    "0": "fg-term-black",
+    "1": "fg-term-red",
+    "2": "fg-term-green",
+    "3": "fg-term-yellow",
+    "4": "fg-term-blue",
+    "5": "fg-term-magenta",
+    "6": "fg-term-cyan",
+    "7": "fg-term-white",
+    "8": "fg-term-black-bright",
+    "9": "fg-term-red-bright",
+    "10": "fg-term-green-bright",
+    "11": "fg-term-yellow-bright",
+    "12": "fg-term-blue-bright",
+    "13": "fg-term-magenta-bright",
+    "14": "fg-term-cyan-bright",
+    "15": "fg-term-white-bright"
+  }
+}
