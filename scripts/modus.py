@@ -14,6 +14,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from scripts.common import contrast as contrast_utils
 from scripts.common import git as git_utils
 from scripts.common import io
 from scripts.common import paths
@@ -611,6 +612,18 @@ def cmd_doctor(_args):
                 )
                 for error in errors:
                     issues.append(f"{tool}: {error}")
+
+        # Check WCAG AAA contrast for all palettes (warnings only)
+        contrast_warnings = []
+        for palette_path in palette_files:
+            theme_name, palette = io.load_palette(str(palette_path))
+            warnings = contrast_utils.validate_palette_contrast(palette)
+            for warning in warnings:
+                contrast_warnings.append(f"{theme_name}: {warning}")
+        if contrast_warnings:
+            print("Contrast warnings (may be intentional for tinted variants):")
+            for warning in contrast_warnings:
+                print(f"  - {warning}")
 
     if issues:
         print("Doctor found issues:")
