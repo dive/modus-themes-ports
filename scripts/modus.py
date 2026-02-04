@@ -320,26 +320,23 @@ def cmd_validate(args):
                     expected = args.theme
                 if path.name != expected:
                     continue
-            if tool == "lazygit":
-                issues = validate_lazygit.validate(text, required_keys)
-            else:
-                issues = []
-                if validate_json:
-                    try:
-                        data = json.loads(text)
-                    except json.JSONDecodeError as exc:
-                        issues.append(f"Invalid JSON: {exc}")
-                    else:
-                        for field in required_fields:
-                            if not json_path_exists(data, field):
-                                issues.append(f"Missing field: {field}")
-                for key in required_keys:
-                    if key == "palette":
-                        if "palette =" not in text:
-                            issues.append("Missing palette entries")
-                    else:
-                        if not re.search(rf"^\s*{re.escape(key)}\s*=", text, re.MULTILINE):
-                            issues.append(f"Missing key: {key}")
+            issues = []
+            if validate_json:
+                try:
+                    data = json.loads(text)
+                except json.JSONDecodeError as exc:
+                    issues.append(f"Invalid JSON: {exc}")
+                else:
+                    for field in required_fields:
+                        if not json_path_exists(data, field):
+                            issues.append(f"Missing field: {field}")
+            for key in required_keys:
+                if key == "palette":
+                    if "palette =" not in text:
+                        issues.append("Missing palette entries")
+                else:
+                    if not re.search(rf"^\s*{re.escape(key)}\s*=", text, re.MULTILINE):
+                        issues.append(f"Missing key: {key}")
             if issues:
                 errors.append((path, issues))
 
