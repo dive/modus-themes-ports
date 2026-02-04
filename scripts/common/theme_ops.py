@@ -1,14 +1,34 @@
 #!/usr/bin/env python3
+"""Theme installation and management operations."""
+
+from __future__ import annotations
+
 import os
 import shutil
 import subprocess
 from pathlib import Path
 
 
-def list_themes(dir_path: Path, theme_kind: str = "file", theme_ext: str = "", dir_suffix: str = ".yazi"):
+def list_themes(
+    dir_path: Path,
+    theme_kind: str = "file",
+    theme_ext: str = "",
+    dir_suffix: str = ".yazi",
+) -> list[str]:
+    """List available themes in a directory.
+
+    Args:
+        dir_path: Directory containing themes.
+        theme_kind: "file" for file-based themes, "dir" for directory-based.
+        theme_ext: File extension for file-based themes.
+        dir_suffix: Directory suffix for directory-based themes.
+
+    Returns:
+        List of theme names (without extensions/suffixes).
+    """
     if not dir_path.is_dir():
         return []
-    items = []
+    items: list[str] = []
     for entry in sorted(dir_path.iterdir()):
         if entry.name.startswith(".") or entry.name == ".gitkeep":
             continue
@@ -27,7 +47,21 @@ def list_themes(dir_path: Path, theme_kind: str = "file", theme_ext: str = "", d
     return items
 
 
-def find_theme_file(src_dir: Path, theme_name: str, theme_ext: str = ""):
+def find_theme_file(
+    src_dir: Path,
+    theme_name: str,
+    theme_ext: str = "",
+) -> Path | None:
+    """Find a theme file by name.
+
+    Args:
+        src_dir: Directory to search.
+        theme_name: Theme name to find.
+        theme_ext: Optional file extension.
+
+    Returns:
+        Path to the theme file, or None if not found.
+    """
     candidate = src_dir / theme_name
     if candidate.is_file():
         return candidate
@@ -38,7 +72,21 @@ def find_theme_file(src_dir: Path, theme_name: str, theme_ext: str = ""):
     return None
 
 
-def find_theme_dir(src_dir: Path, theme_name: str, dir_suffix: str = ".yazi"):
+def find_theme_dir(
+    src_dir: Path,
+    theme_name: str,
+    dir_suffix: str = ".yazi",
+) -> Path | None:
+    """Find a theme directory by name.
+
+    Args:
+        src_dir: Directory to search.
+        theme_name: Theme name to find.
+        dir_suffix: Directory suffix.
+
+    Returns:
+        Path to the theme directory, or None if not found.
+    """
     if dir_suffix and theme_name.endswith(dir_suffix):
         candidate = src_dir / theme_name
     elif dir_suffix:
@@ -54,13 +102,26 @@ def install_themes(
     src_dir: Path,
     dest_dir: Path,
     mode: str,
-    theme_name=None,
+    theme_name: str | None = None,
     theme_kind: str = "file",
     theme_ext: str = "",
     dir_suffix: str = ".yazi",
     theme_entry: str = "",
     symlink_entry_only: bool = False,
-):
+) -> None:
+    """Install themes to a destination directory.
+
+    Args:
+        src_dir: Source directory containing themes.
+        dest_dir: Destination directory for installed themes.
+        mode: "link" for symlinks, "copy" for file copies.
+        theme_name: Specific theme to install (all if None).
+        theme_kind: "file" for file-based, "dir" for directory-based.
+        theme_ext: File extension for file-based themes.
+        dir_suffix: Directory suffix for directory-based themes.
+        theme_entry: Entry file within directory themes.
+        symlink_entry_only: Only symlink the entry file, not the whole dir.
+    """
     if not src_dir.is_dir():
         raise FileNotFoundError(f"Theme source directory missing: {src_dir}")
 
@@ -125,7 +186,8 @@ def install_themes(
         print(f"Installed: {src.name}")
 
 
-def _trash_path(path: Path):
+def _trash_path(path: Path) -> None:
+    """Move a path to trash using the 'trash' command."""
     if shutil.which("trash") is None:
         raise FileNotFoundError("'trash' is required for uninstall.")
     subprocess.run(["trash", str(path)], check=True)
@@ -134,13 +196,27 @@ def _trash_path(path: Path):
 def uninstall_themes(
     dest_dir: Path,
     src_dir: Path,
-    theme_name=None,
+    theme_name: str | None = None,
     theme_kind: str = "file",
     theme_ext: str = "",
     dir_suffix: str = ".yazi",
     theme_entry: str = "",
     symlink_entry_only: bool = False,
-):
+) -> None:
+    """Uninstall themes from a destination directory.
+
+    Only removes symlinks that point to the source directory.
+
+    Args:
+        dest_dir: Directory containing installed themes.
+        src_dir: Original source directory (to verify symlinks).
+        theme_name: Specific theme to uninstall (all if None).
+        theme_kind: "file" for file-based, "dir" for directory-based.
+        theme_ext: File extension for file-based themes.
+        dir_suffix: Directory suffix for directory-based themes.
+        theme_entry: Entry file within directory themes.
+        symlink_entry_only: Only unlink the entry file, not the whole dir.
+    """
     if not dest_dir.is_dir():
         print(f"No themes directory found: {dest_dir}")
         return
