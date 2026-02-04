@@ -292,6 +292,7 @@ def cmd_validate(args):
         errors = []
         theme_kind = manifest.get("theme_kind", "file")
         theme_entry = manifest.get("theme_entry", "flavor.toml")
+        dir_suffix = manifest.get("dir_suffix", ".yazi")
 
         for path in sorted(themes_dir.iterdir()):
             if path.name.startswith("."):
@@ -299,11 +300,11 @@ def cmd_validate(args):
             if theme_kind == "dir":
                 if not path.is_dir():
                     continue
-                if not path.name.endswith(".yazi"):
+                if dir_suffix and not path.name.endswith(dir_suffix):
                     continue
                 candidate = path / theme_entry
                 if not candidate.is_file():
-                    errors.append((path, ["Missing flavor.toml"]))
+                    errors.append((path, [f"Missing {theme_entry}"]))
                     continue
                 text = candidate.read_text(encoding="utf-8")
             else:
@@ -313,7 +314,10 @@ def cmd_validate(args):
                     continue
                 text = path.read_text(encoding="utf-8")
             if args.theme and theme_kind == "dir":
-                expected = args.theme if args.theme.endswith(".yazi") else f"{args.theme}.yazi"
+                if dir_suffix and not args.theme.endswith(dir_suffix):
+                    expected = f"{args.theme}{dir_suffix}"
+                else:
+                    expected = args.theme
                 if path.name != expected:
                     continue
             if tool == "lazygit":
@@ -348,9 +352,18 @@ def cmd_validate(args):
             raise SystemExit(f"Validation failed for {len(errors)} theme(s).")
 
         if theme_kind == "dir":
-            total = len([p for p in themes_dir.iterdir() if p.is_dir() and p.name.endswith(".yazi")])
+            total = len(
+                [
+                    p
+                    for p in themes_dir.iterdir()
+                    if p.is_dir() and (not dir_suffix or p.name.endswith(dir_suffix))
+                ]
+            )
             if args.theme:
-                name = args.theme if args.theme.endswith(".yazi") else f"{args.theme}.yazi"
+                if dir_suffix and not args.theme.endswith(dir_suffix):
+                    name = f"{args.theme}{dir_suffix}"
+                else:
+                    name = args.theme
                 total = 1 if (themes_dir / name).is_dir() else 0
         else:
             total = len([p for p in themes_dir.iterdir() if p.is_file() and not p.name.startswith('.')])
