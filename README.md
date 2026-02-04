@@ -18,6 +18,7 @@ Modus themes are designed by [Protesilaos Stavrou](https://protesilaos.com/about
 | [Lazygit](ports/lazygit/README.md) | Terminal UI for git |
 | [LS_COLORS](ports/ls-colors/README.md) | Colors for `ls` and compatible tools |
 | [OpenCode](ports/opencode/README.md) | AI coding agent CLI |
+| [Pi](ports/pi/README.md) | AI coding agent CLI |
 | [Zed](ports/zed/README.md) | Code editor |
 | [Yazi](ports/yazi/README.md) | Terminal file manager |
 
