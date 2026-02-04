@@ -20,12 +20,18 @@
      (t raw))))
 
 (defun modus-themes--normalize-palette (palette)
-  (let (items)
+  "Normalize PALETTE to an alist of (string . string) pairs.
+Deduplicates keys, keeping the first occurrence (override value)."
+  (let (items seen)
     (dolist (entry palette)
-      (let ((key (car entry))
-            (val (modus-themes--entry-value entry)))
-        (when (symbolp key)
-          (push (cons (symbol-name key) (modus-themes--normalize-value val)) items))))
+      (let ((key (car entry)))
+        (when (and (symbolp key)
+                   (not (member key seen)))
+          (push key seen)
+          (let ((val (modus-themes--entry-value entry)))
+            (push (cons (symbol-name key)
+                        (modus-themes--normalize-value val))
+                  items)))))
     (sort items (lambda (a b) (string< (car a) (car b))))))
 
 (defun modus-themes--write-json (obj path)
