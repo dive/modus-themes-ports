@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""Spec-based theme rendering for Modus theme ports."""
+
+from __future__ import annotations
+
 import argparse
 import sys
 from pathlib import Path
@@ -10,10 +14,25 @@ if str(REPO_ROOT) not in sys.path:
 from scripts.common import io
 
 
-from typing import Optional
+def render_all(
+    palettes_dir: Path,
+    mapping_file: Path,
+    out_dir: Path,
+    spec_file: Path,
+    theme: str | None = None,
+) -> list[Path]:
+    """Render themes using a Python spec module.
 
+    Args:
+        palettes_dir: Directory containing palette JSON files.
+        mapping_file: Path to the mapping JSON file.
+        out_dir: Directory to write rendered themes.
+        spec_file: Path to the Python spec module.
+        theme: Optional theme name to render (renders all if None).
 
-def render_all(palettes_dir: Path, mapping_file: Path, out_dir: Path, spec_file: Path, theme: Optional[str] = None):
+    Returns:
+        List of paths to rendered theme files.
+    """
     if not palettes_dir.is_dir():
         raise FileNotFoundError(f"Palettes directory missing: {palettes_dir}")
     mapping = io.load_mapping(str(mapping_file))
@@ -23,7 +42,7 @@ def render_all(palettes_dir: Path, mapping_file: Path, out_dir: Path, spec_file:
     if not palette_files:
         raise FileNotFoundError("No palettes found. Run extract-palettes first.")
 
-    outputs = []
+    outputs: list[Path] = []
     for palette_path in palette_files:
         theme_name, palette = io.load_palette(str(palette_path))
         if theme and theme_name != theme:

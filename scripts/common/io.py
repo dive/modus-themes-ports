@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """File I/O utilities for Modus theme ports."""
 
+from __future__ import annotations
+
 import importlib.util
 import json
 from pathlib import Path

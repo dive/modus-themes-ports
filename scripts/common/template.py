@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Template rendering for Modus theme ports."""
 
+from __future__ import annotations
+
 import re
 from typing import Any
 

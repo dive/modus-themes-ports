@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""Spec-based theme validation for Modus theme ports."""
+
+from __future__ import annotations
+
 import argparse
 import sys
 from pathlib import Path
@@ -10,10 +14,22 @@ if str(REPO_ROOT) not in sys.path:
 from scripts.common import io
 
 
-from typing import Optional
+def validate_all(
+    themes_dir: Path,
+    spec_file: Path,
+    theme: str | None = None,
+) -> tuple[int, list[tuple[Path, list[str]]]]:
+    """Validate themes using a Python spec module.
 
+    Args:
+        themes_dir: Directory containing rendered theme files.
+        spec_file: Path to the Python spec module.
+        theme: Optional theme name to validate (validates all if None).
 
-def validate_all(themes_dir: Path, spec_file: Path, theme: Optional[str] = None):
+    Returns:
+        A tuple of (validated_count, errors) where errors is a list of
+        (path, issues) tuples for themes that failed validation.
+    """
     if not themes_dir.is_dir():
         raise FileNotFoundError(f"Themes directory missing: {themes_dir}")
 
@@ -22,7 +38,7 @@ def validate_all(themes_dir: Path, spec_file: Path, theme: Optional[str] = None)
     if not files:
         raise FileNotFoundError("No theme files found to validate.")
 
-    errors = []
+    errors: list[tuple[Path, list[str]]] = []
     validated = 0
 
     for path in files:
