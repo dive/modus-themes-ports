@@ -60,6 +60,17 @@ jobs:
             echo "EOF" >> $GITHUB_OUTPUT
           fi
 
+      - name: Ensure upstream-update label
+        if: steps.check.outputs.needs_update == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ! gh label list --json name --jq '.[] | select(.name=="upstream-update")' | grep -q .; then
+            gh label create "upstream-update" \
+              --color "0e8a16" \
+              --description "Upstream vendor update"
+          fi
+
       - name: Check for existing issue
         if: steps.check.outputs.needs_update == 'true'
         id: existing
