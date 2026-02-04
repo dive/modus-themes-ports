@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="322" viewBox="0 0 820 322">
+<rect width="100%" height="100%" fill="#000000"/>
+<text x="20" y="28" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="22" font-weight="700" fill="#ffffff">modus-vivendi</text>
+<rect x="20" y="50" width="130" height="36" fill="#535353" stroke="#646464"/>
+<text x="85.0" y="68.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#ffffff" dominant-baseline="middle" text-anchor="middle">Hue</text>
+<rect x="150" y="50" width="130" height="36" fill="#535353" stroke="#646464"/>
+<text x="215.0" y="68.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#ffffff" dominant-baseline="middle" text-anchor="middle">base</text>
+<rect x="280" y="50" width="130" height="36" fill="#535353" stroke="#646464"/>
+<text x="345.0" y="68.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#ffffff" dominant-baseline="middle" text-anchor="middle">warmer</text>
+<rect x="410" y="50" width="130" height="36" fill="#535353" stroke="#646464"/>
+<text x="475.0" y="68.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#ffffff" dominant-baseline="middle" text-anchor="middle">cooler</text>
+<rect x="540" y="50" width="130" height="36" fill="#535353" stroke="#646464"/>
+<text x="605.0" y="68.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#ffffff" dominant-baseline="middle" text-anchor="middle">faint</text>
+<rect x="670" y="50" width="130" height="36" fill="#535353" stroke="#646464"/>
+<text x="735.0" y="68.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#ffffff" dominant-baseline="middle" text-anchor="middle">intense</text>
+<rect x="20" y="86" width="130" height="36" fill="#000000" stroke="#646464"/>
+<text x="32" y="104.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" fill="#ffffff" dominant-baseline="middle">red</text>
+<rect x="150" y="86" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="160" y="98.0" width="12" height="12" fill="#ff5f59" stroke="#646464"/>
+<text x="178" y="104.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#ff5f59" dominant-baseline="middle">#ff5f59</text>
+<rect x="280" y="86" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="290" y="98.0" width="12" height="12" fill="#ff6b55" stroke="#646464"/>
+<text x="308" y="104.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#ff6b55" dominant-baseline="middle">#ff6b55</text>
+<rect x="410" y="86" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="420" y="98.0" width="12" height="12" fill="#ff7f86" stroke="#646464"/>
+<text x="438" y="104.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#ff7f86" dominant-baseline="middle">#ff7f86</text>
+<rect x="540" y="86" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="550" y="98.0" width="12" height="12" fill="#ff9580" stroke="#646464"/>
+<text x="568" y="104.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#ff9580" dominant-baseline="middle">#ff9580</text>
+<rect x="670" y="86" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="680" y="98.0" width="12" height="12" fill="#ff5f5f" stroke="#646464"/>
+<text x="698" y="104.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#ff5f5f" dominant-baseline="middle">#ff5f5f</text>
+<rect x="20" y="122" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<text x="32" y="140.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" fill="#ffffff" dominant-baseline="middle">green</text>
+<rect x="150" y="122" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="160" y="134.0" width="12" height="12" fill="#44bc44" stroke="#646464"/>
+<text x="178" y="140.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#44bc44" dominant-baseline="middle">#44bc44</text>
+<rect x="280" y="122" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="290" y="134.0" width="12" height="12" fill="#70b900" stroke="#646464"/>
+<text x="308" y="140.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#70b900" dominant-baseline="middle">#70b900</text>
+<rect x="410" y="122" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="420" y="134.0" width="12" height="12" fill="#00c06f" stroke="#646464"/>
+<text x="438" y="140.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#00c06f" dominant-baseline="middle">#00c06f</text>
+<rect x="540" y="122" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="550" y="134.0" width="12" height="12" fill="#88ca9f" stroke="#646464"/>
+<text x="568" y="140.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#88ca9f" dominant-baseline="middle">#88ca9f</text>
+<rect x="670" y="122" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="680" y="134.0" width="12" height="12" fill="#44df44" stroke="#646464"/>
+<text x="698" y="140.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#44df44" dominant-baseline="middle">#44df44</text>
+<rect x="20" y="158" width="130" height="36" fill="#000000" stroke="#646464"/>
+<text x="32" y="176.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" fill="#ffffff" dominant-baseline="middle">yellow</text>
+<rect x="150" y="158" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="160" y="170.0" width="12" height="12" fill="#d0bc00" stroke="#646464"/>
+<text x="178" y="176.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#d0bc00" dominant-baseline="middle">#d0bc00</text>
+<rect x="280" y="158" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="290" y="170.0" width="12" height="12" fill="#fec43f" stroke="#646464"/>
+<text x="308" y="176.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#fec43f" dominant-baseline="middle">#fec43f</text>
+<rect x="410" y="158" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="420" y="170.0" width="12" height="12" fill="#dfaf7a" stroke="#646464"/>
+<text x="438" y="176.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#dfaf7a" dominant-baseline="middle">#dfaf7a</text>
+<rect x="540" y="158" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="550" y="170.0" width="12" height="12" fill="#d2b580" stroke="#646464"/>
+<text x="568" y="176.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#d2b580" dominant-baseline="middle">#d2b580</text>
+<rect x="670" y="158" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="680" y="170.0" width="12" height="12" fill="#efef00" stroke="#646464"/>
+<text x="698" y="176.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#efef00" dominant-baseline="middle">#efef00</text>
+<rect x="20" y="194" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<text x="32" y="212.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" fill="#ffffff" dominant-baseline="middle">blue</text>
+<rect x="150" y="194" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="160" y="206.0" width="12" height="12" fill="#2fafff" stroke="#646464"/>
+<text x="178" y="212.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#2fafff" dominant-baseline="middle">#2fafff</text>
+<rect x="280" y="194" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="290" y="206.0" width="12" height="12" fill="#79a8ff" stroke="#646464"/>
+<text x="308" y="212.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#79a8ff" dominant-baseline="middle">#79a8ff</text>
+<rect x="410" y="194" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="420" y="206.0" width="12" height="12" fill="#00bcff" stroke="#646464"/>
+<text x="438" y="212.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#00bcff" dominant-baseline="middle">#00bcff</text>
+<rect x="540" y="194" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="550" y="206.0" width="12" height="12" fill="#82b0ec" stroke="#646464"/>
+<text x="568" y="212.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#82b0ec" dominant-baseline="middle">#82b0ec</text>
+<rect x="670" y="194" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="680" y="206.0" width="12" height="12" fill="#338fff" stroke="#646464"/>
+<text x="698" y="212.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#338fff" dominant-baseline="middle">#338fff</text>
+<rect x="20" y="230" width="130" height="36" fill="#000000" stroke="#646464"/>
+<text x="32" y="248.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" fill="#ffffff" dominant-baseline="middle">magenta</text>
+<rect x="150" y="230" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="160" y="242.0" width="12" height="12" fill="#feacd0" stroke="#646464"/>
+<text x="178" y="248.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#feacd0" dominant-baseline="middle">#feacd0</text>
+<rect x="280" y="230" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="290" y="242.0" width="12" height="12" fill="#f78fe7" stroke="#646464"/>
+<text x="308" y="248.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#f78fe7" dominant-baseline="middle">#f78fe7</text>
+<rect x="410" y="230" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="420" y="242.0" width="12" height="12" fill="#b6a0ff" stroke="#646464"/>
+<text x="438" y="248.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#b6a0ff" dominant-baseline="middle">#b6a0ff</text>
+<rect x="540" y="230" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="550" y="242.0" width="12" height="12" fill="#caa6df" stroke="#646464"/>
+<text x="568" y="248.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#caa6df" dominant-baseline="middle">#caa6df</text>
+<rect x="670" y="230" width="130" height="36" fill="#000000" stroke="#646464"/>
+<rect x="680" y="242.0" width="12" height="12" fill="#ff66ff" stroke="#646464"/>
+<text x="698" y="248.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#ff66ff" dominant-baseline="middle">#ff66ff</text>
+<rect x="20" y="266" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<text x="32" y="284.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" fill="#ffffff" dominant-baseline="middle">cyan</text>
+<rect x="150" y="266" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="160" y="278.0" width="12" height="12" fill="#00d3d0" stroke="#646464"/>
+<text x="178" y="284.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#00d3d0" dominant-baseline="middle">#00d3d0</text>
+<rect x="280" y="266" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="290" y="278.0" width="12" height="12" fill="#4ae2f0" stroke="#646464"/>
+<text x="308" y="284.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#4ae2f0" dominant-baseline="middle">#4ae2f0</text>
+<rect x="410" y="266" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="420" y="278.0" width="12" height="12" fill="#6ae4b9" stroke="#646464"/>
+<text x="438" y="284.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#6ae4b9" dominant-baseline="middle">#6ae4b9</text>
+<rect x="540" y="266" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="550" y="278.0" width="12" height="12" fill="#9ac8e0" stroke="#646464"/>
+<text x="568" y="284.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#9ac8e0" dominant-baseline="middle">#9ac8e0</text>
+<rect x="670" y="266" width="130" height="36" fill="#1e1e1e" stroke="#646464"/>
+<rect x="680" y="278.0" width="12" height="12" fill="#00eff0" stroke="#646464"/>
+<text x="698" y="284.0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="13" fill="#00eff0" dominant-baseline="middle">#00eff0</text>
+</svg>
