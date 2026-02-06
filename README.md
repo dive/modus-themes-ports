@@ -19,6 +19,7 @@ Modus themes are designed by [Protesilaos Stavrou](https://protesilaos.com/about
 | [LS_COLORS](ports/ls-colors/README.md) | Colors for `ls` and compatible tools |
 | [OpenCode](ports/opencode/README.md) | AI coding agent CLI |
 | [Pi](ports/pi/README.md) | AI coding agent CLI |
+| [Xcode](ports/xcode/README.md) | Apple IDE |
 | [Yazi](ports/yazi/README.md) | Terminal file manager |
 | [Zed](ports/zed/README.md) | Code editor |
 

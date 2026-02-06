@@ -496,6 +496,13 @@ def cmd_print_config(args: argparse.Namespace) -> None:
             print(f"source \"{dest_dir}/{args.theme}\"")
         return
 
+    if args.tool == "xcode":
+        themes_dir = tool_default_themes_dir(manifest)
+        print(f"# Themes directory: {themes_dir}")
+        print("# Open Xcode -> Settings -> Themes and select:")
+        print(args.theme)
+        return
+
 
 def emacs_bin() -> Path:
     if shutil.which("emacs"):

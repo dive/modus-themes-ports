@@ -73,6 +73,7 @@ Template tokens:
 - `{color:<palette-key>}` inserts a palette color
 - `{value:<mapping-key>}` inserts a mapping value
 - `{rgb:<palette-key>}` inserts a palette color as `R;G;B`
+- `{rgba:<palette-key>}` inserts a palette color as `r g b a` (0-1 floats)
 - `{meta:theme}` inserts the palette name
 - `{meta:theme_title}` inserts a title-cased theme name
 - `{meta:appearance}` inserts `light`/`dark` based on the theme name

@@ -1,0 +1,16 @@
+{
+  "tool": "xcode",
+  "theme_dir_rel": "ports/xcode/themes",
+  "theme_ext": ".xccolortheme",
+  "output_path_template": "ports/xcode/themes/{theme}.xccolortheme",
+  "mapping_path": "mappings/xcode/default.json",
+  "template_path": "ports/xcode/theme.tmpl",
+  "template_format": "mini",
+  "required_keys": [],
+  "install_targets": [
+    "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+  ],
+  "config_locations": [
+    "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"
+  ]
+}

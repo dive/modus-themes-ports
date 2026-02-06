@@ -6,7 +6,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-TOKEN_RE = re.compile(r"\{(color|value|meta|rgb):([A-Za-z0-9_-]+)\}")
+TOKEN_RE = re.compile(r"\{(color|value|meta|rgb|rgba):([A-Za-z0-9_-]+)\}")
 
 
 def _theme_title(theme: str) -> str:
@@ -20,6 +20,20 @@ def _hex_to_rgb(value: str) -> str:
     g = int(value[3:5], 16)
     b = int(value[5:7], 16)
     return f"{r};{g};{b}"
+
+
+def _format_unit(value: float) -> str:
+    return f"{value:.6f}".rstrip("0").rstrip(".")
+
+
+def _hex_to_rgba(value: str) -> str:
+    if not isinstance(value, str) or not value.startswith("#") or len(value) not in (7, 9):
+        raise ValueError(f"Expected #RRGGBB or #RRGGBBAA value, got: {value}")
+    r = int(value[1:3], 16) / 255.0
+    g = int(value[3:5], 16) / 255.0
+    b = int(value[5:7], 16) / 255.0
+    a = 1.0 if len(value) == 7 else int(value[7:9], 16) / 255.0
+    return f"{_format_unit(r)} {_format_unit(g)} {_format_unit(b)} {_format_unit(a)}"
 
 
 def _resolve_palette_value(palette: dict[str, str], key: str) -> str:
@@ -60,6 +74,15 @@ def render_template(
                     f"Palette key '{key}' is unspecified and cannot be used in templates"
                 )
             return _hex_to_rgb(value)
+        if kind == "rgba":
+            if key not in palette:
+                raise KeyError(f"Missing palette key: {key}")
+            value = _resolve_palette_value(palette, key)
+            if value == "unspecified":
+                raise ValueError(
+                    f"Palette key '{key}' is unspecified and cannot be used in templates"
+                )
+            return _hex_to_rgba(value)
         if kind == "meta":
             if key == "theme":
                 return theme_name
@@ -101,7 +124,7 @@ def validate_template(
             continue
         seen.add((kind, key))
 
-        if kind == "color" or kind == "rgb":
+        if kind in {"color", "rgb", "rgba"}:
             if key not in palette_keys:
                 errors.append(f"Unknown palette key: {key}")
         elif kind == "value":
