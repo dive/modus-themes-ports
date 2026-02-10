@@ -503,6 +503,23 @@ def cmd_print_config(args: argparse.Namespace) -> None:
         print(args.theme)
         return
 
+    if args.tool == "glamour":
+        print("# Glamour is a shared style source.")
+        print("# For Glow config, use:")
+        print(f"python3 scripts/modus.py print-config --tool glow --theme {args.theme}")
+        return
+
+    if args.tool == "glow":
+        src_dir = tool_src_dir(manifest)
+        theme_ext = manifest.get("theme_ext", "")
+        theme_file = theme_ops.find_theme_file(src_dir, args.theme, theme_ext)
+        if theme_file is None:
+            raise SystemExit(f"Error: theme not found: {args.theme}")
+        themes_dir = tool_default_themes_dir(manifest)
+        print(f"# Add to {config_dir}")
+        print(f"style: \"{themes_dir / theme_file.name}\"")
+        return
+
 
 def emacs_bin() -> Path:
     if shutil.which("emacs"):

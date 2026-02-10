@@ -1,0 +1,53 @@
+{
+  "tool": "glow",
+  "theme_dir_rel": "ports/glamour/themes",
+  "theme_ext": ".json",
+  "output_path_template": "ports/glamour/themes/{theme}.json",
+  "mapping_path": "mappings/glamour/default.json",
+  "template_path": "ports/glamour/theme.tmpl",
+  "template_format": "mini",
+  "validate_json": true,
+  "required_fields": [
+    "document",
+    "block_quote",
+    "paragraph",
+    "list",
+    "heading",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "text",
+    "strikethrough",
+    "emph",
+    "strong",
+    "hr",
+    "item",
+    "enumeration",
+    "task",
+    "link",
+    "link_text",
+    "image",
+    "image_text",
+    "code",
+    "code_block",
+    "code_block.chroma",
+    "table",
+    "definition_list",
+    "definition_term",
+    "definition_description",
+    "html_block",
+    "html_span"
+  ],
+  "required_keys": [],
+  "install_targets": [
+    "$XDG_CONFIG_HOME/glow/styles",
+    "$HOME/.config/glow/styles"
+  ],
+  "config_locations": [
+    "$XDG_CONFIG_HOME/glow/glow.yml",
+    "$HOME/.config/glow/glow.yml"
+  ]
+}
