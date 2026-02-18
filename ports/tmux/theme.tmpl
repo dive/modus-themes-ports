@@ -1,0 +1,18 @@
+# {meta:theme_title} — tmux color theme
+# Source this file from your tmux.conf:
+#   source-file ~/.config/tmux/themes/{meta:theme}.conf
+
+set -g status-style "bg={color:bg-main},fg={color:fg-main}"
+set -g status-left-style "fg={color:fg-dim}"
+set -g status-right-style "fg={color:fg-dim}"
+
+set -g window-status-style "fg={color:fg-dim},bg=default"
+set -g window-status-current-style "fg={color:fg-main},bg={color:bg-active}"
+
+set -g pane-border-style "fg={color:border}"
+set -g pane-active-border-style "fg={color:blue}"
+
+set -g message-style "bg={color:bg-active},fg={color:fg-main}"
+set -g message-command-style "bg={color:bg-inactive},fg={color:fg-dim}"
+
+set -g mode-style "bg={color:bg-active},fg={color:fg-main}"

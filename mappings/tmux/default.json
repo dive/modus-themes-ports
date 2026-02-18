@@ -1,0 +1,12 @@
+{
+  "name": "tmux-default",
+  "background": "bg-main",
+  "foreground": "fg-main",
+  "foreground-dim": "fg-dim",
+  "background-active": "bg-active",
+  "background-inactive": "bg-inactive",
+  "border": "border",
+  "border-active": "blue",
+  "message-background": "bg-active",
+  "message-foreground": "fg-main"
+}
