@@ -30,4 +30,4 @@ Available themes:
 
 Themes are installed under `$XDG_CONFIG_HOME/tmux/themes/`.
 
-The theme sets status bar, window status, pane border, message, and copy-mode styles. It does not override key bindings or plugins.
+The theme sets status bar, window status, pane border, message, popup, and copy-mode styles. It does not override key bindings or plugins.
