@@ -22,6 +22,7 @@ Modus themes are designed by [Protesilaos Stavrou](https://protesilaos.com/about
 | [OpenCode](ports/opencode/README.md) | AI coding agent CLI |
 | [Pi](ports/pi/README.md) | AI coding agent CLI |
 | [tmux](ports/tmux/README.md) | Terminal multiplexer |
+| [Visual Studio Code](ports/vscode/README.md) | Code editor |
 | [Xcode](ports/xcode/README.md) | Apple IDE |
 | [Yazi](ports/yazi/README.md) | Terminal file manager |
 | [Zed](ports/zed/README.md) | Code editor |

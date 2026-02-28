@@ -1,0 +1,57 @@
+{
+  "name": "modus-themes",
+  "displayName": "Modus Themes",
+  "description": "Port of Protesilaos Stavrou's Modus themes for Emacs",
+  "version": "1.0.0",
+  "publisher": "modus-themes-ports",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Modus Operandi",
+        "uiTheme": "vs",
+        "path": "./themes/modus-operandi.json"
+      },
+      {
+        "label": "Modus Operandi Tinted",
+        "uiTheme": "vs",
+        "path": "./themes/modus-operandi-tinted.json"
+      },
+      {
+        "label": "Modus Operandi Deuteranopia",
+        "uiTheme": "vs",
+        "path": "./themes/modus-operandi-deuteranopia.json"
+      },
+      {
+        "label": "Modus Operandi Tritanopia",
+        "uiTheme": "vs",
+        "path": "./themes/modus-operandi-tritanopia.json"
+      },
+      {
+        "label": "Modus Vivendi",
+        "uiTheme": "vs-dark",
+        "path": "./themes/modus-vivendi.json"
+      },
+      {
+        "label": "Modus Vivendi Tinted",
+        "uiTheme": "vs-dark",
+        "path": "./themes/modus-vivendi-tinted.json"
+      },
+      {
+        "label": "Modus Vivendi Deuteranopia",
+        "uiTheme": "vs-dark",
+        "path": "./themes/modus-vivendi-deuteranopia.json"
+      },
+      {
+        "label": "Modus Vivendi Tritanopia",
+        "uiTheme": "vs-dark",
+        "path": "./themes/modus-vivendi-tritanopia.json"
+      }
+    ]
+  }
+}
