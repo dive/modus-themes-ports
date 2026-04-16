@@ -570,7 +570,7 @@ reloaded for changes to take effect.
       modus-themes-org-blocks 'gray-background ; {nil,'gray-background,'tinted-background}
 
       ;; The `modus-themes-headings' is an alist: read the manual's
-      ;; node about it or its doc string.  Basically, it supports
+      ;; node about it or its docstring.  Basically, it supports
       ;; per-level configurations for the optional use of
       ;; `variable-pitch' typography, a height value as a multiple of
       ;; the base font size (e.g. 1.5), and a `WEIGHT'.
@@ -3174,7 +3174,7 @@ faces respectively.  It may also be convenient to set your main typeface
 by configuring the ~default~ face the same way.
 
 Put something like this in your initialization file (also consider
-reading the doc string of ~set-face-attribute~):
+reading the docstring of ~set-face-attribute~):
 
 #+begin_src emacs-lisp
 ;; Main typeface
@@ -5310,6 +5310,7 @@ have lots of extensions, so the "full support" may not be 100% true…
 + info
 + info+ (info-plus)
 + info-colors
++ institution-calendar [Part of {{{development-version}}}.]
 + ioccur
 + isearch, occur, etc.
 + ivy*
@@ -5431,6 +5432,7 @@ have lots of extensions, so the "full support" may not be 100% true…
 + tty-menu
 + tuareg
 + typescript
++ typst [ Part of {{{development-version}}} ]
 + undo-tree
 + vc ({{{file(vc-dir.el)}}}, {{{file(vc-hooks.el)}}})
 + vertico
@@ -5669,7 +5671,7 @@ render the affected text with the ~italic~ face:
 
 Org can work with inline latex and related syntax.  To actually fontify
 those constructs, set the variable ~org-highlight-latex-and-related~ to
-the desired list of values (per its doc string).  For example:
+the desired list of values (per its docstring).  For example:
 
 #+begin_src emacs-lisp
 (setq org-highlight-latex-and-related '(latex script))
@@ -5790,7 +5792,7 @@ To reuse colors from the themes, we must wrap our code in the
 the variables ~highlight-parentheses-background-colors~ and/or
 ~highlight-parentheses-colors~.
 
-So we can have something like this (the doc string of
+So we can have something like this (the docstring of
 ~modus-themes-with-colors~ explains where the names of the colors can be
 found):
 
@@ -6096,7 +6098,7 @@ Emacs' HTML rendering library ({{{file(shr.el)}}}) may need explicit
 configuration to respect the theme's colors instead of whatever
 specifications the webpage provides.
 
-Consult the doc string of ~shr-use-colors~.
+Consult the docstring of ~shr-use-colors~.
 
 ** Note on SHR fonts
 :properties:
@@ -6723,13 +6725,14 @@ The Modus themes are a collective effort.  Every bit of work matters.
 
 + Contributions to code or documentation :: Aleksei Gusev, Alex
   Griffin, Anders Johansson, Antonio Ruiz, Basil L.{{{space()}}}
-  Contovounesios, Björn Lindström, Carlo Zancanaro, Christian Tietze,
-  Daniel Colascione, Daniel Mendler, David Edmondson, Eli Zaretskii,
-  Eric Ottosson, Frédéric Giquel, Fritz Grabo, Gautier Ponsinet, Illia
-  Ostapyshyn, Jacob S.{{{space()}}} Gordon, Jared Finder, JD Smith,
-  Jimmy Yuen Ho Wong, Kevin Fleming, Kévin Le Gouguec, Koen van
-  Greevenbroek, Kostadin Ninev, Leilei332, Madhavan Krishnan, Manuel
-  Giraud, Markus Beppler, Matthew Stevenson, Mauro Aranda, Nacho
+  Contovounesios, Benjamin Kästner, Björn Lindström, Carlo Zancanaro,
+  Christian Tietze, Daniel Colascione, Daniel Mendler, David
+  Edmondson, Eli Zaretskii, Elias Gabriel Perez, Eric Ottosson,
+  Frédéric Giquel, Fritz Grabo, Gautier Ponsinet, Illia Ostapyshyn,
+  Jacob S.{{{space()}}} Gordon, Jared Finder, JD Smith, Jimmy Yuen Ho
+  Wong, Kevin Fleming, Kévin Le Gouguec, Koen van Greevenbroek,
+  Kostadin Ninev, Leilei332, Madhavan Krishnan, Manuel Giraud, Markus
+  Beppler, Matthew Stevenson, Mauro Aranda, Mike Olson, Nacho
   Barrientos, Niall Dooley, Nicolas De Jaeghere, Paul David, Pavel
   Novichkov, Philip Kaludercic, Pierre Téchoueyres, Rahul
   M.{{{space()}}} Juliato, Rudolf Adamkovič, Sergey Nichiporchik,
@@ -6761,22 +6764,23 @@ The Modus themes are a collective effort.  Every bit of work matters.
   Bestley, Mark Burton, Mark Simpson, Marko Kocic, Markus Beppler,
   Matt Armstrong, Matthias Fuchs, Mattias Engdegård, Mauro Aranda,
   Maxime Tréca, Michael Goldenberg, Morgan Smith, Morgan Willcock,
-  Murilo Pereira, Nicky van Foreest, Nicolas De Jaeghere, Nicolas
-  Semrau, Olaf Meeuwissen, Oliver Epper, Pablo Stafforini, Paul
-  Poloskov, Pengji Zhang, Pete Kazmier, Peter Wu, Philip Kaludercic,
-  Pierre Téchoueyres, Przemysław Kryger, Robert Hepple, Roman Rudakov,
-  Roshan Shariff, Russell Sim, Ryan Phillips, Rytis Paškauskas, Rudolf
-  Adamkovič, Sam Kleinman, Samuel Culpepper, Saša Janiška, Shreyas
-  Ragavan, Simon Pugnet, Stéphane Marks, Steve Downey, Tassilo Horn,
-  Thanos Apollo, Thibaut Verron, Thomas Heartman, Togan Muftuoglu,
-  Tony Zorman, Trey Merkley, Tomasz Hołubowicz, Toon Claes, Uri Sharf,
-  Utkarsh Singh, Vincent Foley, Zoltan Kiraly. As well as users: Ben,
-  CsBigDataHub1, Emacs Contrib, Eugene, Fourchaux, Fredrik, Moesasji,
-  Nick, Summer Emacs, TheBlob42, TitusMu, Trey, bepolymathe,
-  bit9tream, bangedorrunt, case-lambda, chainedghost, derek-upham,
-  doolio, fleimgruber, gitrj95, iSeeU, jixiuf, ltmsyvag, okamsn,
-  pedro-nonfree, pRot0ta1p, realazy, shimeike, shipmints, soaringbird,
-  tumashu, wakamenod.
+  Morten Kjeldgaard, Murilo Pereira, Nicky van Foreest, Nicolas De
+  Jaeghere, Nicolas Semrau, Olaf Meeuwissen, Oliver Epper, Pablo
+  Stafforini, Paul Poloskov, Pengji Zhang, Pete Kazmier, Peter Wu,
+  Philip Kaludercic, Pierre Téchoueyres, Pranshu Sharma, Przemysław
+  Kryger, Robert Hepple, Roman Rudakov, Roshan Shariff, Russell Sim,
+  Ryan Phillips, Rytis Paškauskas, Rudolf Adamkovič, Sam Kleinman,
+  Samuel Culpepper, Saša Janiška, Shreyas Ragavan, Simon Pugnet,
+  Stéphane Marks, Steve Downey, Tassilo Horn, Thanos Apollo, Thibaut
+  Verron, Thomas Heartman, Togan Muftuoglu, Tony Zorman, Trey Merkley,
+  Tomasz Hołubowicz, Toon Claes, Troy Brown, Uri Sharf, Utkarsh Singh,
+  Vincent Foley, Zoltan Kiraly. As well as users: Ben, CsBigDataHub1,
+  Emacs Contrib, Eugene, Fourchaux, Fredrik, Moesasji, Nick, Summer
+  Emacs, TheBlob42, TitusMu, Trey, aikrahguzar, baconabo,
+  bangedorrunt, bepolymathe, bit9tream, case-lambda, chainedghost,
+  derek-upham, doolio, fleimgruber, gitrj95, iSeeU, jixiuf, ltmsyvag,
+  okamsn, pedro-nonfree, pRot0ta1p, realazy, shimeike, shipmints,
+  soaringbird, tumashu, wakamenod.
 
 + Packaging :: Basil L.{{{space()}}} Contovounesios, Eli Zaretskii,
   Glenn Morris, Mauro Aranda, Richard Stallman, Stefan Kangas (core
