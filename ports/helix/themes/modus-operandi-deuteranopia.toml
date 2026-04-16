@@ -55,14 +55,14 @@
 "ui.background.separator" = { fg = "#595959" }
 "ui.linenr" = { fg = "#595959" }
 "ui.linenr.selected" = { fg = "#000000", bg = "#f2f2f2" }
-"ui.statusline" = { fg = "#0f0f0f", bg = "#e0e0e0" }
+"ui.statusline" = { fg = "#000000", bg = "#e0e0e0" }
 "ui.statusline.inactive" = { fg = "#585858", bg = "#f2f2f2" }
 "ui.statusline.normal" = { fg = "#3548cf" }
 "ui.statusline.insert" = { fg = "#316500" }
 "ui.statusline.select" = { fg = "#8f0075" }
 "ui.statusline.separator" = { fg = "#595959" }
 "ui.bufferline" = { bg = "#e0e0e0" }
-"ui.bufferline.active" = { bg = "#ffffff", fg = "#0f0f0f" }
+"ui.bufferline.active" = { bg = "#ffffff", fg = "#000000" }
 "ui.bufferline.background" = { bg = "#e0e0e0" }
 "ui.popup" = { fg = "#000000", bg = "#f2f2f2" }
 "ui.popup.info" = { fg = "#000000", bg = "#ffffff" }
