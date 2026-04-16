@@ -649,6 +649,8 @@ represents."
 
 (defconst modus-themes-common-palette-mappings
   '((fringe bg-dim)
+    (fg-region fg-main)
+    (fg-mode-line-active fg-main)
 
     ;; Button mappings
 
@@ -909,14 +911,13 @@ represents."
      ;; Special purpose
 
      (bg-completion       "#c0deff")
+     (bg-popup            "#f3f3f3")
      (bg-hover            "#b2e4dc")
      (bg-hover-secondary  "#f5d0a0")
      (bg-hl-line          "#dae5ec")
      (bg-region           "#bdbdbd")
-     (fg-region           "#000000")
 
      (bg-mode-line-active        "#c8c8c8")
-     (fg-mode-line-active        "#000000")
      (border-mode-line-active    "#5a5a5a")
      (bg-mode-line-inactive      "#e6e6e6")
      (fg-mode-line-inactive      "#585858")
@@ -1068,7 +1069,6 @@ represents."
      (fg-prompt cyan-cooler)
 
      ;; Prose mappings
-
 
      (fg-prose-code cyan-cooler)
      (fg-prose-macro magenta-cooler)
@@ -1238,14 +1238,13 @@ exists in the palette and is associated with a HEX-VALUE.")
      ;; Special purpose
 
      (bg-completion       "#f0c1cf")
+     (bg-popup            "#f6eddd")
      (bg-hover            "#b2e4dc")
      (bg-hover-secondary  "#dfe09f")
      (bg-hl-line          "#f1d5d0")
      (bg-region           "#c2bcb5")
-     (fg-region           "#000000")
 
      (bg-mode-line-active        "#cab9b2")
-     (fg-mode-line-active        "#000000")
      (border-mode-line-active    "#545454")
      (bg-mode-line-inactive      "#dfd9cf")
      (fg-mode-line-inactive      "#585858")
@@ -1565,14 +1564,13 @@ exists in the palette and is associated with a HEX-VALUE.")
      ;; Special purpose
 
      (bg-completion       "#c0deff")
+     (bg-popup            "#f3f3f3")
      (bg-hover            "#b2e4dc")
      (bg-hover-secondary  "#e5d7a0")
      (bg-hl-line          "#dae5ec")
      (bg-region           "#bdbdbd")
-     (fg-region           "#000000")
 
      (bg-mode-line-active        "#d0d6ff")
-     (fg-mode-line-active        "#0f0f0f")
      (border-mode-line-active    "#4f4f74")
      (bg-mode-line-inactive      "#e6e6e6")
      (fg-mode-line-inactive      "#585858")
@@ -1894,14 +1892,13 @@ exists in the palette and is associated with a HEX-VALUE.")
      ;; Special purpose
 
      (bg-completion       "#afdfef")
+     (bg-popup            "#f3f3f3")
      (bg-hover            "#ffafbc")
      (bg-hover-secondary  "#abdfdd")
      (bg-hl-line          "#dfeaec")
      (bg-region           "#bdbdbd")
-     (fg-region           "#000000")
 
      (bg-mode-line-active        "#afe0f2")
-     (fg-mode-line-active        "#0f0f0f")
      (border-mode-line-active    "#2f4f44")
      (bg-mode-line-inactive      "#e6e6e6")
      (fg-mode-line-inactive      "#585858")
@@ -2221,14 +2218,13 @@ exists in the palette and is associated with a HEX-VALUE.")
      ;; Special purpose
 
      (bg-completion       "#2f447f")
+     (bg-popup            "#0c0c0c")
      (bg-hover            "#45605e")
      (bg-hover-secondary  "#654a39")
      (bg-hl-line          "#2f3849")
      (bg-region           "#5a5a5a")
-     (fg-region           "#ffffff")
 
      (bg-mode-line-active        "#505050")
-     (fg-mode-line-active        "#ffffff")
      (border-mode-line-active    "#959595")
      (bg-mode-line-inactive      "#2d2d2d")
      (fg-mode-line-inactive      "#969696")
@@ -2548,14 +2544,13 @@ exists in the palette and is associated with a HEX-VALUE.")
      ;; Special purpose
 
      (bg-completion       "#483d8a")
+     (bg-popup            "#14162c")
      (bg-hover            "#45605e")
      (bg-hover-secondary  "#64404f")
      (bg-hl-line          "#303a6f")
      (bg-region           "#555a66")
-     (fg-region           "#ffffff")
 
      (bg-mode-line-active        "#484d67")
-     (fg-mode-line-active        "#ffffff")
      (border-mode-line-active    "#979797")
      (bg-mode-line-inactive      "#292d48")
      (fg-mode-line-inactive      "#969696")
@@ -2875,14 +2870,13 @@ exists in the palette and is associated with a HEX-VALUE.")
      ;; Special purpose
 
      (bg-completion       "#2f447f")
+     (bg-popup            "#0c0c0c")
      (bg-hover            "#45605e")
      (bg-hover-secondary  "#604c30")
      (bg-hl-line          "#2f3849")
      (bg-region           "#5a5a5a")
-     (fg-region           "#ffffff")
 
      (bg-mode-line-active        "#2a2a6a")
-     (fg-mode-line-active        "#f0f0f0")
      (border-mode-line-active    "#8080a7")
      (bg-mode-line-inactive      "#2d2d2d")
      (fg-mode-line-inactive      "#969696")
@@ -3202,14 +3196,13 @@ exists in the palette and is associated with a HEX-VALUE.")
      ;; Special purpose
 
      (bg-completion       "#004253")
+     (bg-popup            "#0c0c0c")
      (bg-hover            "#8e3e3b")
      (bg-hover-secondary  "#204853")
      (bg-hl-line          "#2f3849")
      (bg-region           "#5a5a5a")
-     (fg-region           "#ffffff")
 
      (bg-mode-line-active        "#003c52")
-     (fg-mode-line-active        "#f0f0f0")
      (border-mode-line-active    "#5f8fb4")
      (bg-mode-line-inactive      "#2d2d2d")
      (fg-mode-line-inactive      "#969696")
@@ -3748,6 +3741,18 @@ Info node `(modus-themes) Option for palette overrides'.")
 
 ;;;; Helper functions for theme setup
 
+(defun modus-themes--hex-to-rgb (hex-color)
+  "Convert HEX-COLOR to a list of normalized RGB values.
+Use `color-values-from-color-spec' (a C built-in since Emacs 28.1)
+instead of `color-name-to-rgb' to avoid dependence on a display
+connection.  This matters when loading a theme during early init on
+GUI Emacs, where `color-values' returns nil before the display is
+ready (per <https://github.com/protesilaos/modus-themes/issues/198>)."
+  (mapcar
+   (lambda (x)
+     (/ x 65535.0))
+   (color-values-from-color-spec hex-color)))
+
 ;; This is the WCAG formula: https://www.w3.org/TR/WCAG20-TECHS/G18.html
 (defun modus-themes--wcag-contribution (channel weight)
   "Return the CHANNEL contribution to overall luminance given WEIGHT."
@@ -3759,20 +3764,46 @@ Info node `(modus-themes) Option for palette overrides'.")
 (defun modus-themes-wcag-formula (hex-color)
   "Get WCAG value of color value HEX-COLOR.
 The value is defined in hexadecimal RGB notation, such #123456."
-  (let ((channels (color-name-to-rgb hex-color))
-        (weights '(0.2126 0.7152 0.0722))
-        (contribution nil))
-    (while channels
-      (push (modus-themes--wcag-contribution (pop channels) (pop weights)) contribution))
-    (apply #'+ contribution)))
+  (when-let* ((channels (modus-themes--hex-to-rgb hex-color)))
+    (let ((weights '(0.2126 0.7152 0.0722))
+          (contribution nil))
+      (while channels
+        (push (modus-themes--wcag-contribution (pop channels) (pop weights)) contribution))
+      (apply #'+ contribution))))
 
 ;;;###autoload
 (defun modus-themes-contrast (hex-color-1 hex-color-2)
   "Measure WCAG contrast ratio between HEX-COLOR-1 and HEX-COLOR-2.
 HEX-COLOR-1 and HEX-COLOR-2 are color values written in hexadecimal RGB."
-  (let ((ct (/ (+ (modus-themes-wcag-formula hex-color-1) 0.05)
-               (+ (modus-themes-wcag-formula hex-color-2) 0.05))))
-    (max ct (/ ct))))
+  (if-let* ((hex1-weight (modus-themes-wcag-formula hex-color-1))
+            (hex2-weight (modus-themes-wcag-formula hex-color-2)))
+      (let ((contrast (/ (+ hex1-weight 0.05) (+ hex2-weight 0.05))))
+        (max contrast (/ contrast)))
+    (error "Both `%s' and `%s' must be valid hexadecimal RGB colors" hex-color-1 hex-color-2)))
+
+(defun modus-themes--color-eight-to-six-digits (hex-color)
+  "Reduce representation of hexadecimal RGB HEX-COLOR from eight to six digits.
+If HEX-COLOR is three or six digits, then return it as is."
+  (let ((color-no-hash (substring hex-color 1)))
+    (if (memq (length color-no-hash) '(3 6))
+        hex-color
+      (let* ((triplets (seq-split color-no-hash 4))
+             (triplets-shortened (mapcar
+                                  (lambda (string)
+                                    (substring string 0 2))
+                                  triplets)))
+        (concat "#" (string-join triplets-shortened))))))
+
+(defun modus-themes-adjust-value (hex-rgb percentage)
+  "Adjust value of HEX-RGB colour by PERCENTAGE."
+  (if-let* ((rgb (modus-themes--hex-to-rgb hex-rgb)))
+      (pcase-let* ((`(,r ,g ,b) rgb)
+                   (fn (if (color-dark-p (list r g b))
+                           #'color-lighten-name
+                         #'color-darken-name))
+                   (value (funcall fn hex-rgb percentage)))
+        (modus-themes--color-eight-to-six-digits value))
+    (error "The `%s' has to be a valid hexadecimal RGB color" hex-rgb)))
 
 (defvar modus-themes-registered-items nil
   "List of defined themes.
@@ -3917,10 +3948,18 @@ If THEME is unknown, return nil.  Else return (append OVERRIDES USER CORE)."
 
 (defun modus-themes--disable-themes (themes)
   "Disable THEMES per `modus-themes-disable-other-themes'."
-  (mapc #'disable-theme
-        (if modus-themes-disable-other-themes
-            themes
-          (seq-filter #'modus-themes--modus-theme-p themes))))
+  (mapc
+   #'disable-theme
+   (if modus-themes-disable-other-themes
+       themes
+     (seq-filter #'modus-themes--modus-theme-p themes))))
+
+(defun modus-themes--get-color-schemes ()
+  "Return `custom-enabled-themes' of :kind `color-scheme'."
+  (seq-filter
+   (lambda (theme)
+     (eq (plist-get (get theme 'theme-properties) :kind) 'color-scheme))
+   custom-enabled-themes))
 
 (defun modus-themes-load-theme (theme &optional hook)
   "Load THEME while disabling other themes.
@@ -3933,11 +3972,16 @@ after loading the THEME.  If HOOK, then call that instead.
 
 Return THEME."
   (load-theme theme :no-confirm)
-  (modus-themes--disable-themes (remq theme custom-enabled-themes))
+  (modus-themes--disable-themes (remq theme (modus-themes--get-color-schemes)))
   (run-hooks (or hook 'modus-themes-after-load-theme-hook))
   theme)
 
-(defun modus-themes--retrieve-palette-value (color palette)
+(define-obsolete-function-alias
+  'modus-themes--retrieve-palette-value
+  'modus-themes-retrieve-palette-value
+  "5.3.0")
+
+(defun modus-themes-retrieve-palette-value (color palette)
   "Return COLOR from PALETTE.
 Use recursion until COLOR is retrieved as a string.  Refrain from
 doing so if the value of COLOR is not a key in the PALETTE.
@@ -3953,7 +3997,7 @@ This function is used in the macro `modus-themes-theme'"
       value)
      ((and (symbolp value)
            value)
-      (modus-themes--retrieve-palette-value value palette))
+      (modus-themes-retrieve-palette-value value palette))
      (t
       'unspecified))))
 
@@ -3979,7 +4023,7 @@ symbol, which is safe when used as a face attribute's value."
   (when theme
     (modus-themes-activate theme))
   (if-let* ((palette (modus-themes-get-theme-palette theme with-overrides :with-user-palette))
-            (value (modus-themes--retrieve-palette-value color palette)))
+            (value (modus-themes-retrieve-palette-value color palette)))
       value
     'unspecified))
 
@@ -4093,10 +4137,9 @@ Disable other themes per `modus-themes-disable-other-themes'."
   (interactive)
   (if-let* ((themes (modus-themes-known-p modus-themes-to-toggle))
             (one (car themes))
-            (two (cadr themes))
-            (current (modus-themes-get-current-theme)))
-      (modus-themes-load-theme (if (eq current one) two one))
-    (modus-themes-load-theme (modus-themes-select-prompt "No valid theme to toggle; select other"))))
+            (two (cadr themes)))
+      (modus-themes-load-theme (if (eq (modus-themes-get-current-theme) one) two one))
+    (modus-themes-load-theme (modus-themes-select-prompt "No two valid themes to toggle; select other"))))
 
 ;;;;; Rotate through a list of themes
 
@@ -4651,7 +4694,7 @@ If COLOR is unspecified, then return :box unspecified."
 ;;;;; basic and/or ungrouped styles
     `(abbrev-table-name ((,c :inherit modus-themes-heading-1)))
     `(appt-notification ((,c :inherit modus-themes-bold :foreground ,modeline-err)))
-    `(blink-matching-paren-offscreen ((,c :background ,bg-paren-match)))
+    `(blink-matching-paren-offscreen ((,c :background ,bg-paren-match :foreground ,fg-paren-match :underline ,underline-paren-match)))
     `(buffer-menu-buffer ((,c :foreground ,name)))
     `(child-frame-border ((,c :background ,border)))
     `(comint-highlight-input ((,c :inherit modus-themes-bold)))
@@ -4796,7 +4839,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(font-latex-doctex-preprocessor-face ((,c :foreground ,preprocessor)))
     `(font-latex-italic-face ((,c :inherit italic)))
     `(font-latex-math-face ((,c :foreground ,constant)))
-    `(font-latex-script-char-face ((,c :inherit modus-themes-bold :foreground ,builtin)))
+    `(font-latex-script-char-face ((,c :inherit modus-themes-bold :foreground ,keybind)))
     `(font-latex-sectioning-5-face ((,c :inherit modus-themes-bold :foreground ,fg-alt)))
     `(font-latex-sedate-face ((,c :inherit modus-themes-bold :foreground ,keyword)))
     `(font-latex-slide-title-face ((,c :inherit modus-themes-heading-1)))
@@ -4835,8 +4878,8 @@ If COLOR is unspecified, then return :box unspecified."
     `(binder-sidebar-tags ((,c :foreground ,variable)))
 ;;;;; breadcrumb
     `(breadcrumb-face ((,c :foreground ,fg-alt)))
-    `(breadcrumb-imenu-leaf-face ((,c :inherit modus-themes-bold :foreground ,modeline-info))) ; same as `which-func'
-    `(breadcrumb-project-leaf-face ((,c :inherit modus-themes-bold)))
+    `(breadcrumb-imenu-leaf-face ((,c :inherit (modus-themes-bold breadcrumb-face) :foreground ,modeline-info))) ; same as `which-func'
+    `(breadcrumb-project-leaf-face ((,c :inherit (modus-themes-bold breadcrumb-face))))
 ;;;;; bongo
     `(bongo-album-title (( )))
     `(bongo-artist ((,c :foreground ,accent-0)))
@@ -4951,13 +4994,13 @@ If COLOR is unspecified, then return :box unspecified."
     `(column-enforce-face ((,c :background ,bg-prominent-err :foreground ,fg-prominent-err)))
 ;;;;; company-mode
     `(company-echo-common ((,c :inherit modus-themes-completion-match-0)))
-    `(company-preview ((,c :background ,bg-dim :foreground ,fg-dim)))
+    `(company-preview ((,c :foreground ,fg-dim)))
     `(company-preview-common ((,c :inherit modus-themes-completion-match-0)))
     `(company-preview-search ((,c :background ,bg-yellow-intense)))
     `(company-scrollbar-bg ((,c :background ,bg-active)))
     `(company-scrollbar-fg ((,c :background ,fg-main)))
     `(company-template-field ((,c :background ,bg-active)))
-    `(company-tooltip ((,c :inherit modus-themes-fixed-pitch :background ,bg-dim)))
+    `(company-tooltip ((,c :inherit modus-themes-fixed-pitch :background ,bg-popup)))
     `(company-tooltip-annotation ((,c :inherit modus-themes-slant :foreground ,docstring)))
     `(company-tooltip-common ((,c :inherit modus-themes-completion-match-0)))
     `(company-tooltip-deprecated ((,c :inherit modus-themes-fixed-pitch :background ,bg-dim :strike-through t)))
@@ -5005,7 +5048,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(corfu-current ((,c :inherit modus-themes-completion-selected)))
     `(corfu-bar ((,c :background ,fg-dim)))
     `(corfu-border ((,c :background ,bg-active)))
-    `(corfu-default ((,c :inherit modus-themes-fixed-pitch :background ,bg-dim)))
+    `(corfu-default ((,c :inherit modus-themes-fixed-pitch :background ,bg-popup)))
 ;;;;; corfu-candidate-overlay
     `(corfu-candidate-overlay-face ((,c :foreground ,fg-dim)))
 ;;;;; corfu-quick
@@ -5807,6 +5850,9 @@ If COLOR is unspecified, then return :box unspecified."
     `(info-colors-ref-item-type ((,c :inherit modus-themes-bold :foreground ,type)))
     `(info-colors-ref-item-user-option ((,c :foreground ,variable)))
     `(info-colors-ref-item-variable ((,c :foreground ,variable)))
+;;;;; institution-calendar
+    `(institution-calendar-term-indicator-regular-week ((,c :background ,bg-dim :foreground ,fg-alt)))
+    `(institution-calendar-term-indicator-extra-week ((,c :foreground ,fg-dim)))
 ;;;;; ioccur
     `(ioccur-cursor ((,c :foreground ,fg-main)))
     `(ioccur-invalid-regexp ((,c :foreground ,err)))
@@ -5930,14 +5976,20 @@ If COLOR is unspecified, then return :box unspecified."
     `(lin-cyan ((,c :background ,bg-cyan-subtle)))
     `(lin-green ((,c :background ,bg-green-subtle)))
     `(lin-magenta ((,c :background ,bg-magenta-subtle)))
+    `(lin-purple ((,c :background ,bg-lavender)))
     `(lin-red ((,c :background ,bg-red-subtle)))
+    `(lin-orange ((,c :background ,bg-ochre)))
     `(lin-yellow ((,c :background ,bg-yellow-subtle)))
+    `(lin-slate ((,c :background ,bg-inactive)))
     `(lin-blue-override-fg ((,c :background ,bg-blue-subtle :foreground ,fg-main)))
     `(lin-cyan-override-fg ((,c :background ,bg-cyan-subtle :foreground ,fg-main)))
     `(lin-green-override-fg ((,c :background ,bg-green-subtle :foreground ,fg-main)))
     `(lin-magenta-override-fg ((,c :background ,bg-magenta-subtle :foreground ,fg-main)))
+    `(lin-purple-override-fg ((,c :background ,bg-lavender :foreground ,fg-main)))
     `(lin-red-override-fg ((,c :background ,bg-red-subtle :foreground ,fg-main)))
+    `(lin-orange-override-fg ((,c :background ,bg-ochre :foreground ,fg-main)))
     `(lin-yellow-override-fg ((,c :background ,bg-yellow-subtle :foreground ,fg-main)))
+    `(lin-slate-override-fg ((,c :background ,bg-inactive :foreground ,fg-main)))
 ;;;;; line numbers (display-line-numbers-mode and global variant)
     ;; Here we cannot inherit `modus-themes-fixed-pitch'.  We need to
     ;; fall back to `default' otherwise line numbers do not scale when
@@ -6047,7 +6099,6 @@ If COLOR is unspecified, then return :box unspecified."
     `(magit-refname-pullreq ((,c :foreground ,fg-dim)))
     `(magit-refname-stash ((,c :foreground ,fg-dim)))
     `(magit-refname-wip ((,c :foreground ,fg-dim)))
-    `(magit-section ((,c :background ,bg-dim :foreground ,fg-main)))
     `(magit-section-heading ((,c :inherit modus-themes-bold :foreground ,fg-alt)))
     `(magit-section-heading-selection ((,c :inherit modus-themes-bold :background ,bg-hover-secondary)))
     `(magit-section-highlight ((,c :background ,bg-dim)))
@@ -6262,7 +6313,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(mu4e-view-body-face (( )))
     `(mu4e-warning-face ((,c :foreground ,warning)))
 ;;;;; multiple-cursors
-    `(mc/cursor-bar-face ((,c :height 1 :foreground ,fg-main :background ,bg-main)))
+    `(mc/cursor-bar-face ((,c :height 1 :background ,cursor)))
     `(mc/cursor-face ((,c :inverse-video t)))
     `(mc/region-face ((,c :background ,bg-region :foreground ,fg-region)))
 ;;;;; nerd-icons
@@ -6599,7 +6650,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(proced-uninterruptible-sleep-status-code ((,c :foreground ,err)))
     `(proced-user (( )))
 ;;;;; popup
-    `(popup-face ((,c :background ,bg-inactive :foreground ,fg-main)))
+    `(popup-face ((,c :background ,bg-popup :foreground ,fg-main)))
     `(popup-isearch-match ((,c :background ,bg-search-current :foreground ,fg-search-current)))
     `(popup-menu-mouse-face ((,c :background ,bg-hover :foreground ,fg-main)))
     `(popup-menu-selection-face ((,c :inherit modus-themes-completion-selected)))
@@ -7070,6 +7121,12 @@ If COLOR is unspecified, then return :box unspecified."
     `(typescript-jsdoc-tag ((,c :inherit modus-themes-slant :foreground ,builtin)))
     `(typescript-jsdoc-type ((,c :inherit modus-themes-slant :foreground ,type)))
     `(typescript-jsdoc-value ((,c :inherit modus-themes-slant :foreground ,string)))
+;;;;; typst-ts-mode
+    `(typst-ts-error-face ((,c :foreground ,err)))
+    `(typst-ts-markup-label-face ((,c :inherit ,(if modus-themes-mixed-fonts '(fixed-pitch default) 'default) :foreground ,builtin)))
+    `(typst-ts-markup-linebreak-face ((,c :foreground ,warning)))
+    `(typst-ts-markup-reference-face ((,c :background ,bg-link-symbolic :foreground ,fg-link-symbolic :underline ,underline-link-symbolic)))
+    `(typst-ts-script-char-face ((,c :inherit modus-themes-bold :foreground ,keybind)))
 ;;;;; undo-tree
     `(undo-tree-visualizer-active-branch-face ((,c :inherit modus-themes-bold :foreground ,fg-main)))
     `(undo-tree-visualizer-current-face ((,c :foreground ,err)))
@@ -7457,7 +7514,7 @@ Consult the manual for details on how to build a theme on top of the
                ,@(mapcar
                   (lambda (entry)
                     (let ((name (car entry)))
-                      (list name `(modus-themes--retrieve-palette-value ',name palette))))
+                      (list name `(modus-themes-retrieve-palette-value ',name palette))))
                   palette))
           (custom-theme-set-faces
            ',name
@@ -7466,7 +7523,7 @@ Consult the manual for details on how to build a theme on top of the
            ',name
            ,@variables))
        :lexical))
-    (unless theme-exists-p
+    (unless (featurep theme-exists-p)
       (provide-theme name))))
 
 ;;;; Use theme colors
@@ -7602,28 +7659,16 @@ For instance:
       (push (+ (* (nth i a) alpha) (* (nth i b) (- 1 alpha))) blend))
     (nreverse blend)))
 
-(defun modus-themes--color-six-digits (hex-color)
-  "Reduce representation of hexadecimal RGB HEX-COLOR to six digits."
-  (let ((color-no-hash (substring hex-color 1)))
-    (if (= (length color-no-hash) 6)
-        hex-color
-      (let* ((triplets (seq-split color-no-hash 4))
-             (triplets-shortened (mapcar
-                                  (lambda (string)
-                                    (substring string 0 2))
-                                  triplets)))
-        (concat "#" (string-join triplets-shortened))))))
-
 (defun modus-themes-generate-color-blend (hex-color blended-with-hex alpha)
   "Return hexadecimal RGB of HEX-COLOR with BLENDED-WITH-HEX given ALPHA.
 BLENDED-WITH-HEX is commensurate with COLOR.  ALPHA is between 0.0 and 1.0,
 inclusive."
   (let* ((blend-rgb (modus-themes-blend
-                     (color-name-to-rgb hex-color)
-                     (color-name-to-rgb blended-with-hex)
+                     (modus-themes--hex-to-rgb hex-color)
+                     (modus-themes--hex-to-rgb blended-with-hex)
                      alpha))
          (blend-hex (apply #'color-rgb-to-hex blend-rgb)))
-    (modus-themes--color-six-digits blend-hex)))
+    (modus-themes--color-eight-to-six-digits blend-hex)))
 
 (defun modus-themes-generate-color-warmer (color alpha)
   "Return warmer COLOR by ALPHA, per `modus-themes-generate-color-blend'."
@@ -7636,20 +7681,13 @@ inclusive."
 (defun modus-themes-generate-gradient (color percent)
   "Adjust value of COLOR by PERCENT."
   (let ((gradient (color-lighten-name color percent)))
-    (modus-themes--color-six-digits gradient)))
+    (modus-themes--color-eight-to-six-digits gradient)))
 
-;; NOTE 2025-11-25: I used to rely on `color-distance', thinking that
-;; it would do the right thing here:
-;;
-;;     (> (color-distance color "#ff0000") (color-distance color "#0000ff"))
-;;
-;; But my understanding of "warm" versus "cool" is simple, so better
-;; do it my way.
 (defun modus-themes-color-warm-p (color)
   "Return non-nil if COLOR is warm.
 A warm color has more contribution from the red channel of light than
 the blue one."
-  (pcase-let ((`(,r ,_ ,b) (color-name-to-rgb color)))
+  (pcase-let ((`(,r ,_ ,b) (modus-themes--hex-to-rgb color)))
     (> r b)))
 
 (defun modus-themes-color-is-warm-or-cool-p (color)

@@ -88,3 +88,16 @@ The manual has a section about building on top of Modus. My
   ;; `modus-themes-load-random-light').
   (modus-themes-load-theme 'modus-operandi))
 ```
+
+## Projects inspired by the Modus themes
+
+This is not an exhaustive list. You are welcome to add your project
+here.
+
+- `hugo-modus` by Yejun Su is a theme for the Hugo static site
+  generator: <https://github.com/goofansu/hugo-modus>. It uses colours
+  from the Modus themes.
+- `modus-themes.nvim` by Miika Nissi and others is a port for NeoVim:
+  <https://github.com/miikanissi/modus-themes.nvim>.
+- `zed-modus-themes` by Vitaly Slobodin is a port for the Zed editor:
+  <https://github.com/vitallium/zed-modus-themes>.
