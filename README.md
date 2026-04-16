@@ -75,6 +75,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) to add new ports—no-code templates supp
 All credit for the Modus themes design goes to [Protesilaos Stavrou](https://protesilaos.com/about/). This project ports his work to additional tools.
 
 - Upstream repository: [protesilaos/modus-themes](https://github.com/protesilaos/modus-themes)
+- Related project: [protesilaos/modus-themes-exporter](https://github.com/protesilaos/modus-themes-exporter) — an Emacs package that exports Modus themes to other applications, currently focused on `xterm`/`urxvt`
 - Manual: [Modus Themes Manual](https://protesilaos.com/emacs/modus-themes)
 
 ## License
