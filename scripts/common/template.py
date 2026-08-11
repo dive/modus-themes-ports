@@ -4,9 +4,8 @@
 from __future__ import annotations
 
 import re
-from typing import Any
 
-TOKEN_RE = re.compile(r"\{(color|value|meta|rgb|rgba):([A-Za-z0-9_-]+)\}")
+TOKEN_RE = re.compile(r"\{(color|meta|rgb|rgba):([A-Za-z0-9_-]+)\}")
 
 
 def _theme_title(theme: str) -> str:
@@ -47,7 +46,6 @@ def _resolve_palette_value(palette: dict[str, str], key: str) -> str:
 def render_template(
     template: str,
     palette: dict[str, str],
-    mapping: dict[str, Any],
     theme_name: str,
 ) -> str:
     def replace(match):
@@ -61,10 +59,6 @@ def render_template(
                     f"Palette key '{key}' is unspecified and cannot be used in templates"
                 )
             return str(value)
-        if kind == "value":
-            if key not in mapping:
-                raise KeyError(f"Missing mapping key: {key}")
-            return str(mapping[key])
         if kind == "rgb":
             if key not in palette:
                 raise KeyError(f"Missing palette key: {key}")
@@ -103,14 +97,12 @@ _VALID_META_KEYS = {"theme", "theme_title", "appearance"}
 def validate_template(
     template: str,
     palette_keys: set[str],
-    mapping_keys: set[str],
 ) -> list[str]:
     """Validate that all template tokens reference valid keys.
 
     Args:
         template: The template string to validate.
         palette_keys: Set of valid palette key names.
-        mapping_keys: Set of valid mapping key names.
 
     Returns:
         A list of error messages (empty if valid).
@@ -127,9 +119,6 @@ def validate_template(
         if kind in {"color", "rgb", "rgba"}:
             if key not in palette_keys:
                 errors.append(f"Unknown palette key: {key}")
-        elif kind == "value":
-            if key not in mapping_keys:
-                errors.append(f"Unknown mapping key: {key}")
         elif kind == "meta":
             if key not in _VALID_META_KEYS:
                 errors.append(f"Unknown meta key: {key}")

@@ -23,10 +23,8 @@ from scripts.common import contrast as contrast_utils
 from scripts.common import io
 from scripts.common import paths
 from scripts.common import registry as registry_utils
-from scripts.common import render
 from scripts.common import template as template_utils
 from scripts.common import theme_ops
-from scripts.common import validate
 
 PALETTE_SOURCE = "https://protesilaos.com/emacs/modus-themes-colors"
 GENERATED_NOTICE_MARKERS = (
@@ -64,19 +62,6 @@ def resolve_path(repo_root: Path, value: str | None) -> Path | None:
 
 def tool_manifest(registry: dict[str, dict[str, Any]], tool: str) -> dict[str, Any]:
     return registry_utils.get_tool(registry, tool)
-
-
-def tool_spec(manifest: dict[str, Any]) -> Path | None:
-    return resolve_path(REPO_ROOT, manifest.get("spec_path"))
-
-
-def tool_mapping(manifest: dict[str, Any], override: str | None) -> Path:
-    if override:
-        return Path(override)
-    mapping_path = manifest.get("mapping_path")
-    if not mapping_path:
-        raise SystemExit("Error: mapping_path missing in manifest")
-    return resolve_path(REPO_ROOT, mapping_path)
 
 
 def tool_template(manifest: dict[str, Any]) -> Path | None:
@@ -226,13 +211,11 @@ def cmd_list(_args: argparse.Namespace) -> None:
 
 
 def render_with_template(
-    manifest: dict[str, Any],
     palette: dict[str, str],
-    mapping: dict[str, str],
     template_text: str,
     theme_name: str,
 ) -> str:
-    return template_utils.render_template(template_text, palette, mapping, theme_name)
+    return template_utils.render_template(template_text, palette, theme_name)
 
 
 def cmd_render(args: argparse.Namespace) -> None:
@@ -242,29 +225,13 @@ def cmd_render(args: argparse.Namespace) -> None:
 
     for tool in tools:
         manifest = tool_manifest(registry, tool)
-        spec = tool_spec(manifest)
-        mapping = tool_mapping(manifest, args.mapping)
         out_dir = tool_out_dir(manifest, args.out_dir)
-
-        if spec:
-            outputs = render.render_all(
-                palettes_dir(),
-                mapping,
-                out_dir,
-                spec,
-                theme=args.theme,
-                palette_overrides=palette_overrides,
-            )
-            for output in outputs:
-                print(f"Wrote {output}")
-            continue
 
         template_path = tool_template(manifest)
         if not template_path:
-            raise SystemExit(f"Error: no spec_path or template_path for {tool}")
+            raise SystemExit(f"Error: template_path missing for {tool}")
 
         template_text = template_path.read_text(encoding="utf-8")
-        mapping_data = io.load_mapping(str(mapping))
         extra = extra_templates(manifest)
         extra_written = set()
 
@@ -279,13 +246,13 @@ def cmd_render(args: argparse.Namespace) -> None:
             )
             if args.theme and theme_name != args.theme:
                 continue
-            content = render_with_template(manifest, palette, mapping_data, template_text, theme_name)
+            content = render_with_template(palette, template_text, theme_name)
             output_path = resolve_output_path(manifest, theme_name, args.out_dir)
             io.write_output(str(output_path), content)
             print(f"Wrote {output_path}")
             for entry in extra:
                 extra_text = entry["template_path"].read_text(encoding="utf-8")
-                extra_content = render_with_template(manifest, palette, mapping_data, extra_text, theme_name)
+                extra_content = render_with_template(palette, extra_text, theme_name)
                 if args.out_dir:
                     base_dir = output_path.parent
                     extra_path = base_dir / Path(entry["output_path_template"]).name
@@ -305,22 +272,10 @@ def cmd_validate(args: argparse.Namespace) -> None:
 
     for tool in tools:
         manifest = tool_manifest(registry, tool)
-        spec = tool_spec(manifest)
         themes_dir = tool_out_dir(manifest, args.themes_dir)
         required_keys = manifest.get("required_keys", [])
         validate_json = manifest.get("validate_json", False)
         required_fields = manifest.get("required_fields", [])
-
-        if spec:
-            validated, errors = validate.validate_all(themes_dir, spec, theme=args.theme)
-            for path, issues in errors:
-                print(f"Invalid theme: {path}")
-                for issue in issues:
-                    print(f"  {issue}")
-            if errors:
-                raise SystemExit(f"Validation failed for {len(errors)} theme(s).")
-            print(f"Validated {validated} theme(s).")
-            continue
 
         # Template-based validation (key presence)
         errors = []
@@ -369,7 +324,9 @@ def cmd_validate(args: argparse.Namespace) -> None:
                     if "palette =" not in text:
                         issues.append("Missing palette entries")
                 else:
-                    if not re.search(rf"^\s*{re.escape(key)}\s*=", text, re.MULTILINE):
+                    if not re.search(
+                        rf"^\s*{re.escape(key)}\s*(?:=|:)", text, re.MULTILINE
+                    ):
                         issues.append(f"Missing key: {key}")
             if issues:
                 errors.append((path, issues))
@@ -707,7 +664,7 @@ def cmd_sync_upstream(args: argparse.Namespace) -> None:
     lock_path = REPO_ROOT / "upstream.lock.json"
     lock_path.write_text(json.dumps(lock, indent=2) + "\n", encoding="utf-8")
     update_notice_provenance(lock)
-    cmd_render(argparse.Namespace(tool="all", mapping=None, out_dir=None, theme=None))
+    cmd_render(argparse.Namespace(tool="all", out_dir=None, theme=None))
 
 
 def cmd_doctor(_args: argparse.Namespace) -> None:
@@ -831,14 +788,7 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
             template_path = tool_template(manifest)
             if template_path and template_path.is_file():
                 template_text = template_path.read_text(encoding="utf-8")
-                mapping_path = manifest.get("mapping_path")
-                mapping_keys: set[str] = set()
-                if mapping_path:
-                    mapping = io.load_mapping(str(REPO_ROOT / mapping_path))
-                    mapping_keys = set(mapping.keys())
-                errors = template_utils.validate_template(
-                    template_text, palette_keys, mapping_keys
-                )
+                errors = template_utils.validate_template(template_text, palette_keys)
                 for error in errors:
                     issues.append(f"{tool}: {error}")
 
@@ -906,7 +856,6 @@ def build_parser() -> argparse.ArgumentParser:
 
     render_cmd = sub.add_parser("render")
     render_cmd.add_argument("--tool", required=True)
-    render_cmd.add_argument("--mapping")
     render_cmd.add_argument("--out-dir")
     render_cmd.add_argument("--theme")
     render_cmd.set_defaults(func=cmd_render)

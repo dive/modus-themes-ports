@@ -6,10 +6,10 @@ Short guide for adding ports and working on the project.
 
 ```sh
 # 1. Create port structure
-mkdir -p ports/mytool mappings/mytool
+mkdir -p ports/mytool
 
-# 2. Add manifest, mapping, and template
-#    See "Add a New Port (No-Code)" below for details
+# 2. Add a manifest and template
+#    See "Add a New Port" below for details
 
 # 3. Render and validate
 python3 scripts/modus.py render --tool mytool
@@ -43,33 +43,27 @@ Tools are discovered from `ports/*/*-port.json`.
 Key fields:
 - `tool`: tool name
 - `theme_dir_rel`: output directory for rendered themes
-- `mapping_path`: mapping JSON for the tool
-- `template_path`: template file for no-code ports
-- `template_format`: currently `mini`
+- `template_path`: template used to generate the port
 - `extra_templates`: extra rendered outputs (e.g., `tmtheme.xml`)
 - `required_keys`: used by validation for template ports
-- `spec_path`: optional Python spec for advanced ports
 - `install_targets`: suggested install locations
 - `config_locations`: suggested config locations
 - `extra_install_dirs`: additional install sources copied under a subdirectory
 - `validate_json`: enable JSON validation for template outputs
 - `required_fields`: dot-paths required in JSON outputs (e.g., `themes.0.style`)
 
-## Add a New Port (No-Code)
+## Add a New Port
 1. Create folder:
    - `ports/<tool>/`
-2. Add manifest:
+2. Add a manifest:
    - `ports/<tool>/<tool>-port.json`
-3. Add mapping:
-   - `mappings/<tool>/default.json`
-4. Add template:
+3. Add a template:
    - `ports/<tool>/theme.tmpl`
-5. Render:
+4. Render:
    - `python3 scripts/modus.py render --tool <tool>`
 
 Template tokens:
 - `{color:<palette-key>}` inserts a palette color
-- `{value:<mapping-key>}` inserts a mapping value
 - `{rgb:<palette-key>}` inserts a palette color as `R;G;B`
 - `{rgba:<palette-key>}` inserts a palette color as `r g b a` (0-1 floats)
 - `{meta:theme}` inserts the palette name
@@ -78,13 +72,6 @@ Template tokens:
 
 Terminal palettes:
 - For ANSI 0–15 slots, map to `fg-term-*` and `fg-term-*-bright` (avoid UI colors like `bg-dim`/`fg-dim`).
-
-## Add a New Port (Spec-Based)
-If templates are insufficient, add:
-- `scripts/tools/<tool>/spec.py` implementing:
-  - `render(theme_name, palette, mapping) -> str`
-  - `validate(text) -> list[str]`
-Then add `"spec_path": "scripts/tools/<tool>/spec.py"` to the manifest.
 
 ## Naming
 All theme filenames are kebab-case with no extension (e.g. `modus-operandi`).
@@ -111,7 +98,7 @@ Recommended checks:
 ## Licensing Generated Ports
 
 - Keep extracted Modus palette data under CC0-1.0.
-- Keep project-authored mappings, templates, scripts, and rendered ports under MIT.
+- Keep project-authored templates, scripts, and rendered ports under MIT.
 - Add port-wide palette choices to `mappings/palette/default.json`; do not import upstream Emacs presets.
 - Preserve generated SPDX and palette provenance notices in formats that support comments.
 - Include `ports/NOTICE` and `LICENSES/MIT.txt` when distributing formats that cannot carry comments or license metadata.

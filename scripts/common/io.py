@@ -3,24 +3,9 @@
 
 from __future__ import annotations
 
-import importlib.util
 import json
 from pathlib import Path
-from types import ModuleType
 from typing import Any
-
-
-def load_spec(path: str) -> ModuleType:
-    """Load a Python spec module from the given path."""
-    spec_path = Path(path)
-    if not spec_path.is_file():
-        raise FileNotFoundError(f"Spec not found: {spec_path}")
-    spec = importlib.util.spec_from_file_location("tool_spec", str(spec_path))
-    if spec is None or spec.loader is None:
-        raise RuntimeError(f"Failed to load spec: {spec_path}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
 
 
 def load_mapping(path: str) -> dict[str, Any]:

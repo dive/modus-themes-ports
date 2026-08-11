@@ -4,9 +4,7 @@
   "theme_entry": "flavor.toml",
   "theme_dir_rel": "ports/yazi/flavors",
   "output_path_template": "ports/yazi/flavors/{theme}.yazi/flavor.toml",
-  "mapping_path": "mappings/yazi/default.json",
   "template_path": "ports/yazi/flavor.tmpl",
-  "template_format": "mini",
   "extra_templates": [
     {
       "template_path": "ports/shared/tmtheme.tmpl",

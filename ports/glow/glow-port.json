@@ -3,9 +3,7 @@
   "theme_dir_rel": "ports/glamour/themes",
   "theme_ext": ".json",
   "output_path_template": "ports/glamour/themes/{theme}.json",
-  "mapping_path": "mappings/glamour/default.json",
   "template_path": "ports/glamour/theme.tmpl",
-  "template_format": "mini",
   "validate_json": true,
   "required_fields": [
     "document",

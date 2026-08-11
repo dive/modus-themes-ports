@@ -3,9 +3,7 @@
   "theme_dir_rel": "ports/tmux/themes",
   "theme_ext": ".conf",
   "output_path_template": "ports/tmux/themes/{theme}.conf",
-  "mapping_path": "mappings/tmux/default.json",
   "template_path": "ports/tmux/theme.tmpl",
-  "template_format": "mini",
   "required_keys": [],
   "install_targets": [
     "$XDG_CONFIG_HOME/tmux/themes",
