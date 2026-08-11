@@ -3,6 +3,7 @@
   "theme_dir_rel": "ports/ls-colors/themes",
   "output_path_template": "ports/ls-colors/themes/{theme}",
   "template_path": "ports/ls-colors/theme.tmpl",
+  "notice_style": "hash",
   "extra_templates": [
     {
       "template_path": "ports/ls-colors/lscolors-bsd.tmpl",

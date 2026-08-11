@@ -27,11 +27,6 @@ from scripts.common import template as template_utils
 from scripts.common import theme_ops
 
 PALETTE_SOURCE = "https://protesilaos.com/emacs/modus-themes-colors"
-GENERATED_NOTICE_MARKERS = (
-    "SPDX-License-Identifier: MIT",
-    "Modus palette data: CC0-1.0",
-    PALETTE_SOURCE,
-)
 
 
 def palettes_dir() -> Path:
@@ -68,6 +63,9 @@ def extra_templates(manifest: dict[str, Any]) -> list[dict[str, Any]]:
             {
                 "template_path": template_path,
                 "output_path_template": output_path,
+                "notice_style": entry.get(
+                    "notice_style", manifest.get("notice_style")
+                ),
             }
         )
     return resolved
@@ -202,8 +200,10 @@ def render_with_template(
     palette: dict[str, str],
     template_text: str,
     theme_name: str,
+    notice_style: str,
 ) -> str:
-    return template_utils.render_template(template_text, palette, theme_name)
+    content = template_utils.render_template(template_text, palette, theme_name)
+    return template_utils.add_notice(content, notice_style)
 
 
 def cmd_render(args: argparse.Namespace) -> None:
@@ -219,6 +219,9 @@ def cmd_render(args: argparse.Namespace) -> None:
             raise SystemExit(f"Error: template_path missing for {tool}")
 
         template_text = template_path.read_text(encoding="utf-8")
+        notice_style = manifest.get("notice_style")
+        if notice_style not in template_utils.NOTICE_STYLES:
+            raise SystemExit(f"Error: invalid notice_style for {tool}: {notice_style}")
         extra = extra_templates(manifest)
         extra_written = set()
 
@@ -231,13 +234,17 @@ def cmd_render(args: argparse.Namespace) -> None:
             theme_name, palette = io.load_palette(str(palette_path))
             if args.theme and theme_name != args.theme:
                 continue
-            content = render_with_template(palette, template_text, theme_name)
+            content = render_with_template(
+                palette, template_text, theme_name, notice_style
+            )
             output_path = resolve_output_path(manifest, theme_name, args.out_dir)
             io.write_output(str(output_path), content)
             print(f"Wrote {output_path}")
             for entry in extra:
                 extra_text = entry["template_path"].read_text(encoding="utf-8")
-                extra_content = render_with_template(palette, extra_text, theme_name)
+                extra_content = render_with_template(
+                    palette, extra_text, theme_name, entry["notice_style"]
+                )
                 if args.out_dir:
                     base_dir = output_path.parent
                     extra_path = base_dir / Path(entry["output_path_template"]).name
@@ -699,6 +706,13 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
         except (OSError, json.JSONDecodeError, ValueError) as exc:
             issues.append(f"could not validate palette provenance: {exc}")
 
+    ports_notice = REPO_ROOT / "ports" / "NOTICE"
+    if ports_notice.is_file():
+        ports_notice_text = ports_notice.read_text(encoding="utf-8")
+        for marker in ("MIT", "CC0-1.0", PALETTE_SOURCE):
+            if marker not in ports_notice_text:
+                issues.append(f"ports/NOTICE missing marker: {marker}")
+
     vscode_license = REPO_ROOT / "ports" / "vscode" / "extension-root" / "LICENSE"
     mit_license = REPO_ROOT / "LICENSES" / "MIT.txt"
     if vscode_license.is_file() and mit_license.is_file():
@@ -767,33 +781,35 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
                 for error in errors:
                     issues.append(f"{tool}: {error}")
 
-        # Generated JSON formats cannot carry comments and are covered by
-        # ports/NOTICE. Require inline licensing and provenance everywhere else.
         theme_names = [palette_path.stem for palette_path in palette_files]
-        generated_paths: set[Path] = set()
-        for manifest in registry.values():
+        generated_paths: dict[Path, str] = {}
+        for tool, manifest in registry.items():
+            notice_style = manifest.get("notice_style")
+            if notice_style not in template_utils.NOTICE_STYLES:
+                issues.append(f"{tool}: invalid notice_style: {notice_style}")
+                continue
             for theme_name in theme_names:
-                generated_paths.add(resolve_output_path(manifest, theme_name, None))
+                generated_paths[resolve_output_path(manifest, theme_name, None)] = notice_style
             for entry in extra_templates(manifest):
                 output_template = entry["output_path_template"]
                 if "{theme}" in output_template:
-                    generated_paths.update(
-                        REPO_ROOT / output_template.replace("{theme}", theme_name)
-                        for theme_name in theme_names
-                    )
+                    for theme_name in theme_names:
+                        generated_paths[
+                            REPO_ROOT / output_template.replace("{theme}", theme_name)
+                        ] = entry["notice_style"]
                 else:
-                    generated_paths.add(REPO_ROOT / output_template)
+                    generated_paths[REPO_ROOT / output_template] = entry["notice_style"]
 
-        for output_path in sorted(generated_paths):
-            if output_path.suffix.lower() == ".json":
-                continue
+        for output_path, notice_style in sorted(generated_paths.items()):
             if not output_path.is_file():
                 issues.append(
                     f"generated theme missing: {output_path.relative_to(REPO_ROOT)}"
                 )
                 continue
+            if notice_style == "sidecar":
+                continue
             output_text = output_path.read_text(encoding="utf-8")
-            for marker in GENERATED_NOTICE_MARKERS:
+            for marker in template_utils.NOTICE_MARKERS:
                 if marker not in output_text:
                     issues.append(
                         f"{output_path.relative_to(REPO_ROOT)}: "

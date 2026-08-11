@@ -3,6 +3,7 @@
   "theme_dir_rel": "ports/lazygit/themes",
   "theme_ext": "",
   "template_path": "ports/lazygit/theme.tmpl",
+  "notice_style": "hash",
   "required_keys": [
     "activeBorderColor",
     "inactiveBorderColor",

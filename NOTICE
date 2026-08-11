@@ -7,8 +7,8 @@ https://protesilaos.com/emacs/modus-themes-colors
 
 The current palette snapshot was extracted from Modus Themes 5.3.0 at upstream commit
 52d4665bc5d5505e9761fe6068ab5426ad70a52a. Palette data is extracted without
-upstream presets, then the project-owned render profile in
-mappings/palette/default.json is applied to the generated ports.
+upstream presets. Port-specific palette choices are expressed directly in each
+tool template.
 
 The GPL-licensed upstream implementation is fetched into a temporary directory
 only while synchronizing palettes and is not distributed in this repository.

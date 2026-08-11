@@ -4,6 +4,7 @@
   "theme_ext": ".toml",
   "output_path_template": "ports/helix/themes/{theme}.toml",
   "template_path": "ports/helix/theme.tmpl",
+  "notice_style": "hash",
   "required_keys": [],
   "install_targets": [
     "$XDG_CONFIG_HOME/helix/themes",

@@ -4,6 +4,7 @@
   "theme_ext": ".tmTheme",
   "output_path_template": "ports/bat/themes/{theme}.tmTheme",
   "template_path": "ports/shared/tmtheme.tmpl",
+  "notice_style": "xml",
   "required_keys": [],
   "install_targets": [
     "$XDG_CONFIG_HOME/bat/themes",

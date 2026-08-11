@@ -4,6 +4,7 @@
   "theme_ext": ".xccolortheme",
   "output_path_template": "ports/xcode/themes/{theme}.xccolortheme",
   "template_path": "ports/xcode/theme.tmpl",
+  "notice_style": "xml",
   "required_keys": [],
   "install_targets": [
     "$HOME/Library/Developer/Xcode/UserData/FontAndColorThemes"

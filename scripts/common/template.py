@@ -6,6 +6,43 @@ from __future__ import annotations
 import re
 
 TOKEN_RE = re.compile(r"\{(color|meta|rgb|rgba):([A-Za-z0-9_-]+)\}")
+NOTICE_MARKERS = (
+    "SPDX-License-Identifier: MIT",
+    "Modus palette data: CC0-1.0",
+    "https://protesilaos.com/emacs/modus-themes-colors",
+)
+NOTICE_STYLES = {"hash", "xml", "sidecar"}
+_HASH_NOTICE = "\n".join(
+    (
+        "# SPDX-License-Identifier: MIT",
+        "# Modus palette data: CC0-1.0",
+        "# Palette source: https://protesilaos.com/emacs/modus-themes-colors",
+        "",
+    )
+)
+_XML_NOTICE = "\n".join(
+    (
+        "<!-- SPDX-License-Identifier: MIT -->",
+        "<!-- Modus palette data: CC0-1.0; https://protesilaos.com/emacs/modus-themes-colors -->",
+        "",
+    )
+)
+
+
+def add_notice(content: str, style: str) -> str:
+    """Add the generated theme notice using the output format's comment style."""
+    if style not in NOTICE_STYLES:
+        raise ValueError(f"Unsupported notice style: {style}")
+    if style == "sidecar":
+        return content
+    if style == "hash":
+        separator = "" if content.startswith("#") else "\n"
+        return _HASH_NOTICE + separator + content
+
+    declaration, separator, remainder = content.partition("\n")
+    if not separator or not declaration.startswith("<?xml"):
+        raise ValueError("XML notice style requires an XML declaration")
+    return declaration + separator + _XML_NOTICE + remainder
 
 
 def _theme_title(theme: str) -> str:

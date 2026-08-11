@@ -5,10 +5,12 @@
   "theme_dir_rel": "ports/yazi/flavors",
   "output_path_template": "ports/yazi/flavors/{theme}.yazi/flavor.toml",
   "template_path": "ports/yazi/flavor.tmpl",
+  "notice_style": "hash",
   "extra_templates": [
     {
       "template_path": "ports/shared/tmtheme.tmpl",
-      "output_path_template": "ports/yazi/flavors/{theme}.yazi/tmtheme.xml"
+      "output_path_template": "ports/yazi/flavors/{theme}.yazi/tmtheme.xml",
+      "notice_style": "xml"
     }
   ],
   "required_keys": [

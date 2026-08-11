@@ -8,6 +8,7 @@
   "symlink_entry_only": true,
   "output_path_template": "ports/amp/themes/{theme}/colors.toml",
   "template_path": "ports/amp/theme.tmpl",
+  "notice_style": "hash",
   "required_keys": [],
   "install_targets": [
     "$XDG_CONFIG_HOME/amp/themes",

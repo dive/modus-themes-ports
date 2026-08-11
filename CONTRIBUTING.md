@@ -44,6 +44,7 @@ Key fields:
 - `tool`: tool name
 - `theme_dir_rel`: output directory for rendered themes
 - `template_path`: template used to generate the port
+- `notice_style`: generated notice format (`hash`, `xml`, or `sidecar`)
 - `extra_templates`: extra rendered outputs (e.g., `tmtheme.xml`)
 - `required_keys`: used by validation for template ports
 - `install_targets`: suggested install locations
@@ -100,5 +101,5 @@ Recommended checks:
 - Keep extracted Modus palette data under CC0-1.0.
 - Keep project-authored templates, scripts, and rendered ports under MIT.
 - Express palette choices directly in each tool template; do not import upstream Emacs presets.
-- Preserve generated SPDX and palette provenance notices in formats that support comments.
+- Select the appropriate generated notice style in the port manifest; do not duplicate notices in templates.
 - Include `ports/NOTICE` and `LICENSES/MIT.txt` when distributing formats that cannot carry comments or license metadata.

@@ -4,6 +4,7 @@
   "theme_ext": ".conf",
   "output_path_template": "ports/tmux/themes/{theme}.conf",
   "template_path": "ports/tmux/theme.tmpl",
+  "notice_style": "hash",
   "required_keys": [],
   "install_targets": [
     "$XDG_CONFIG_HOME/tmux/themes",

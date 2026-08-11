@@ -4,6 +4,7 @@
   "theme_ext": ".json",
   "output_path_template": "ports/pi/themes/{theme}.json",
   "template_path": "ports/pi/theme.tmpl",
+  "notice_style": "sidecar",
   "validate_json": true,
   "required_fields": [
     "$schema",

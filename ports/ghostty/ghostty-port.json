@@ -3,6 +3,7 @@
   "theme_dir_rel": "ports/ghostty/themes",
   "theme_ext": "",
   "template_path": "ports/ghostty/theme.tmpl",
+  "notice_style": "hash",
   "required_keys": [
     "background",
     "foreground",
