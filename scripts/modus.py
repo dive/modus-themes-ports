@@ -445,6 +445,14 @@ def cmd_validate(args: argparse.Namespace) -> None:
         theme_entry = manifest.get("theme_entry", "flavor.toml")
         dir_suffix = manifest.get("dir_suffix", ".yazi")
         theme_ext = manifest.get("theme_ext", "")
+        selected_theme_file = None
+
+        if args.theme and theme_kind != "dir":
+            selected_theme_file = args.theme
+            if theme_ext and not selected_theme_file.endswith(theme_ext):
+                selected_theme_file += theme_ext
+            if not (themes_dir / selected_theme_file).is_file():
+                raise SystemExit(f"Error: theme not found: {args.theme}")
 
         if theme_format == SHIKI_THEME_FORMAT and not args.theme:
             expected_files = {
@@ -485,7 +493,7 @@ def cmd_validate(args: argparse.Namespace) -> None:
             else:
                 if path.is_dir():
                     continue
-                if args.theme and path.name != args.theme:
+                if selected_theme_file and path.name != selected_theme_file:
                     continue
                 text = path.read_text(encoding="utf-8")
             if args.theme and theme_kind == "dir":
@@ -543,8 +551,8 @@ def cmd_validate(args: argparse.Namespace) -> None:
                 total = 1 if (themes_dir / name).is_dir() else 0
         else:
             total = len([p for p in themes_dir.iterdir() if p.is_file() and not p.name.startswith('.')])
-            if args.theme:
-                total = 1 if (themes_dir / args.theme).is_file() else 0
+            if selected_theme_file:
+                total = 1
         if not getattr(args, "quiet", False):
             print(f"Validated {total} theme(s).")
 
@@ -1164,6 +1172,15 @@ def check_generated() -> None:
                         quiet=True,
                     )
                 )
+                if manifest.get("theme_format") == SHIKI_THEME_FORMAT:
+                    cmd_validate(
+                        argparse.Namespace(
+                            tool=tool,
+                            themes_dir=None,
+                            theme=None,
+                            quiet=True,
+                        )
+                    )
                 extras = extra_templates(manifest)
             except (OSError, KeyError, TypeError, ValueError, SystemExit) as exc:
                 issues.append(f"{tool}: render or validation failed: {exc}")

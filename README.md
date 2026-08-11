@@ -83,4 +83,4 @@ All credit for the Modus themes design goes to [Protesilaos Stavrou](https://pro
 
 ## License
 
-Project code and rendered ports are MIT-licensed; Modus palette data is CC0. See [LICENSE](LICENSE).
+Project code and rendered ports are MIT-licensed; Modus palette data is CC0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
