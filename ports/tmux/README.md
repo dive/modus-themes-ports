@@ -16,15 +16,7 @@ Source the theme from your `~/.config/tmux/tmux.conf`:
 source-file ~/.config/tmux/themes/modus-operandi.conf
 ```
 
-Available themes:
-- `modus-operandi` — light theme
-- `modus-operandi-tinted` — light theme with subtle tinted backgrounds
-- `modus-operandi-deuteranopia` — light theme optimized for red-green color deficiency
-- `modus-operandi-tritanopia` — light theme optimized for blue-yellow color deficiency
-- `modus-vivendi` — dark theme
-- `modus-vivendi-tinted` — dark theme with subtle tinted backgrounds
-- `modus-vivendi-deuteranopia` — dark theme optimized for red-green color deficiency
-- `modus-vivendi-tritanopia` — dark theme optimized for blue-yellow color deficiency
+See the repository's [theme variant table](../../README.md#theme-variants) for the complete list of light, dark, tinted, and color-deficiency variants.
 
 ## Notes
 

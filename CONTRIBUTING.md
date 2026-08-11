@@ -80,10 +80,10 @@ Terminal palettes:
 - For ANSI 0–15 slots, map to `fg-term-*` and `fg-term-*-bright` (avoid UI colors like `bg-dim`/`fg-dim`).
 
 ## Naming
-All theme filenames are kebab-case with no extension (e.g. `modus-operandi`).
+Theme names are kebab-case (for example, `modus-operandi`). Output filenames, extensions, and directory suffixes are defined by each port manifest.
 
 ## Config Paths
-Use `XDG_CONFIG_HOME` (or `~/.config`). Do not use `~/Library/Application Support`.
+Use each tool's native configuration conventions. Prefer `XDG_CONFIG_HOME` (or `~/.config`) where supported; use platform-native paths such as `~/Library/Application Support` when the tool requires them.
 
 ## Accessibility
 

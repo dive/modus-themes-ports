@@ -19,4 +19,7 @@ If Xcode does not pick up symlinked themes immediately, install with:
 3. Select a `modus-*` theme.
 
 ## Uninstall
+For symlink installations:
 - `python3 scripts/modus.py uninstall --tool xcode`
+
+Themes installed with `--copy` must currently be removed manually from `~/Library/Developer/Xcode/UserData/FontAndColorThemes/`.

@@ -13,16 +13,10 @@ Modus Themes for the [Helix](https://helix-editor.com) editor.
 
 ## Installation
 
-Copy the theme files to `~/.config/helix/themes/`:
+Install all themes using symbolic links:
 
 ```sh
 python3 scripts/modus.py install --tool helix
-```
-
-Or use symbolic links:
-
-```sh
-python3 scripts/modus.py install --tool helix --link
 ```
 
 ## Usage
@@ -33,15 +27,7 @@ Add to your `~/.config/helix/config.toml`:
 theme = "modus-vivendi"
 ```
 
-Available themes:
-- `modus-operandi` — light theme
-- `modus-operandi-tinted` — light theme with subtle tinted backgrounds
-- `modus-operandi-deuteranopia` — light theme optimized for red-green color deficiency
-- `modus-operandi-tritanopia` — light theme optimized for blue-yellow color deficiency
-- `modus-vivendi` — dark theme
-- `modus-vivendi-tinted` — dark theme with subtle tinted backgrounds
-- `modus-vivendi-deuteranopia` — dark theme optimized for red-green color deficiency
-- `modus-vivendi-tritanopia` — dark theme optimized for blue-yellow color deficiency
+See the repository's [theme variant table](../../README.md#theme-variants) for the complete list of light, dark, tinted, and color-deficiency variants.
 
 ## Uninstall
 

@@ -3,7 +3,7 @@
 [![Licenses: MIT and CC0](https://img.shields.io/badge/licenses-MIT%20%7C%20CC0-blue.svg)](LICENSE)
 [![Python 3](https://img.shields.io/badge/Python-3-blue.svg)](https://www.python.org/)
 
-Ports of the [Modus themes](https://protesilaos.com/emacs/modus-themes) for terminal tools.
+Ports of the [Modus themes](https://protesilaos.com/emacs/modus-themes) for developer tools and editors.
 
 Modus themes are designed by [Protesilaos Stavrou](https://protesilaos.com/about/) with a focus on accessibility—conforming to the highest legibility standard (WCAG AAA). They ship in light/dark variants with tinted and color-deficiency friendly flavors (deuteranopia, tritanopia).
 
@@ -42,7 +42,11 @@ python3 scripts/modus.py install --tool ghostty
 python3 scripts/modus.py install --tool ghostty --theme modus-operandi
 ```
 
-Themes are symlinked into `$XDG_CONFIG_HOME` by default. See each tool's README for activation instructions.
+Themes are symlinked into each tool's native theme directory by default. See the tool-specific README for its destination and activation instructions.
+
+## Palette Snapshots
+
+Rendering uses the checked-in CC0 JSON snapshots under `palettes/`; Emacs is not needed to use, install, render, or contribute theme ports. Maintainers only need Emacs when reproducibly synchronizing those downstream snapshots with the exact upstream revision recorded in [`upstream.lock.json`](upstream.lock.json).
 
 ## Theme Variants
 
