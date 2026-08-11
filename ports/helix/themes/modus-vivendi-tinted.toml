@@ -1,5 +1,8 @@
+# SPDX-License-Identifier: MIT
+# Modus palette data: CC0-1.0
+# Palette source: https://protesilaos.com/emacs/modus-themes-colors
 # Modus Vivendi Tinted
-# A port of the Modus Themes by Protesilaos Stavrou
+# Design by Protesilaos Stavrou; port by Modus Themes Ports contributors
 
 # Syntax highlighting
 "type" = "#6ae4b9"

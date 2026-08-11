@@ -46,7 +46,12 @@ def render(
             raise KeyError(f"Missing palette key: {palette_key}")
         return palette[palette_key]
 
-    lines: list[str] = []
+    lines = [
+        "# SPDX-License-Identifier: MIT",
+        "# Modus palette data: CC0-1.0",
+        "# Palette source: https://protesilaos.com/emacs/modus-themes-colors",
+        "",
+    ]
     for key in required_map_keys[:-1]:
         palette_key = mapping[key]
         color = resolve(palette_key)

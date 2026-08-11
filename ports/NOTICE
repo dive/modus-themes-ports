@@ -1,0 +1,12 @@
+Generated port licensing
+========================
+
+The generated theme files under ports/ are licensed under the MIT License in
+../LICENSES/MIT.txt. They incorporate Modus palette data published under
+CC0-1.0 at https://protesilaos.com/emacs/modus-themes-colors.
+
+Theme design: Protesilaos Stavrou
+Port implementation: Modus Themes Ports contributors
+
+Include this notice and the MIT License when distributing generated themes in
+formats that cannot carry comments or license metadata.

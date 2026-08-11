@@ -28,9 +28,28 @@ from scripts.common import template as template_utils
 from scripts.common import theme_ops
 from scripts.common import validate
 
+PALETTE_SOURCE = "https://protesilaos.com/emacs/modus-themes-colors"
+GENERATED_NOTICE_MARKERS = (
+    "SPDX-License-Identifier: MIT",
+    "Modus palette data: CC0-1.0",
+    PALETTE_SOURCE,
+)
+
 
 def palettes_dir() -> Path:
     return REPO_ROOT / "palettes"
+
+
+def palette_profile() -> dict[str, str]:
+    profile = io.load_mapping(
+        str(REPO_ROOT / "mappings" / "palette" / "default.json")
+    )
+    if not isinstance(profile, dict) or any(
+        not isinstance(key, str) or not isinstance(value, str)
+        for key, value in profile.items()
+    ):
+        raise ValueError("Palette profile must be an object of string aliases")
+    return profile
 
 
 def load_registry() -> dict[str, dict[str, Any]]:
@@ -219,6 +238,7 @@ def render_with_template(
 def cmd_render(args: argparse.Namespace) -> None:
     registry = load_registry()
     tools = sorted(registry.keys()) if args.tool == "all" else [args.tool]
+    palette_overrides = palette_profile()
 
     for tool in tools:
         manifest = tool_manifest(registry, tool)
@@ -233,6 +253,7 @@ def cmd_render(args: argparse.Namespace) -> None:
                 out_dir,
                 spec,
                 theme=args.theme,
+                palette_overrides=palette_overrides,
             )
             for output in outputs:
                 print(f"Wrote {output}")
@@ -253,7 +274,9 @@ def cmd_render(args: argparse.Namespace) -> None:
 
         out_dir.mkdir(parents=True, exist_ok=True)
         for palette_path in palette_files:
-            theme_name, palette = io.load_palette(str(palette_path))
+            theme_name, palette = io.load_palette(
+                str(palette_path), palette_overrides=palette_overrides
+            )
             if args.theme and theme_name != args.theme:
                 continue
             content = render_with_template(manifest, palette, mapping_data, template_text, theme_name)
@@ -598,10 +621,63 @@ def cmd_fetch_emacs(_args: argparse.Namespace) -> None:
         subprocess.run(["hdiutil", "detach", mount_point, "-quiet"], check=False)
 
 
+def vendored_modus_version() -> str:
+    source = REPO_ROOT / "vendor" / "modus-themes" / "modus-themes.el"
+    match = re.search(
+        r"^;; Version:\s+(\S+)", source.read_text(encoding="utf-8"), re.MULTILINE
+    )
+    if not match:
+        raise ValueError("Could not determine vendored Modus version")
+    return match.group(1)
+
+
+def vendored_modus_revision() -> str:
+    result = subprocess.run(
+        [
+            "git",
+            "log",
+            "--all",
+            "--format=%B",
+            "--grep=git-subtree-dir: vendor/modus-themes",
+            "-n",
+            "1",
+        ],
+        cwd=REPO_ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    match = re.search(r"git-subtree-split:\s*([0-9a-f]{40})", result.stdout)
+    if not match:
+        raise ValueError("Could not determine vendored Modus upstream revision")
+    return match.group(1)
+
+
+def update_notice_provenance() -> None:
+    notice_path = REPO_ROOT / "NOTICE"
+    notice = notice_path.read_text(encoding="utf-8")
+    replacement = (
+        f"The current vendored source is Modus Themes {vendored_modus_version()} "
+        f"at upstream commit\n{vendored_modus_revision()}"
+    )
+    updated, replacements = re.subn(
+        r"The current vendored source is Modus Themes \S+ at upstream commit\n"
+        r"[0-9a-f]{40}",
+        replacement,
+        notice,
+    )
+    if replacements != 1:
+        raise ValueError("Could not update vendored provenance in NOTICE")
+    if updated != notice:
+        notice_path.write_text(updated, encoding="utf-8")
+        print(f"Updated {notice_path}")
+
+
 def cmd_update_subtree(_args: argparse.Namespace) -> None:
     remote_url = "https://github.com/protesilaos/modus-themes"
     prefix = "vendor/modus-themes"
     git_utils.subtree_update(str(REPO_ROOT), remote_url, prefix)
+    update_notice_provenance()
     cmd_extract_palettes(None)
     cmd_render(argparse.Namespace(tool="all", mapping=None, out_dir=None, theme=None))
 
@@ -624,11 +700,101 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
     if not (REPO_ROOT / "palettes").is_dir():
         issues.append("palettes directory missing (run: python3 scripts/modus.py extract-palettes)")
 
+    for required_file in (
+        REPO_ROOT / "LICENSE",
+        REPO_ROOT / "NOTICE",
+        REPO_ROOT / "LICENSES" / "MIT.txt",
+        REPO_ROOT / "LICENSES" / "CC0-1.0.txt",
+        REPO_ROOT / "ports" / "NOTICE",
+        REPO_ROOT / "ports" / "vscode" / "extension-root" / "LICENSE",
+        REPO_ROOT / "ports" / "vscode" / "extension-root" / "NOTICE",
+        REPO_ROOT / "vendor" / "modus-themes" / "COPYING",
+        REPO_ROOT / "vendor" / "modus-themes" / "doc" / "modus-themes.org",
+    ):
+        if not required_file.is_file():
+            issues.append(f"licensing file missing: {required_file.relative_to(REPO_ROOT)}")
+
+    notice_path = REPO_ROOT / "NOTICE"
+    if notice_path.is_file():
+        try:
+            notice_text = notice_path.read_text(encoding="utf-8")
+            version = vendored_modus_version()
+            revision = vendored_modus_revision()
+            if f"Modus Themes {version} at upstream commit\n{revision}" not in notice_text:
+                issues.append(
+                    "NOTICE vendored provenance is stale "
+                    f"(expected Modus Themes {version} at {revision})"
+                )
+        except (OSError, subprocess.CalledProcessError, ValueError) as exc:
+            issues.append(f"could not validate vendored provenance: {exc}")
+
+    vscode_license = REPO_ROOT / "ports" / "vscode" / "extension-root" / "LICENSE"
+    mit_license = REPO_ROOT / "LICENSES" / "MIT.txt"
+    if vscode_license.is_file() and mit_license.is_file():
+        if vscode_license.read_bytes() != mit_license.read_bytes():
+            issues.append("VS Code extension LICENSE differs from LICENSES/MIT.txt")
+
+    vscode_notice = REPO_ROOT / "ports" / "vscode" / "extension-root" / "NOTICE"
+    if vscode_notice.is_file():
+        vscode_notice_text = vscode_notice.read_text(encoding="utf-8")
+        for marker in ("MIT", "CC0-1.0", PALETTE_SOURCE):
+            if marker not in vscode_notice_text:
+                issues.append(f"VS Code extension NOTICE missing marker: {marker}")
+
+    vscode_package = REPO_ROOT / "ports" / "vscode" / "extension-root" / "package.json"
+    if vscode_package.is_file():
+        try:
+            if json.loads(vscode_package.read_text(encoding="utf-8")).get("license") != "MIT":
+                issues.append("VS Code extension package must declare the MIT license")
+        except (AttributeError, json.JSONDecodeError) as exc:
+            issues.append(f"VS Code extension package invalid: {exc}")
+
+    extractor_path = REPO_ROOT / "scripts" / "core" / "extract-palettes.el"
+    if extractor_path.is_file():
+        extractor_text = extractor_path.read_text(encoding="utf-8")
+        if not re.search(
+            r"\(modus-themes-common-palette-overrides\s+nil\)", extractor_text
+        ):
+            issues.append("palette extractor must explicitly disable upstream overrides")
+        if "modus-themes-preset-overrides-" in extractor_text:
+            issues.append("palette extractor must not import an upstream preset")
+        if not re.search(
+            r"\(modus-themes-get-theme-palette\s+"
+            r"\(intern theme-name\)\s+nil\s+nil\)",
+            extractor_text,
+        ):
+            issues.append("palette extractor must request core palette data only")
+    else:
+        issues.append("palette extractor missing: scripts/core/extract-palettes.el")
+
     # Validate all templates reference valid palette keys
-    palette_files = list(palettes_dir().glob("*.json"))
+    palette_files = sorted(palettes_dir().glob("*.json"))
     if palette_files:
+        try:
+            palette_overrides = palette_profile()
+        except (FileNotFoundError, json.JSONDecodeError, TypeError, ValueError) as exc:
+            issues.append(f"palette profile invalid: {exc}")
+            palette_overrides = {}
+
+        for palette_path in palette_files:
+            try:
+                data = json.loads(palette_path.read_text(encoding="utf-8"))
+                if not isinstance(data, dict):
+                    raise ValueError("Palette document must be an object")
+                if data.get("license") != "CC0-1.0":
+                    issues.append(f"{palette_path.name}: missing CC0-1.0 metadata")
+                if data.get("source") != PALETTE_SOURCE:
+                    issues.append(f"{palette_path.name}: missing palette source metadata")
+                io.load_palette(
+                    str(palette_path), palette_overrides=palette_overrides
+                )
+            except (json.JSONDecodeError, TypeError, ValueError) as exc:
+                issues.append(f"{palette_path.name}: {exc}")
+
         # Use the first palette to get the set of valid keys
-        _, sample_palette = io.load_palette(str(palette_files[0]))
+        _, sample_palette = io.load_palette(
+            str(palette_files[0]), palette_overrides=palette_overrides
+        )
         palette_keys = set(sample_palette.keys())
 
         registry = load_registry()
@@ -647,10 +813,45 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
                 for error in errors:
                     issues.append(f"{tool}: {error}")
 
+        # Generated JSON formats cannot carry comments and are covered by
+        # ports/NOTICE. Require inline licensing and provenance everywhere else.
+        theme_names = [palette_path.stem for palette_path in palette_files]
+        generated_paths: set[Path] = set()
+        for manifest in registry.values():
+            for theme_name in theme_names:
+                generated_paths.add(resolve_output_path(manifest, theme_name, None))
+            for entry in extra_templates(manifest):
+                output_template = entry["output_path_template"]
+                if "{theme}" in output_template:
+                    generated_paths.update(
+                        REPO_ROOT / output_template.replace("{theme}", theme_name)
+                        for theme_name in theme_names
+                    )
+                else:
+                    generated_paths.add(REPO_ROOT / output_template)
+
+        for output_path in sorted(generated_paths):
+            if output_path.suffix.lower() == ".json":
+                continue
+            if not output_path.is_file():
+                issues.append(
+                    f"generated theme missing: {output_path.relative_to(REPO_ROOT)}"
+                )
+                continue
+            output_text = output_path.read_text(encoding="utf-8")
+            for marker in GENERATED_NOTICE_MARKERS:
+                if marker not in output_text:
+                    issues.append(
+                        f"{output_path.relative_to(REPO_ROOT)}: "
+                        f"missing generated notice marker: {marker}"
+                    )
+
         # Check WCAG AAA contrast for all palettes (warnings only)
         contrast_warnings = []
         for palette_path in palette_files:
-            theme_name, palette = io.load_palette(str(palette_path))
+            theme_name, palette = io.load_palette(
+                str(palette_path), palette_overrides=palette_overrides
+            )
             warnings = contrast_utils.validate_palette_contrast(palette)
             for warning in warnings:
                 contrast_warnings.append(f"{theme_name}: {warning}")

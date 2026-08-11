@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: MIT
+# Modus palette data: CC0-1.0
+# Palette source: https://protesilaos.com/emacs/modus-themes-colors
+
 gui:
   authorColors:
     '*': "#feacd0"

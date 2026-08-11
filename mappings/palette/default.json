@@ -1,0 +1,12 @@
+{
+  "bg-completion": "bg-inactive",
+  "bg-hl-line": "bg-dim",
+  "bg-region": "bg-active",
+  "bg-mode-line-active": "bg-inactive",
+  "border-mode-line-active": "fg-dim",
+  "bg-mode-line-inactive": "bg-dim",
+  "border-mode-line-inactive": "bg-active",
+  "bg-tab-bar": "bg-inactive",
+  "bg-tab-other": "bg-active",
+  "bg-paren-match": "bg-cyan-subtle"
+}

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: MIT -->
+<!-- Modus palette data: CC0-1.0; https://protesilaos.com/emacs/modus-themes-colors -->
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
@@ -7,7 +9,7 @@
     <key>semanticClass</key>
     <string>theme.modus.modus-operandi-tritanopia</string>
     <key>author</key>
-    <string>Protesilaos Stavrou</string>
+    <string>Design by Protesilaos Stavrou; port by Modus Themes Ports contributors</string>
     <key>colorSpaceName</key>
     <string>sRGB</string>
     <key>settings</key>

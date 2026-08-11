@@ -61,8 +61,11 @@ def resolve_palette(palette: dict[str, str]) -> dict[str, str]:
     return resolved
 
 
-def load_palette(path: str) -> tuple[str, dict[str, str]]:
-    """Load a palette JSON file and resolve all references.
+def load_palette(
+    path: str,
+    palette_overrides: dict[str, str] | None = None,
+) -> tuple[str, dict[str, str]]:
+    """Load a palette JSON file, apply local overrides, and resolve references.
 
     Returns:
         A tuple of (theme_name, resolved_palette).
@@ -78,6 +81,28 @@ def load_palette(path: str) -> tuple[str, dict[str, str]]:
         palette = data
     if not isinstance(palette, dict):
         raise ValueError(f"Palette must be an object: {palette_path}")
+    palette = dict(palette)
+    if palette_overrides:
+        missing_keys = sorted(set(palette_overrides) - set(palette))
+        if missing_keys:
+            raise ValueError(
+                f"Palette overrides contain unknown keys for {name}: "
+                + ", ".join(missing_keys)
+            )
+        missing_values = sorted(
+            {
+                value
+                for value in palette_overrides.values()
+                if not isinstance(value, str) or value not in palette
+            },
+            key=str,
+        )
+        if missing_values:
+            raise ValueError(
+                f"Palette overrides reference unknown values for {name}: "
+                + ", ".join(map(str, missing_values))
+            )
+        palette.update(palette_overrides)
     # NOTE: Resolve palette references so rendered themes never contain alias names.
     return name, resolve_palette(palette)
 

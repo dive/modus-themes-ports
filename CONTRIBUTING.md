@@ -29,7 +29,7 @@ python3 scripts/modus.py install --tool mytool --link
   - `python3 scripts/modus.py update-subtree`
 - Extract palettes only:
   - `python3 scripts/modus.py extract-palettes`
-  - Note: palette extraction applies the Modus faint preset.
+  - Rendering applies the project-owned profile in `mappings/palette/default.json`; extracted palettes remain unmodified CC0 data.
   - Regenerate hue previews with `python3 scripts/render-hue-previews.py`.
 - Render themes:
   - `python3 scripts/modus.py render --tool <tool>`
@@ -37,7 +37,7 @@ python3 scripts/modus.py install --tool mytool --link
   - `python3 scripts/modus.py validate --tool <tool>`
 - Environment check:
   - `python3 scripts/modus.py doctor`
-  - Validates: dependencies, palettes, template tokens, WCAG contrast
+  - Validates: dependencies, palettes, licensing boundaries, generated notices, template tokens, WCAG contrast
 
 ## Registry Overview
 Tools are discovered from `ports/*/*-port.json`.
@@ -109,3 +109,11 @@ Recommended checks:
 - `python3 scripts/modus.py render --tool all`
 - `python3 scripts/modus.py validate --tool all`
 - `python3 scripts/modus.py doctor`
+
+## Licensing Generated Ports
+
+- Keep extracted Modus palette data under CC0-1.0.
+- Keep project-authored mappings, templates, scripts, and rendered ports under MIT.
+- Add port-wide palette choices to `mappings/palette/default.json`; do not import upstream Emacs presets.
+- Preserve generated SPDX and palette provenance notices in formats that support comments.
+- Include `ports/NOTICE` and `LICENSES/MIT.txt` when distributing formats that cannot carry comments or license metadata.

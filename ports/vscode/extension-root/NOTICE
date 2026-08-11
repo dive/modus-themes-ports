@@ -1,0 +1,14 @@
+Modus Themes for Visual Studio Code provenance
+===============================================
+
+This extension and its generated theme ports are licensed under the MIT
+License in LICENSE.
+
+The themes incorporate Modus palette data designed by Protesilaos Stavrou and
+published under CC0-1.0 at:
+https://protesilaos.com/emacs/modus-themes-colors
+
+Port implementation: Modus Themes Ports contributors
+
+This is an independent port and is not affiliated with or endorsed by the
+Free Software Foundation, GNU, or Protesilaos Stavrou.

@@ -20,6 +20,7 @@ def render_all(
     out_dir: Path,
     spec_file: Path,
     theme: str | None = None,
+    palette_overrides: dict[str, str] | None = None,
 ) -> list[Path]:
     """Render themes using a Python spec module.
 
@@ -29,6 +30,7 @@ def render_all(
         out_dir: Directory to write rendered themes.
         spec_file: Path to the Python spec module.
         theme: Optional theme name to render (renders all if None).
+        palette_overrides: Optional project-owned palette aliases applied before rendering.
 
     Returns:
         List of paths to rendered theme files.
@@ -44,7 +46,9 @@ def render_all(
 
     outputs: list[Path] = []
     for palette_path in palette_files:
-        theme_name, palette = io.load_palette(str(palette_path))
+        theme_name, palette = io.load_palette(
+            str(palette_path), palette_overrides=palette_overrides
+        )
         if theme and theme_name != theme:
             continue
         content = spec.render(theme_name, palette, mapping)

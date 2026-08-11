@@ -1,6 +1,6 @@
 # Modus Themes Ports
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Licenses: MIT and CC0](https://img.shields.io/badge/licenses-MIT%20%7C%20CC0-blue.svg)](LICENSE)
 [![Python 3](https://img.shields.io/badge/Python-3-blue.svg)](https://www.python.org/)
 
 Ports of the [Modus themes](https://protesilaos.com/emacs/modus-themes) for terminal tools.
@@ -58,9 +58,7 @@ Themes are symlinked into `$XDG_CONFIG_HOME` by default. See each tool's README 
 Preview of the core accent foreground hues by variant (base, warmer, cooler, faint, intense).
 
 > [!NOTE]
-> This repo uses the Modus faint preset by default for palette extraction.
-
-Docs: [Modus palette overrides](https://protesilaos.com/emacs/modus-themes#h:34c7a691-19bb-4037-8d2f-67a07edab150)
+> Generated ports apply the project-owned palette profile in `mappings/palette/default.json`; extracted palettes remain unmodified CC0 data.
 
 ![Modus Operandi accent hues](screenshots/hues/modus-operandi.svg)
 
@@ -80,4 +78,4 @@ All credit for the Modus themes design goes to [Protesilaos Stavrou](https://pro
 
 ## License
 
-MIT
+Project code and rendered ports are MIT-licensed; Modus palette data is CC0. Vendored upstream material keeps its original licenses. See [LICENSE](LICENSE).

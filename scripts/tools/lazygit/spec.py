@@ -59,6 +59,10 @@ def render(
         author_value = f'"{author_value}"'
 
     lines: list[str] = [
+        "# SPDX-License-Identifier: MIT",
+        "# Modus palette data: CC0-1.0",
+        "# Palette source: https://protesilaos.com/emacs/modus-themes-colors",
+        "",
         "gui:",
         "  authorColors:",
         f"    '*': {author_value}",

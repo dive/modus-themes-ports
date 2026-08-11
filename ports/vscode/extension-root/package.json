@@ -4,6 +4,7 @@
   "description": "Port of Protesilaos Stavrou's Modus themes for Emacs",
   "version": "1.0.0",
   "publisher": "modus-themes-ports",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.70.0"
   },
