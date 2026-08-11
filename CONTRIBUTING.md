@@ -45,6 +45,8 @@ Tools are discovered from `ports/*/*-port.json`.
 
 Key fields:
 - `tool`: tool name
+- `distribution`: `package` for atomic package ports; defaults to `loose`
+- `package_root_rel`: complete package source for package ports
 - `theme_dir_rel`: output directory for rendered themes
 - `template_path`: template used to generate the port
 - `notice_style`: generated notice format (`hash`, `xml`, or `sidecar`)

@@ -1,8 +1,10 @@
 {
   "tool": "vscode",
-  "theme_dir_rel": "ports/vscode/themes",
+  "distribution": "package",
+  "package_root_rel": "ports/vscode/extension-root",
+  "theme_dir_rel": "ports/vscode/extension-root/themes",
   "theme_ext": ".json",
-  "output_path_template": "ports/vscode/themes/{theme}.json",
+  "output_path_template": "ports/vscode/extension-root/themes/{theme}.json",
   "template_path": "ports/vscode/theme.tmpl",
   "notice_style": "sidecar",
   "validate_json": true,
@@ -13,15 +15,9 @@
     "tokenColors"
   ],
   "required_keys": [],
-  "extra_install_dirs": [
-    {
-      "source_rel": "ports/vscode/extension-root",
-      "dest_subdir": ".."
-    }
-  ],
   "install_targets": [
-    "$HOME/.vscode/extensions/modus-themes/themes",
-    "$HOME/.vscode-insiders/extensions/modus-themes/themes"
+    "$HOME/.vscode/extensions/modus-themes",
+    "$HOME/.vscode-insiders/extensions/modus-themes"
   ],
   "config_locations": [
     "$HOME/Library/Application Support/Code/User/settings.json",

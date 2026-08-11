@@ -3,9 +3,11 @@
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 
 
@@ -186,11 +188,72 @@ def install_themes(
         print(f"Installed: {src.name}")
 
 
+def install_package(src_dir: Path, dest_dir: Path, mode: str) -> None:
+    """Install a complete package as one directory entry."""
+    if not src_dir.is_dir():
+        raise FileNotFoundError(f"Package source directory missing: {src_dir}")
+
+    dest_dir.parent.mkdir(parents=True, exist_ok=True)
+    if dest_dir.exists() or dest_dir.is_symlink():
+        if dest_dir.is_symlink() and dest_dir.resolve() == src_dir.resolve():
+            print(f"Already installed: {dest_dir.name}")
+        else:
+            print(f"Skipping existing package: {dest_dir}")
+        return
+
+    if mode == "link":
+        os.symlink(src_dir, dest_dir)
+    else:
+        staging_root = Path(
+            tempfile.mkdtemp(prefix=f".{dest_dir.name}-", dir=dest_dir.parent)
+        )
+        staged_package = staging_root / dest_dir.name
+        try:
+            shutil.copytree(src_dir, staged_package)
+            staged_package.replace(dest_dir)
+        finally:
+            shutil.rmtree(staging_root, ignore_errors=True)
+
+    print(f"Installed package: {dest_dir.name}")
+
+
 def _trash_path(path: Path) -> None:
     """Move a path to trash using the 'trash' command."""
     if shutil.which("trash") is None:
         raise FileNotFoundError("'trash' is required for uninstall.")
     subprocess.run(["trash", str(path)], check=True)
+
+
+def _package_name(path: Path) -> str | None:
+    try:
+        data = json.loads((path / "package.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(data, dict) or not isinstance(data.get("name"), str):
+        return None
+    return data["name"]
+
+
+def uninstall_package(dest_dir: Path, src_dir: Path) -> None:
+    """Uninstall a linked or copied package owned by this repository."""
+    if not dest_dir.exists() and not dest_dir.is_symlink():
+        print(f"No package found: {dest_dir}")
+        return
+
+    source_name = _package_name(src_dir)
+    if source_name is None:
+        raise ValueError(f"Package source has no valid package.json: {src_dir}")
+
+    if dest_dir.is_symlink():
+        if dest_dir.resolve() != src_dir.resolve():
+            print(f"Skipping non-modus symlink: {dest_dir}")
+            return
+    elif not dest_dir.is_dir() or _package_name(dest_dir) != source_name:
+        print(f"Skipping unrecognized package: {dest_dir}")
+        return
+
+    _trash_path(dest_dir)
+    print(f"Removed package: {dest_dir.name}")
 
 
 def uninstall_themes(

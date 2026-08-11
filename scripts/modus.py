@@ -104,6 +104,13 @@ def tool_src_dir(manifest: dict[str, Any]) -> Path:
     return resolve_path(REPO_ROOT, theme_dir)
 
 
+def tool_package_dir(manifest: dict[str, Any]) -> Path:
+    package_root = manifest.get("package_root_rel")
+    if not package_root:
+        raise SystemExit("Error: package_root_rel missing in package manifest")
+    return resolve_path(REPO_ROOT, package_root)
+
+
 def resolve_output_path(manifest: dict[str, Any], theme_name: str, out_dir_override: str | None) -> Path:
     theme_kind = manifest.get("theme_kind", "file")
     entry = manifest.get("theme_entry", "flavor.toml")
@@ -359,11 +366,20 @@ def cmd_validate(args: argparse.Namespace) -> None:
 def cmd_install(args: argparse.Namespace) -> None:
     registry = load_registry()
     manifest = tool_manifest(registry, args.tool)
-    src_dir = tool_src_dir(manifest)
     dest_dir = Path(args.themes_dir) if args.themes_dir else tool_default_themes_dir(manifest)
     if args.copy and args.link:
         raise SystemExit("Error: choose either --copy or --link")
     mode = "copy" if args.copy else "link"
+    if manifest.get("distribution", "loose") == "package":
+        if args.theme:
+            raise SystemExit(
+                f"Error: {args.tool} is installed as a complete package; "
+                "--theme is not supported"
+            )
+        theme_ops.install_package(tool_package_dir(manifest), dest_dir, mode)
+        return
+
+    src_dir = tool_src_dir(manifest)
     theme_kind = manifest.get("theme_kind", "file")
     theme_ext = manifest.get("theme_ext", "")
     dir_suffix = manifest.get("dir_suffix", ".yazi")
@@ -389,8 +405,17 @@ def cmd_install(args: argparse.Namespace) -> None:
 def cmd_uninstall(args: argparse.Namespace) -> None:
     registry = load_registry()
     manifest = tool_manifest(registry, args.tool)
-    src_dir = tool_src_dir(manifest)
     dest_dir = Path(args.themes_dir) if args.themes_dir else tool_default_themes_dir(manifest)
+    if manifest.get("distribution", "loose") == "package":
+        if args.theme:
+            raise SystemExit(
+                f"Error: {args.tool} is installed as a complete package; "
+                "--theme is not supported"
+            )
+        theme_ops.uninstall_package(dest_dir, tool_package_dir(manifest))
+        return
+
+    src_dir = tool_src_dir(manifest)
     theme_kind = manifest.get("theme_kind", "file")
     theme_ext = manifest.get("theme_ext", "")
     dir_suffix = manifest.get("dir_suffix", ".yazi")
@@ -752,6 +777,21 @@ def check_source() -> None:
             package = json.loads(vscode_package.read_text(encoding="utf-8"))
             if not isinstance(package, dict) or package.get("license") != "MIT":
                 issues.append("VS Code extension package must declare the MIT license")
+            contributes = package.get("contributes") if isinstance(package, dict) else None
+            themes = contributes.get("themes") if isinstance(contributes, dict) else None
+            if not isinstance(themes, list):
+                issues.append("VS Code extension package must contribute themes")
+            else:
+                for theme in themes:
+                    relative_path = theme.get("path") if isinstance(theme, dict) else None
+                    if not isinstance(relative_path, str):
+                        issues.append("VS Code extension has an invalid theme path")
+                        continue
+                    theme_path = vscode_package.parent / relative_path
+                    if not theme_path.is_file():
+                        issues.append(
+                            f"VS Code extension theme missing: {relative_path}"
+                        )
         except json.JSONDecodeError as exc:
             issues.append(f"VS Code extension package invalid: {exc}")
 
@@ -811,6 +851,23 @@ def check_source() -> None:
         for field in ("theme_dir_rel", "template_path", "notice_style"):
             if not manifest.get(field):
                 issues.append(f"{tool}: missing manifest field: {field}")
+        distribution = manifest.get("distribution", "loose")
+        if distribution not in ("loose", "package"):
+            issues.append(f"{tool}: invalid distribution: {distribution}")
+        if distribution == "package":
+            package_root = resolve_path(REPO_ROOT, manifest.get("package_root_rel"))
+            if package_root is None or not package_root.is_dir():
+                issues.append(
+                    f"{tool}: package root missing: {manifest.get('package_root_rel')}"
+                )
+            else:
+                theme_dir = resolve_path(REPO_ROOT, manifest.get("theme_dir_rel"))
+                try:
+                    if theme_dir is None:
+                        raise ValueError
+                    theme_dir.relative_to(package_root)
+                except ValueError:
+                    issues.append(f"{tool}: theme_dir_rel must be inside package_root_rel")
         notice_style = manifest.get("notice_style")
         if notice_style not in template_utils.NOTICE_STYLES:
             issues.append(f"{tool}: invalid notice_style: {notice_style}")

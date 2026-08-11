@@ -5,16 +5,17 @@
 Install all themes (symlink mode):
 - `python3 scripts/modus.py install --tool vscode`
 
-Install a single theme:
-- `python3 scripts/modus.py install --tool vscode --theme "modus-operandi"`
-
-Themes and the extension manifest are installed to:
+The complete extension—including all themes, package metadata, license, and
+notice—is installed atomically to:
 - `~/.vscode/extensions/modus-themes/`
 
 Visual Studio Code discovers extensions in that directory automatically on next launch.
 
 If Visual Studio Code does not pick up symlinked themes, install with copy mode:
 - `python3 scripts/modus.py install --tool vscode --copy`
+
+Selective `--theme` installation is not supported because a VS Code extension
+is one package.
 
 ## Activate
 
