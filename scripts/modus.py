@@ -919,6 +919,12 @@ def check_source() -> None:
         if not required_file.is_file():
             issues.append(f"required file missing: {required_file.relative_to(REPO_ROOT)}")
 
+    root_license = REPO_ROOT / "LICENSE"
+    mit_license = REPO_ROOT / "LICENSES" / "MIT.txt"
+    if root_license.is_file() and mit_license.is_file():
+        if root_license.read_bytes() != mit_license.read_bytes():
+            issues.append("root LICENSE differs from LICENSES/MIT.txt")
+
     notice_path = REPO_ROOT / "NOTICE"
     if notice_path.is_file():
         try:
@@ -937,6 +943,9 @@ def check_source() -> None:
                 issues.append("upstream lock must declare CC0-1.0 palette data")
             if lock["palette_source"] != PALETTE_SOURCE:
                 issues.append("upstream lock has the wrong palette source")
+            for marker in ("MIT License", "CC0-1.0", PALETTE_SOURCE):
+                if marker not in notice_text:
+                    issues.append(f"NOTICE missing marker: {marker}")
         except (OSError, json.JSONDecodeError, ValueError) as exc:
             issues.append(f"could not validate palette provenance: {exc}")
 
@@ -948,7 +957,6 @@ def check_source() -> None:
                 issues.append(f"ports/NOTICE missing marker: {marker}")
 
     vscode_license = REPO_ROOT / "ports" / "vscode" / "extension-root" / "LICENSE"
-    mit_license = REPO_ROOT / "LICENSES" / "MIT.txt"
     if vscode_license.is_file() and mit_license.is_file():
         if vscode_license.read_bytes() != mit_license.read_bytes():
             issues.append("VS Code extension LICENSE differs from LICENSES/MIT.txt")

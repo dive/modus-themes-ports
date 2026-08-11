@@ -1,6 +1,22 @@
 Modus Themes Ports provenance
 ==============================
 
+Licensing by component
+----------------------
+
+Project-authored scripts, mappings, templates, manifests, documentation, and
+rendered theme ports are licensed under the MIT License in LICENSE and
+LICENSES/MIT.txt unless a file states otherwise.
+
+The palette data in palettes/ is published under CC0-1.0. The CC0 legal text
+is in LICENSES/CC0-1.0.txt. More-specific file-level notices take precedence.
+
+Upstream source fetched temporarily by the sync command is not distributed in
+this repository and retains its upstream license while in use.
+
+Palette provenance
+------------------
+
 The palette data is based on the Modus themes designed by Protesilaos Stavrou
 and published under CC0-1.0 at:
 https://protesilaos.com/emacs/modus-themes-colors
