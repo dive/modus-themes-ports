@@ -57,16 +57,16 @@
 "ui.background" = { bg = "{color:bg-main}" }
 "ui.background.separator" = { fg = "{color:fg-dim}" }
 "ui.linenr" = { fg = "{color:fg-dim}" }
-"ui.linenr.selected" = { fg = "{color:fg-main}", bg = "{color:bg-hl-line}" }
-"ui.statusline" = { fg = "{color:fg-mode-line-active}", bg = "{color:bg-mode-line-active}" }
-"ui.statusline.inactive" = { fg = "{color:fg-mode-line-inactive}", bg = "{color:bg-mode-line-inactive}" }
+"ui.linenr.selected" = { fg = "{color:fg-main}", bg = "{color:bg-dim}" }
+"ui.statusline" = { fg = "{color:fg-mode-line-active}", bg = "{color:bg-inactive}" }
+"ui.statusline.inactive" = { fg = "{color:fg-mode-line-inactive}", bg = "{color:bg-dim}" }
 "ui.statusline.normal" = { fg = "{color:blue-warmer}" }
 "ui.statusline.insert" = { fg = "{color:green-warmer}" }
 "ui.statusline.select" = { fg = "{color:magenta-warmer}" }
-"ui.statusline.separator" = { fg = "{color:border-mode-line-active}" }
-"ui.bufferline" = { bg = "{color:bg-tab-bar}" }
+"ui.statusline.separator" = { fg = "{color:fg-dim}" }
+"ui.bufferline" = { bg = "{color:bg-inactive}" }
 "ui.bufferline.active" = { bg = "{color:bg-main}", fg = "{color:fg-mode-line-active}" }
-"ui.bufferline.background" = { bg = "{color:bg-tab-bar}" }
+"ui.bufferline.background" = { bg = "{color:bg-inactive}" }
 "ui.popup" = { fg = "{color:fg-main}", bg = "{color:bg-dim}" }
 "ui.popup.info" = { fg = "{color:fg-main}", bg = "{color:bg-main}" }
 "ui.picker.header" = { fg = "{color:fg-main}", bg = "{color:bg-active}", modifiers = ["bold"] }
@@ -75,13 +75,13 @@
 "ui.window" = { fg = "{color:fg-dim}" }
 "ui.help" = { fg = "{color:fg-main}", bg = "{color:bg-active}" }
 "ui.gutter" = { }
-"ui.gutter.selected" = { bg = "{color:bg-hl-line}" }
+"ui.gutter.selected" = { bg = "{color:bg-dim}" }
 "ui.debug.breakpoint" = { fg = "{color:red-intense}" }
 "ui.debug.active" = { fg = "{color:yellow-intense}" }
 "ui.debug" = { fg = "{color:yellow-intense}" }
 "ui.text" = "{color:fg-main}"
 "ui.text.directory" = "{color:blue-cooler}"
-"ui.text.focus" = { fg = "{color:fg-main}", bg = "{color:bg-completion}", modifiers = ["bold"] }
+"ui.text.focus" = { fg = "{color:fg-main}", bg = "{color:bg-inactive}", modifiers = ["bold"] }
 "ui.text.inactive" = { fg = "{color:fg-dim}" }
 "ui.text.info" = { fg = "{color:fg-main}" }
 "ui.virtual" = "{color:bg-active}"
@@ -103,12 +103,12 @@
 "ui.cursor.primary.normal" = { fg = "{color:bg-main}", bg = "{color:fg-dim}" }
 "ui.cursor.primary.insert" = { fg = "{color:bg-main}", bg = "{color:fg-dim}" }
 "ui.cursor.primary.select" = { fg = "{color:bg-main}", bg = "{color:fg-dim}" }
-"ui.cursor.match" = { fg = "{color:fg-main}", bg = "{color:bg-paren-match}" }
-"ui.cursorline.primary" = { bg = "{color:bg-hl-line}" }
-"ui.highlight" = { bg = "{color:bg-hl-line}" }
-"ui.highlight.frameline" = { bg = "{color:bg-paren-match}" }
+"ui.cursor.match" = { fg = "{color:fg-main}", bg = "{color:bg-cyan-subtle}" }
+"ui.cursorline.primary" = { bg = "{color:bg-dim}" }
+"ui.highlight" = { bg = "{color:bg-dim}" }
+"ui.highlight.frameline" = { bg = "{color:bg-cyan-subtle}" }
 "ui.menu" = { fg = "{color:fg-main}", bg = "{color:bg-dim}" }
-"ui.menu.selected" = { fg = "{color:fg-main}", bg = "{color:bg-completion}", modifiers = ["bold"] }
+"ui.menu.selected" = { fg = "{color:fg-main}", bg = "{color:bg-inactive}", modifiers = ["bold"] }
 "ui.menu.scroll" = { fg = "{color:fg-dim}", bg = "{color:bg-cyan-intense}" }
 
 # Diagnostics

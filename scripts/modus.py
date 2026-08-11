@@ -38,18 +38,6 @@ def palettes_dir() -> Path:
     return REPO_ROOT / "palettes"
 
 
-def palette_profile() -> dict[str, str]:
-    profile = io.load_mapping(
-        str(REPO_ROOT / "mappings" / "palette" / "default.json")
-    )
-    if not isinstance(profile, dict) or any(
-        not isinstance(key, str) or not isinstance(value, str)
-        for key, value in profile.items()
-    ):
-        raise ValueError("Palette profile must be an object of string aliases")
-    return profile
-
-
 def load_registry() -> dict[str, dict[str, Any]]:
     return registry_utils.load_registry(REPO_ROOT)
 
@@ -221,7 +209,6 @@ def render_with_template(
 def cmd_render(args: argparse.Namespace) -> None:
     registry = load_registry()
     tools = sorted(registry.keys()) if args.tool == "all" else [args.tool]
-    palette_overrides = palette_profile()
 
     for tool in tools:
         manifest = tool_manifest(registry, tool)
@@ -241,9 +228,7 @@ def cmd_render(args: argparse.Namespace) -> None:
 
         out_dir.mkdir(parents=True, exist_ok=True)
         for palette_path in palette_files:
-            theme_name, palette = io.load_palette(
-                str(palette_path), palette_overrides=palette_overrides
-            )
+            theme_name, palette = io.load_palette(str(palette_path))
             if args.theme and theme_name != args.theme:
                 continue
             content = render_with_template(palette, template_text, theme_name)
@@ -756,12 +741,6 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
     # Validate all templates reference valid palette keys
     palette_files = sorted(palettes_dir().glob("*.json"))
     if palette_files:
-        try:
-            palette_overrides = palette_profile()
-        except (FileNotFoundError, json.JSONDecodeError, TypeError, ValueError) as exc:
-            issues.append(f"palette profile invalid: {exc}")
-            palette_overrides = {}
-
         for palette_path in palette_files:
             try:
                 data = json.loads(palette_path.read_text(encoding="utf-8"))
@@ -771,16 +750,12 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
                     issues.append(f"{palette_path.name}: missing CC0-1.0 metadata")
                 if data.get("source") != PALETTE_SOURCE:
                     issues.append(f"{palette_path.name}: missing palette source metadata")
-                io.load_palette(
-                    str(palette_path), palette_overrides=palette_overrides
-                )
+                io.load_palette(str(palette_path))
             except (json.JSONDecodeError, TypeError, ValueError) as exc:
                 issues.append(f"{palette_path.name}: {exc}")
 
         # Use the first palette to get the set of valid keys
-        _, sample_palette = io.load_palette(
-            str(palette_files[0]), palette_overrides=palette_overrides
-        )
+        _, sample_palette = io.load_palette(str(palette_files[0]))
         palette_keys = set(sample_palette.keys())
 
         registry = load_registry()
@@ -828,9 +803,7 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
         # Check WCAG AAA contrast for all palettes (warnings only)
         contrast_warnings = []
         for palette_path in palette_files:
-            theme_name, palette = io.load_palette(
-                str(palette_path), palette_overrides=palette_overrides
-            )
+            theme_name, palette = io.load_palette(str(palette_path))
             warnings = contrast_utils.validate_palette_contrast(palette)
             for warning in warnings:
                 contrast_warnings.append(f"{theme_name}: {warning}")

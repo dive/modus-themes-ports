@@ -58,7 +58,7 @@ Themes are symlinked into `$XDG_CONFIG_HOME` by default. See each tool's README 
 Preview of the core accent foreground hues by variant (base, warmer, cooler, faint, intense).
 
 > [!NOTE]
-> Generated ports apply the project-owned palette profile in `mappings/palette/default.json`; extracted palettes remain unmodified CC0 data.
+> Port-specific palette choices live in each tool template; extracted palettes remain unmodified CC0 data.
 
 ![Modus Operandi accent hues](screenshots/hues/modus-operandi.svg)
 

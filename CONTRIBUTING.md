@@ -27,7 +27,7 @@ python3 scripts/modus.py install --tool mytool --link
 ## Core Commands
 - Synchronize upstream + regenerate palettes + render themes:
   - `python3 scripts/modus.py sync-upstream`
-  - Rendering applies the project-owned profile in `mappings/palette/default.json`; extracted palettes remain unmodified CC0 data.
+  - Port-specific palette choices live directly in each tool template; extracted palettes remain unmodified CC0 data.
   - Regenerate hue previews with `python3 scripts/render-hue-previews.py`.
 - Render themes:
   - `python3 scripts/modus.py render --tool <tool>`
@@ -99,6 +99,6 @@ Recommended checks:
 
 - Keep extracted Modus palette data under CC0-1.0.
 - Keep project-authored templates, scripts, and rendered ports under MIT.
-- Add port-wide palette choices to `mappings/palette/default.json`; do not import upstream Emacs presets.
+- Express palette choices directly in each tool template; do not import upstream Emacs presets.
 - Preserve generated SPDX and palette provenance notices in formats that support comments.
 - Include `ports/NOTICE` and `LICENSES/MIT.txt` when distributing formats that cannot carry comments or license metadata.

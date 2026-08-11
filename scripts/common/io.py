@@ -5,16 +5,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
-
-
-def load_mapping(path: str) -> dict[str, Any]:
-    """Load a JSON mapping file."""
-    mapping_path = Path(path)
-    if not mapping_path.is_file():
-        raise FileNotFoundError(f"Mapping not found: {mapping_path}")
-    with mapping_path.open("r", encoding="utf-8") as f:
-        return json.load(f)
 
 
 def _resolve_palette_value(
@@ -46,11 +36,8 @@ def resolve_palette(palette: dict[str, str]) -> dict[str, str]:
     return resolved
 
 
-def load_palette(
-    path: str,
-    palette_overrides: dict[str, str] | None = None,
-) -> tuple[str, dict[str, str]]:
-    """Load a palette JSON file, apply local overrides, and resolve references.
+def load_palette(path: str) -> tuple[str, dict[str, str]]:
+    """Load a palette document and resolve palette references.
 
     Returns:
         A tuple of (theme_name, resolved_palette).
@@ -58,38 +45,34 @@ def load_palette(
     palette_path = Path(path)
     with palette_path.open("r", encoding="utf-8") as f:
         data = json.load(f)
-    if isinstance(data, dict) and "palette" in data:
-        name = data.get("name") or palette_path.stem
-        palette = data["palette"]
-    else:
-        name = palette_path.stem
-        palette = data
+
+    if not isinstance(data, dict):
+        raise ValueError(f"Palette document must be an object: {palette_path}")
+    missing_fields = [
+        field for field in ("name", "license", "source", "palette") if field not in data
+    ]
+    if missing_fields:
+        raise ValueError(
+            f"Palette document missing fields: {', '.join(missing_fields)}: {palette_path}"
+        )
+    for field in ("name", "license", "source"):
+        if not isinstance(data[field], str) or not data[field]:
+            raise ValueError(f"Palette {field} must be a non-empty string: {palette_path}")
+
+    palette = data["palette"]
     if not isinstance(palette, dict):
         raise ValueError(f"Palette must be an object: {palette_path}")
-    palette = dict(palette)
-    if palette_overrides:
-        missing_keys = sorted(set(palette_overrides) - set(palette))
-        if missing_keys:
-            raise ValueError(
-                f"Palette overrides contain unknown keys for {name}: "
-                + ", ".join(missing_keys)
-            )
-        missing_values = sorted(
-            {
-                value
-                for value in palette_overrides.values()
-                if not isinstance(value, str) or value not in palette
-            },
-            key=str,
+    invalid_entries = sorted(
+        str(key)
+        for key, value in palette.items()
+        if not isinstance(key, str) or not isinstance(value, str)
+    )
+    if invalid_entries:
+        raise ValueError(
+            "Palette keys and values must be strings; invalid entries: "
+            + ", ".join(invalid_entries)
         )
-        if missing_values:
-            raise ValueError(
-                f"Palette overrides reference unknown values for {name}: "
-                + ", ".join(map(str, missing_values))
-            )
-        palette.update(palette_overrides)
-    # NOTE: Resolve palette references so rendered themes never contain alias names.
-    return name, resolve_palette(palette)
+    return data["name"], resolve_palette(palette)
 
 
 def write_output(path: str, content: str) -> Path:
