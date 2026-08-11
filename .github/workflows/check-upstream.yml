@@ -100,7 +100,7 @@ jobs:
           After updating, verify the changes:
 
           \`\`\`sh
-          python3 scripts/modus.py validate --tool all
+          python3 scripts/modus.py check
           \`\`\`
 
           ---

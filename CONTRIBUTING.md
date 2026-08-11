@@ -33,9 +33,12 @@ python3 scripts/modus.py install --tool mytool --link
   - `python3 scripts/modus.py render --tool <tool>`
 - Validate themes:
   - `python3 scripts/modus.py validate --tool <tool>`
-- Environment check:
+- Run all deterministic repository checks:
+  - `python3 scripts/modus.py check`
+  - Use `check source` or `check generated` to run one phase.
+- Check the local development environment:
   - `python3 scripts/modus.py doctor`
-  - Validates: dependencies, palettes, licensing boundaries, generated notices, template tokens, WCAG contrast
+  - Checks dependencies needed for synchronization, installation, and development.
 
 ## Registry Overview
 Tools are discovered from `ports/*/*-port.json`.
@@ -82,7 +85,7 @@ Use `XDG_CONFIG_HOME` (or `~/.config`). Do not use `~/Library/Application Suppor
 
 ## Accessibility
 
-Modus themes are designed to meet WCAG AAA (7:1 contrast ratio). The `doctor` command checks contrast for all palette colors. Warnings for tinted variants may be intentional design choices.
+Modus themes are designed to meet WCAG AAA (7:1 contrast ratio). The source check evaluates contrast for all palette colors. Warnings for tinted variants may be intentional design choices.
 
 Key foreground colors to check against `bg-main`:
 - `fg-main`, `fg-dim`, `fg-alt`
@@ -92,9 +95,8 @@ Key foreground colors to check against `bg-main`:
 ## Testing
 
 Recommended checks:
-- `python3 scripts/modus.py render --tool all`
-- `python3 scripts/modus.py validate --tool all`
-- `python3 scripts/modus.py doctor`
+- `python3 scripts/modus.py check`
+- `python3 scripts/modus.py doctor` when diagnosing the local environment
 
 ## Licensing Generated Ports
 

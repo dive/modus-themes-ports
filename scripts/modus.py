@@ -113,7 +113,8 @@ def resolve_output_path(manifest: dict[str, Any], theme_name: str, out_dir_overr
     if out_dir_override:
         base = Path(out_dir_override)
         if theme_kind == "dir":
-            return base / f"{theme_name}.yazi" / entry
+            dir_suffix = manifest.get("dir_suffix", ".yazi")
+            return base / f"{theme_name}{dir_suffix}" / entry
         suffix = theme_ext if theme_ext else ""
         return base / f"{theme_name}{suffix}"
 
@@ -239,7 +240,8 @@ def cmd_render(args: argparse.Namespace) -> None:
             )
             output_path = resolve_output_path(manifest, theme_name, args.out_dir)
             io.write_output(str(output_path), content)
-            print(f"Wrote {output_path}")
+            if not getattr(args, "quiet", False):
+                print(f"Wrote {output_path}")
             for entry in extra:
                 extra_text = entry["template_path"].read_text(encoding="utf-8")
                 extra_content = render_with_template(
@@ -255,7 +257,8 @@ def cmd_render(args: argparse.Namespace) -> None:
                         continue
                     extra_written.add(str(extra_path))
                 io.write_output(str(extra_path), extra_content)
-                print(f"Wrote {extra_path}")
+                if not getattr(args, "quiet", False):
+                    print(f"Wrote {extra_path}")
 
 
 def cmd_validate(args: argparse.Namespace) -> None:
@@ -349,7 +352,8 @@ def cmd_validate(args: argparse.Namespace) -> None:
             total = len([p for p in themes_dir.iterdir() if p.is_file() and not p.name.startswith('.')])
             if args.theme:
                 total = 1 if (themes_dir / args.theme).is_file() else 0
-        print(f"Validated {total} theme(s).")
+        if not getattr(args, "quiet", False):
+            print(f"Validated {total} theme(s).")
 
 
 def cmd_install(args: argparse.Namespace) -> None:
@@ -659,20 +663,35 @@ def cmd_sync_upstream(args: argparse.Namespace) -> None:
     cmd_render(argparse.Namespace(tool="all", out_dir=None, theme=None))
 
 
+def report_issues(label: str, issues: list[str]) -> None:
+    if not issues:
+        return
+    print(f"{label} found issues:")
+    for issue in issues:
+        print(f"- {issue}")
+    raise SystemExit(f"{label} failed.")
+
+
 def cmd_doctor(_args: argparse.Namespace) -> None:
     issues = []
-
-    if shutil.which("git") is None:
-        issues.append("git not found")
-    if shutil.which("python3") is None:
-        issues.append("python3 not found")
+    for command in ("git", "python3"):
+        if shutil.which(command) is None:
+            issues.append(f"{command} not found")
     if shutil.which("trash") is None:
         issues.append("trash not found (needed for uninstall)")
+    try:
+        emacs_bin()
+    except FileNotFoundError as exc:
+        issues.append(str(exc))
 
-    if not (REPO_ROOT / "palettes").is_dir():
-        issues.append("palettes directory missing (run: python3 scripts/modus.py sync-upstream)")
+    report_issues("Doctor", issues)
+    print("Doctor passed.")
 
-    for required_file in (
+
+def check_source() -> None:
+    issues: list[str] = []
+
+    required_files = (
         REPO_ROOT / "LICENSE",
         REPO_ROOT / "NOTICE",
         REPO_ROOT / "LICENSES" / "MIT.txt",
@@ -681,9 +700,10 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
         REPO_ROOT / "ports" / "vscode" / "extension-root" / "LICENSE",
         REPO_ROOT / "ports" / "vscode" / "extension-root" / "NOTICE",
         REPO_ROOT / "upstream.lock.json",
-    ):
+    )
+    for required_file in required_files:
         if not required_file.is_file():
-            issues.append(f"licensing file missing: {required_file.relative_to(REPO_ROOT)}")
+            issues.append(f"required file missing: {required_file.relative_to(REPO_ROOT)}")
 
     notice_path = REPO_ROOT / "NOTICE"
     if notice_path.is_file():
@@ -729,9 +749,10 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
     vscode_package = REPO_ROOT / "ports" / "vscode" / "extension-root" / "package.json"
     if vscode_package.is_file():
         try:
-            if json.loads(vscode_package.read_text(encoding="utf-8")).get("license") != "MIT":
+            package = json.loads(vscode_package.read_text(encoding="utf-8"))
+            if not isinstance(package, dict) or package.get("license") != "MIT":
                 issues.append("VS Code extension package must declare the MIT license")
-        except (AttributeError, json.JSONDecodeError) as exc:
+        except json.JSONDecodeError as exc:
             issues.append(f"VS Code extension package invalid: {exc}")
 
     extractor_path = REPO_ROOT / "scripts" / "core" / "extract-palettes.el"
@@ -752,89 +773,176 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
     else:
         issues.append("palette extractor missing: scripts/core/extract-palettes.el")
 
-    # Validate all templates reference valid palette keys
     palette_files = sorted(palettes_dir().glob("*.json"))
-    if palette_files:
-        for palette_path in palette_files:
-            try:
-                data = json.loads(palette_path.read_text(encoding="utf-8"))
-                if not isinstance(data, dict):
-                    raise ValueError("Palette document must be an object")
-                if data.get("license") != "CC0-1.0":
-                    issues.append(f"{palette_path.name}: missing CC0-1.0 metadata")
-                if data.get("source") != PALETTE_SOURCE:
-                    issues.append(f"{palette_path.name}: missing palette source metadata")
-                io.load_palette(str(palette_path))
-            except (json.JSONDecodeError, TypeError, ValueError) as exc:
-                issues.append(f"{palette_path.name}: {exc}")
-
-        # Use the first palette to get the set of valid keys
-        _, sample_palette = io.load_palette(str(palette_files[0]))
-        palette_keys = set(sample_palette.keys())
-
-        registry = load_registry()
-        for tool, manifest in registry.items():
-            template_path = tool_template(manifest)
-            if template_path and template_path.is_file():
-                template_text = template_path.read_text(encoding="utf-8")
-                errors = template_utils.validate_template(template_text, palette_keys)
-                for error in errors:
-                    issues.append(f"{tool}: {error}")
-
-        theme_names = [palette_path.stem for palette_path in palette_files]
-        generated_paths: dict[Path, str] = {}
-        for tool, manifest in registry.items():
-            notice_style = manifest.get("notice_style")
-            if notice_style not in template_utils.NOTICE_STYLES:
-                issues.append(f"{tool}: invalid notice_style: {notice_style}")
-                continue
-            for theme_name in theme_names:
-                generated_paths[resolve_output_path(manifest, theme_name, None)] = notice_style
-            for entry in extra_templates(manifest):
-                output_template = entry["output_path_template"]
-                if "{theme}" in output_template:
-                    for theme_name in theme_names:
-                        generated_paths[
-                            REPO_ROOT / output_template.replace("{theme}", theme_name)
-                        ] = entry["notice_style"]
-                else:
-                    generated_paths[REPO_ROOT / output_template] = entry["notice_style"]
-
-        for output_path, notice_style in sorted(generated_paths.items()):
-            if not output_path.is_file():
+    loaded_palettes: list[tuple[str, dict[str, str]]] = []
+    if not palette_files:
+        issues.append("no palettes found (run: python3 scripts/modus.py sync-upstream)")
+    for palette_path in palette_files:
+        try:
+            data = json.loads(palette_path.read_text(encoding="utf-8"))
+            theme_name, palette = io.load_palette(str(palette_path))
+            if data["license"] != "CC0-1.0":
+                issues.append(f"{palette_path.name}: missing CC0-1.0 metadata")
+            if data["source"] != PALETTE_SOURCE:
+                issues.append(f"{palette_path.name}: missing palette source metadata")
+            if theme_name != palette_path.stem:
                 issues.append(
-                    f"generated theme missing: {output_path.relative_to(REPO_ROOT)}"
+                    f"{palette_path.name}: name does not match filename: {theme_name}"
                 )
+            loaded_palettes.append((theme_name, palette))
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+            issues.append(f"{palette_path.name}: {exc}")
+
+    palette_keys: set[str] = set()
+    if loaded_palettes:
+        key_sets = [set(palette) for _, palette in loaded_palettes]
+        palette_keys = set.intersection(*key_sets)
+        if any(keys != key_sets[0] for keys in key_sets[1:]):
+            issues.append("palette key sets differ between themes")
+
+    try:
+        registry = load_registry()
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        issues.append(f"tool registry invalid: {exc}")
+        registry = {}
+
+    templates: dict[Path, set[str]] = {}
+    for tool, manifest in registry.items():
+        for field in ("theme_dir_rel", "template_path", "notice_style"):
+            if not manifest.get(field):
+                issues.append(f"{tool}: missing manifest field: {field}")
+        notice_style = manifest.get("notice_style")
+        if notice_style not in template_utils.NOTICE_STYLES:
+            issues.append(f"{tool}: invalid notice_style: {notice_style}")
+
+        template_path = tool_template(manifest)
+        if template_path is None or not template_path.is_file():
+            issues.append(f"{tool}: template missing: {manifest.get('template_path')}")
+        else:
+            templates.setdefault(template_path, set()).add(tool)
+
+        for entry in manifest.get("extra_templates") or []:
+            extra_template = resolve_path(REPO_ROOT, entry.get("template_path"))
+            output_template = entry.get("output_path_template")
+            extra_style = entry.get("notice_style", notice_style)
+            if extra_template is None or not extra_template.is_file():
+                issues.append(
+                    f"{tool}: extra template missing: {entry.get('template_path')}"
+                )
+            else:
+                templates.setdefault(extra_template, set()).add(tool)
+            if not output_template:
+                issues.append(f"{tool}: extra template missing output_path_template")
+            if extra_style not in template_utils.NOTICE_STYLES:
+                issues.append(f"{tool}: invalid extra notice_style: {extra_style}")
+
+    for template_path, tools in sorted(templates.items()):
+        template_text = template_path.read_text(encoding="utf-8")
+        owner = ", ".join(sorted(tools))
+        for error in template_utils.validate_template(template_text, palette_keys):
+            issues.append(f"{owner}: {error}")
+        for marker in template_utils.NOTICE_MARKERS:
+            if marker in template_text:
+                issues.append(
+                    f"{template_path.relative_to(REPO_ROOT)}: generated notice is hard-coded"
+                )
+                break
+
+    contrast_warnings = []
+    for theme_name, palette in loaded_palettes:
+        for warning in contrast_utils.validate_palette_contrast(palette):
+            contrast_warnings.append(f"{theme_name}: {warning}")
+    if contrast_warnings:
+        print("Contrast warnings (may be intentional for tinted variants):")
+        for warning in contrast_warnings:
+            print(f"  - {warning}")
+
+    report_issues("Source check", issues)
+
+
+def check_generated() -> None:
+    issues: list[str] = []
+    try:
+        registry = load_registry()
+        theme_names = [
+            io.load_palette(str(path))[0]
+            for path in sorted(palettes_dir().glob("*.json"))
+        ]
+    except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+        report_issues("Generated check", [str(exc)])
+        return
+
+    checked_paths: set[Path] = set()
+    with tempfile.TemporaryDirectory(prefix="modus-render-check-") as temp_dir:
+        for tool, manifest in registry.items():
+            tool_dir = Path(temp_dir) / tool
+            try:
+                cmd_render(
+                    argparse.Namespace(
+                        tool=tool,
+                        out_dir=str(tool_dir),
+                        theme=None,
+                        quiet=True,
+                    )
+                )
+                cmd_validate(
+                    argparse.Namespace(
+                        tool=tool,
+                        themes_dir=str(tool_dir),
+                        theme=None,
+                        quiet=True,
+                    )
+                )
+                extras = extra_templates(manifest)
+            except (OSError, KeyError, TypeError, ValueError, SystemExit) as exc:
+                issues.append(f"{tool}: render or validation failed: {exc}")
                 continue
-            if notice_style == "sidecar":
-                continue
-            output_text = output_path.read_text(encoding="utf-8")
-            for marker in template_utils.NOTICE_MARKERS:
-                if marker not in output_text:
-                    issues.append(
-                        f"{output_path.relative_to(REPO_ROOT)}: "
-                        f"missing generated notice marker: {marker}"
+
+            rendered_paths: dict[Path, tuple[Path, str]] = {}
+            for theme_name in theme_names:
+                rendered = resolve_output_path(manifest, theme_name, str(tool_dir))
+                tracked = resolve_output_path(manifest, theme_name, None)
+                rendered_paths[rendered] = (tracked, manifest["notice_style"])
+                for entry in extras:
+                    extra_rendered = rendered.parent / Path(
+                        entry["output_path_template"]
+                    ).name
+                    extra_tracked = REPO_ROOT / entry[
+                        "output_path_template"
+                    ].replace("{theme}", theme_name)
+                    rendered_paths[extra_rendered] = (
+                        extra_tracked,
+                        entry["notice_style"],
                     )
 
-        # Check WCAG AAA contrast for all palettes (warnings only)
-        contrast_warnings = []
-        for palette_path in palette_files:
-            theme_name, palette = io.load_palette(str(palette_path))
-            warnings = contrast_utils.validate_palette_contrast(palette)
-            for warning in warnings:
-                contrast_warnings.append(f"{theme_name}: {warning}")
-        if contrast_warnings:
-            print("Contrast warnings (may be intentional for tinted variants):")
-            for warning in contrast_warnings:
-                print(f"  - {warning}")
+            for rendered, (tracked, notice_style) in rendered_paths.items():
+                checked_paths.add(tracked)
+                relative = tracked.relative_to(REPO_ROOT)
+                if not rendered.is_file():
+                    issues.append(f"{tool}: rendered output missing: {rendered}")
+                    continue
+                if not tracked.is_file():
+                    issues.append(f"tracked generated output missing: {relative}")
+                    continue
+                if rendered.read_bytes() != tracked.read_bytes():
+                    issues.append(f"tracked generated output is stale: {relative}")
+                if notice_style != "sidecar":
+                    output_text = rendered.read_text(encoding="utf-8")
+                    for marker in template_utils.NOTICE_MARKERS:
+                        if marker not in output_text:
+                            issues.append(f"{relative}: missing generated notice: {marker}")
 
-    if issues:
-        print("Doctor found issues:")
-        for issue in issues:
-            print(f"- {issue}")
-        raise SystemExit("Doctor failed.")
+    report_issues("Generated check", issues)
+    print(f"Checked {len(checked_paths)} generated outputs.")
 
-    print("Doctor passed.")
+
+def cmd_check(args: argparse.Namespace) -> None:
+    if args.scope in (None, "source"):
+        check_source()
+        print("Source check passed.")
+    if args.scope in (None, "generated"):
+        check_generated()
+        print("Generated check passed.")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -881,6 +989,9 @@ def build_parser() -> argparse.ArgumentParser:
     sync_cmd.add_argument("--revision")
     sync_cmd.set_defaults(func=cmd_sync_upstream)
     sub.add_parser("doctor").set_defaults(func=cmd_doctor)
+    check_cmd = sub.add_parser("check")
+    check_cmd.add_argument("scope", nargs="?", choices=("source", "generated"))
+    check_cmd.set_defaults(func=cmd_check)
 
     return parser
 
