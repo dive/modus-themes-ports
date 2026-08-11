@@ -27,6 +27,43 @@ from scripts.common import template as template_utils
 from scripts.common import theme_ops
 
 PALETTE_SOURCE = "https://protesilaos.com/emacs/modus-themes-colors"
+SHIKI_THEME_FORMAT = "shiki-theme"
+HEX_COLOR_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
+SHIKI_ANSI_COLOR_KEYS = (
+    "terminal.ansiBlack",
+    "terminal.ansiRed",
+    "terminal.ansiGreen",
+    "terminal.ansiYellow",
+    "terminal.ansiBlue",
+    "terminal.ansiMagenta",
+    "terminal.ansiCyan",
+    "terminal.ansiWhite",
+    "terminal.ansiBrightBlack",
+    "terminal.ansiBrightRed",
+    "terminal.ansiBrightGreen",
+    "terminal.ansiBrightYellow",
+    "terminal.ansiBrightBlue",
+    "terminal.ansiBrightMagenta",
+    "terminal.ansiBrightCyan",
+    "terminal.ansiBrightWhite",
+)
+SHIKI_COLOR_KEYS = {
+    "editor.foreground",
+    "editor.background",
+    *SHIKI_ANSI_COLOR_KEYS,
+}
+SHIKI_THEME_KEYS = {
+    "name",
+    "displayName",
+    "type",
+    "fg",
+    "bg",
+    "colors",
+    "tokenColors",
+}
+SHIKI_TOKEN_RULE_KEYS = {"name", "scope", "settings"}
+SHIKI_TOKEN_SETTING_KEYS = {"foreground", "background", "fontStyle"}
+SHIKI_FONT_STYLES = {"italic", "bold", "underline", "strikethrough"}
 
 
 def palettes_dir() -> Path:
@@ -183,6 +220,128 @@ def json_path_exists(data: Any, path: str) -> bool:
     return current is not None
 
 
+def validate_shiki_theme(data: Any, path: Path) -> list[str]:
+    """Validate the strict source format used by the standalone Shiki port."""
+    issues: list[str] = []
+    if not isinstance(data, dict):
+        return ["Theme document must be an object"]
+
+    missing_keys = sorted(SHIKI_THEME_KEYS - set(data))
+    unknown_keys = sorted(set(data) - SHIKI_THEME_KEYS)
+    if missing_keys:
+        issues.append(f"Missing top-level keys: {', '.join(missing_keys)}")
+    if unknown_keys:
+        issues.append(f"Unsupported top-level keys: {', '.join(unknown_keys)}")
+
+    theme_name = data.get("name")
+    if theme_name != path.stem:
+        issues.append(f"name must match filename: {path.stem}")
+    display_name = data.get("displayName")
+    if not isinstance(display_name, str) or not display_name.strip():
+        issues.append("displayName must be a non-empty string")
+
+    expected_type = "light" if path.stem.startswith("modus-operandi") else "dark"
+    if data.get("type") != expected_type:
+        issues.append(f"type must be {expected_type}")
+
+    for key in ("fg", "bg"):
+        value = data.get(key)
+        if not isinstance(value, str) or not HEX_COLOR_RE.fullmatch(value):
+            issues.append(f"{key} must be a #RRGGBB color")
+
+    colors = data.get("colors")
+    if not isinstance(colors, dict):
+        issues.append("colors must be an object")
+    else:
+        missing_colors = sorted(SHIKI_COLOR_KEYS - set(colors))
+        unknown_colors = sorted(set(colors) - SHIKI_COLOR_KEYS)
+        if missing_colors:
+            issues.append(f"Missing colors: {', '.join(missing_colors)}")
+        if unknown_colors:
+            issues.append(f"Unsupported colors: {', '.join(unknown_colors)}")
+        for key, value in colors.items():
+            if not isinstance(value, str) or not HEX_COLOR_RE.fullmatch(value):
+                issues.append(f"colors.{key} must be a #RRGGBB color")
+        if data.get("fg") != colors.get("editor.foreground"):
+            issues.append("fg must match colors.editor.foreground")
+        if data.get("bg") != colors.get("editor.background"):
+            issues.append("bg must match colors.editor.background")
+
+    token_colors = data.get("tokenColors")
+    if not isinstance(token_colors, list) or not token_colors:
+        issues.append("tokenColors must be a non-empty array")
+        return issues
+
+    for index, rule in enumerate(token_colors):
+        prefix = f"tokenColors.{index}"
+        if not isinstance(rule, dict):
+            issues.append(f"{prefix} must be an object")
+            continue
+        unknown_rule_keys = sorted(set(rule) - SHIKI_TOKEN_RULE_KEYS)
+        if unknown_rule_keys:
+            issues.append(
+                f"{prefix} has unsupported keys: {', '.join(unknown_rule_keys)}"
+            )
+        if "name" in rule and (
+            not isinstance(rule["name"], str) or not rule["name"].strip()
+        ):
+            issues.append(f"{prefix}.name must be a non-empty string")
+
+        scopes = rule.get("scope")
+        if not isinstance(scopes, list) or not scopes:
+            issues.append(f"{prefix}.scope must be a non-empty array")
+        else:
+            for scope in scopes:
+                if not isinstance(scope, str) or not scope.strip():
+                    issues.append(f"{prefix}.scope entries must be non-empty strings")
+                elif "," in scope:
+                    issues.append(
+                        f"{prefix}.scope entries must not pack comma-separated selectors"
+                    )
+
+        settings = rule.get("settings")
+        if not isinstance(settings, dict) or not settings:
+            issues.append(f"{prefix}.settings must be a non-empty object")
+            continue
+        unknown_setting_keys = sorted(set(settings) - SHIKI_TOKEN_SETTING_KEYS)
+        if unknown_setting_keys:
+            issues.append(
+                f"{prefix}.settings has unsupported keys: "
+                + ", ".join(unknown_setting_keys)
+            )
+        for key in ("foreground", "background"):
+            if key not in settings:
+                continue
+            value = settings[key]
+            if not isinstance(value, str) or not HEX_COLOR_RE.fullmatch(value):
+                issues.append(f"{prefix}.settings.{key} must be a #RRGGBB color")
+        if "fontStyle" in settings:
+            font_style = settings["fontStyle"]
+            if not isinstance(font_style, str):
+                issues.append(f"{prefix}.settings.fontStyle must be a string")
+            else:
+                styles = font_style.split()
+                unknown_styles = sorted(set(styles) - SHIKI_FONT_STYLES)
+                if unknown_styles:
+                    issues.append(
+                        f"{prefix}.settings.fontStyle has unsupported values: "
+                        + ", ".join(unknown_styles)
+                    )
+                if len(styles) != len(set(styles)):
+                    issues.append(
+                        f"{prefix}.settings.fontStyle must not repeat values"
+                    )
+
+    return issues
+
+
+def require_installable(manifest: dict[str, Any], tool: str) -> None:
+    if manifest.get("installable", True) is False:
+        raise SystemExit(
+            f"Error: {tool} is a source-only port and has no install or config target"
+        )
+
+
 def cmd_list(_args: argparse.Namespace) -> None:
     registry = load_registry()
     tools = sorted(registry.keys())
@@ -278,12 +437,37 @@ def cmd_validate(args: argparse.Namespace) -> None:
         required_keys = manifest.get("required_keys", [])
         validate_json = manifest.get("validate_json", False)
         required_fields = manifest.get("required_fields", [])
+        theme_format = manifest.get("theme_format")
 
         # Template-based validation (key presence)
         errors = []
         theme_kind = manifest.get("theme_kind", "file")
         theme_entry = manifest.get("theme_entry", "flavor.toml")
         dir_suffix = manifest.get("dir_suffix", ".yazi")
+        theme_ext = manifest.get("theme_ext", "")
+
+        if theme_format == SHIKI_THEME_FORMAT and not args.theme:
+            expected_files = {
+                f"{path.stem}{theme_ext}" for path in palettes_dir().glob("*.json")
+            }
+            actual_files = {
+                path.name
+                for path in themes_dir.iterdir()
+                if path.is_file() and not path.name.startswith(".")
+            }
+            missing_files = sorted(expected_files - actual_files)
+            unexpected_files = sorted(actual_files - expected_files)
+            directory_issues = []
+            if missing_files:
+                directory_issues.append(
+                    f"Missing generated themes: {', '.join(missing_files)}"
+                )
+            if unexpected_files:
+                directory_issues.append(
+                    f"Unexpected generated themes: {', '.join(unexpected_files)}"
+                )
+            if directory_issues:
+                errors.append((themes_dir, directory_issues))
 
         for path in sorted(themes_dir.iterdir()):
             if path.name.startswith("."):
@@ -321,6 +505,8 @@ def cmd_validate(args: argparse.Namespace) -> None:
                     for field in required_fields:
                         if not json_path_exists(data, field):
                             issues.append(f"Missing field: {field}")
+                    if theme_format == SHIKI_THEME_FORMAT:
+                        issues.extend(validate_shiki_theme(data, path))
             for key in required_keys:
                 if key == "palette":
                     if "palette =" not in text:
@@ -366,6 +552,7 @@ def cmd_validate(args: argparse.Namespace) -> None:
 def cmd_install(args: argparse.Namespace) -> None:
     registry = load_registry()
     manifest = tool_manifest(registry, args.tool)
+    require_installable(manifest, args.tool)
     dest_dir = Path(args.themes_dir) if args.themes_dir else tool_default_themes_dir(manifest)
     if args.copy and args.link:
         raise SystemExit("Error: choose either --copy or --link")
@@ -405,6 +592,7 @@ def cmd_install(args: argparse.Namespace) -> None:
 def cmd_uninstall(args: argparse.Namespace) -> None:
     registry = load_registry()
     manifest = tool_manifest(registry, args.tool)
+    require_installable(manifest, args.tool)
     dest_dir = Path(args.themes_dir) if args.themes_dir else tool_default_themes_dir(manifest)
     if manifest.get("distribution", "loose") == "package":
         if args.theme:
@@ -440,6 +628,7 @@ def cmd_uninstall(args: argparse.Namespace) -> None:
 def cmd_print_config(args: argparse.Namespace) -> None:
     registry = load_registry()
     manifest = tool_manifest(registry, args.tool)
+    require_installable(manifest, args.tool)
     if not args.theme:
         raise SystemExit("Error: --theme is required for print-config")
 
@@ -851,6 +1040,23 @@ def check_source() -> None:
         for field in ("theme_dir_rel", "template_path", "notice_style"):
             if not manifest.get(field):
                 issues.append(f"{tool}: missing manifest field: {field}")
+        installable = manifest.get("installable", True)
+        if not isinstance(installable, bool):
+            issues.append(f"{tool}: installable must be a boolean")
+        elif not installable:
+            if manifest.get("install_targets"):
+                issues.append(
+                    f"{tool}: source-only ports must not declare install_targets"
+                )
+            if manifest.get("config_locations"):
+                issues.append(
+                    f"{tool}: source-only ports must not declare config_locations"
+                )
+        theme_format = manifest.get("theme_format")
+        if theme_format not in (None, SHIKI_THEME_FORMAT):
+            issues.append(f"{tool}: unsupported theme_format: {theme_format}")
+        if theme_format == SHIKI_THEME_FORMAT and not manifest.get("validate_json"):
+            issues.append(f"{tool}: {SHIKI_THEME_FORMAT} requires validate_json")
         distribution = manifest.get("distribution", "loose")
         if distribution not in ("loose", "package"):
             issues.append(f"{tool}: invalid distribution: {distribution}")

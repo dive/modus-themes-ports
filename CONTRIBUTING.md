@@ -15,7 +15,7 @@ mkdir -p ports/mytool
 python3 scripts/modus.py render --tool mytool
 python3 scripts/modus.py validate --tool mytool
 
-# 4. Test install locally
+# 4. Test install locally (skip for source-only ports)
 python3 scripts/modus.py install --tool mytool --link
 ```
 
@@ -45,6 +45,7 @@ Tools are discovered from `ports/*/*-port.json`.
 
 Key fields:
 - `tool`: tool name
+- `installable`: set to `false` for source artifacts with no native install/config target
 - `distribution`: `package` for atomic package ports; defaults to `loose`
 - `package_root_rel`: complete package source for package ports
 - `theme_dir_rel`: output directory for rendered themes
@@ -57,6 +58,7 @@ Key fields:
 - `extra_install_dirs`: additional install sources copied under a subdirectory
 - `validate_json`: enable JSON validation for template outputs
 - `required_fields`: dot-paths required in JSON outputs (e.g., `themes.0.style`)
+- `theme_format`: enable a format-specific validator (currently `shiki-theme`)
 
 ## Add a New Port
 1. Create folder:
@@ -84,6 +86,11 @@ Theme names are kebab-case (for example, `modus-operandi`). Output filenames, ex
 
 ## Config Paths
 Use each tool's native configuration conventions. Prefer `XDG_CONFIG_HOME` (or `~/.config`) where supported; use platform-native paths such as `~/Library/Application Support` when the tool requires them.
+
+Source-only ports should set `installable` to `false` and omit both
+`install_targets` and `config_locations`. They remain available to `list`,
+`render`, and `validate`; `install`, `uninstall`, and `print-config` reject them
+with a source-only-port error.
 
 ## Accessibility
 
