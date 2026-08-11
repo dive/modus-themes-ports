@@ -2,10 +2,10 @@
 
 ;; Copyright (C) 2019-2026  Free Software Foundation, Inc.
 
-;; Author: Protesilaos Stavrou <info@protesilaos.com>
-;; Maintainer: Protesilaos Stavrou <info@protesilaos.com>
+;; Author: Protesilaos <info@protesilaos.com>
+;; Maintainer: Protesilaos <info@protesilaos.com>
 ;; URL: https://github.com/protesilaos/modus-themes
-;; Version: 5.2.0
+;; Version: 5.3.0
 ;; Package-Requires: ((emacs "28.1"))
 ;; Keywords: faces, theme, accessibility
 
@@ -71,6 +71,10 @@ deficiency (deuteranopia or tritanopia, respectively)."
 
 ;;;; Custom faces
 
+;; TODO 2026-07-14: Review which other Modus faces can be
+;; introduced. I am only interested in the semantic ones, not those
+;; with named colours.
+
 ;; NOTE 2025-10-25: I could not find the `make-obsolete' equivalent for faces.
 (define-obsolete-face-alias 'modus-themes-fg-blue nil "5.0.0")
 (define-obsolete-face-alias 'modus-themes-fg-blue-cooler nil "5.0.0")
@@ -112,9 +116,6 @@ deficiency (deuteranopia or tritanopia, respectively)."
 (define-obsolete-face-alias 'modus-themes-lang-error nil "5.0.0")
 (define-obsolete-face-alias 'modus-themes-lang-note nil "5.0.0")
 (define-obsolete-face-alias 'modus-themes-lang-warning nil "5.0.0")
-(define-obsolete-face-alias 'modus-themes-mark-alt nil "5.0.0")
-(define-obsolete-face-alias 'modus-themes-mark-del nil "5.0.0")
-(define-obsolete-face-alias 'modus-themes-mark-sel nil "5.0.0")
 (define-obsolete-face-alias 'modus-themes-nuanced-blue nil "5.0.0")
 (define-obsolete-face-alias 'modus-themes-nuanced-cyan nil "5.0.0")
 (define-obsolete-face-alias 'modus-themes-nuanced-green nil "5.0.0")
@@ -127,14 +128,6 @@ deficiency (deuteranopia or tritanopia, respectively)."
 (define-obsolete-face-alias 'modus-themes-prose-code nil "5.0.0")
 (define-obsolete-face-alias 'modus-themes-prose-macro nil "5.0.0")
 (define-obsolete-face-alias 'modus-themes-prose-verbatim nil "5.0.0")
-(define-obsolete-face-alias 'modus-themes-search-current nil "5.0.0")
-(define-obsolete-face-alias 'modus-themes-search-lazy nil "5.0.0")
-(define-obsolete-face-alias 'modus-themes-search-replace nil "5.0.0")
-(define-obsolete-face-alias 'modus-themes-search-rx-group-0 nil "5.0.0")
-(define-obsolete-face-alias 'modus-themes-search-rx-group-1 nil "5.0.0")
-(define-obsolete-face-alias 'modus-themes-search-rx-group-2 nil "5.0.0")
-(define-obsolete-face-alias 'modus-themes-search-rx-group-3 nil "5.0.0")
-(define-obsolete-face-alias 'modus-themes-search-static nil "5.0.0")
 (define-obsolete-face-alias 'modus-themes-subtle-blue nil "5.0.0")
 (define-obsolete-face-alias 'modus-themes-subtle-cyan nil "5.0.0")
 (define-obsolete-face-alias 'modus-themes-subtle-green nil "5.0.0")
@@ -188,24 +181,50 @@ properties from their context (e.g. an overlay over an underlined
 text should not be underlined as well) yet still blend in."
   :group 'modus-themes-faces)
 
-(defface modus-themes-prompt nil
-  "Generic face for command prompts."
-  :group 'modus-themes-faces)
-
 (defface modus-themes-button nil
   "Face for graphical buttons."
   :group 'modus-themes-faces)
 
+(defface modus-themes-prompt nil
+  "Prompts like in the minibuffer and the shell."
+  :package-version '(modus-themes . "5.4.0")
+  :group 'modus-themes-faces)
+
 (defface modus-themes-completion-selected nil
-  "Face for current selection in completion UIs."
+  "Face for completion selected candidate."
+  :package-version '(modus-themes . "5.4.0")
   :group 'modus-themes-faces)
 
 (dotimes (n 4)
   (custom-declare-face
    (intern (format "modus-themes-completion-match-%d" n))
-   nil (format "Completions match level %d." n)
-   :package-version '(modus-themes . "4.0.0")
-   :version "30.1"
+   nil (format "Face for completion matches %d." n)
+   :package-version '(modus-themes . "5.4.0")
+   :group 'modus-themes-faces))
+
+(dolist (suffix '(current lazy replace static))
+  (custom-declare-face
+   (intern (format "modus-themes-search-%s" suffix))
+   nil (format "Face for %s search matches." suffix)
+   :package-version '(modus-themes . "5.4.0")
+   :group 'modus-themes-faces))
+
+(dotimes (n 4)
+  (custom-declare-face
+   (intern (format "modus-themes-search-rx-group-%d" n))
+   nil (format "Face for regexp group %d." n)
+   :package-version '(modus-themes . "5.4.0")
+   :group 'modus-themes-faces))
+
+(define-obsolete-face-alias 'modus-themes-mark-alt 'modus-themes-mark-other "5.4.0")
+(define-obsolete-face-alias 'modus-themes-mark-del 'modus-themes-mark-delete "5.4.0")
+(define-obsolete-face-alias 'modus-themes-mark-sel 'modus-themes-mark-select "5.4.0")
+
+(dolist (suffix '(other delete select))
+  (custom-declare-face
+   (intern (format "modus-themes-mark-%s" suffix))
+   nil (format "Face for %s marks." suffix)
+   :package-version '(modus-themes . "5.4.0")
    :group 'modus-themes-faces))
 
 
@@ -479,123 +498,15 @@ and related user options."
           :value-type ,modus-themes--headings-widget)
   :link '(info-link "(modus-themes) Heading styles"))
 
-(defcustom modus-themes-completions nil
-  "Control the style of completion user interfaces.
+(make-obsolete-variable
+ 'modus-themes-completions
+ "Completion matches are bold when `modus-themes-bold-constructs' is non-nil"
+ "5.3.0")
 
-This affects Company, Corfu, Flx, Icomplete/Fido, Ido, Ivy,
-Orderless, Vertico, and the standard *Completions* buffer.  The
-value is an alist of expressions, each of which takes the form
-of (KEY . LIST-OF-PROPERTIES).  KEY is a symbol, while PROPERTIES
-is a list.  Here is a sample, followed by a description of the
-particularities:
-
-    (setq modus-themes-completions
-          (quote ((matches . (extrabold underline))
-                  (selection . (semibold italic)))))
-
-The `matches' key refers to the highlighted characters that
-correspond to the user's input.  When its properties are nil or
-an empty list, matching characters in the user interface will
-have a bold weight and a colored foreground.  The list of
-properties may include any of the following symbols regardless of
-the order they may appear in:
-
-- `underline' to draw a line below the characters;
-
-- `italic' to use a slanted font (italic or oblique forms);
-
-- The symbol of a font weight attribute such as `light',
-  `semibold', et cetera.  Valid symbols are defined in the
-  variable `modus-themes-weights'.  The absence of a weight means
-  that bold will be used.
-
-The `selection' key applies to the current line or currently
-matched candidate, depending on the specifics of the user
-interface.  When its properties are nil or an empty list, it has
-a subtle gray background, a bold weight, and the base foreground
-value for the text.  The list of properties it accepts is as
-follows (order is not significant):
-
-- `underline' to draw a line below the characters;
-
-- `italic' to use a slanted font (italic or oblique forms);
-
-- The symbol of a font weight attribute such as `light',
-  `semibold', et cetera.  Valid symbols are defined in the
-  variable `modus-themes-weights'.  The absence of a weight means
-  that bold will be used.
-
-Apart from specifying each key separately, a catch-all list is
-accepted.  This is only useful when the desired aesthetic is the
-same across all keys that are not explicitly referenced.  For
-example, this:
-
-    (setq modus-themes-completions
-          (quote ((t . (extrabold underline)))))
-
-Is the same as:
-
-    (setq modus-themes-completions
-          (quote ((matches . (extrabold underline))
-                  (selection . (extrabold underline)))))"
-  :group 'modus-themes
-  :package-version '(modus-themes . "4.0.0")
-  :version "30.1"
-  :type `(set
-          (cons :tag "Matches"
-                (const matches)
-                (set :tag "Style of matches" :greedy t
-                     ,modus-themes--weight-widget
-                     (const :tag "Italic font (oblique or slanted forms)" italic)
-                     (const :tag "Underline" underline)))
-          (cons :tag "Selection"
-                (const selection)
-                (set :tag "Style of selection" :greedy t
-                     ,modus-themes--weight-widget
-                     (const :tag "Italic font (oblique or slanted forms)" italic)
-                     (const :tag "Underline" underline)))
-          (cons :tag "Fallback for both matches and selection"
-                (const t)
-                (set :tag "Style of both matches and selection" :greedy t
-                     ,modus-themes--weight-widget
-                     (const :tag "Italic font (oblique or slanted forms)" italic)
-                     (const :tag "Underline" underline))))
-  :link '(info-link "(modus-themes) Completion UIs"))
-
-(defcustom modus-themes-prompts nil
-  "Use subtle or intense styles for minibuffer and REPL prompts.
-
-The value is a list of properties, each designated by a symbol.
-The default (a nil value or an empty list) means to only use a
-subtle colored foreground color.
-
-The `italic' property adds a slant to the font's forms (italic or
-oblique forms, depending on the typeface).
-
-The symbol of a font weight attribute such as `light', `semibold',
-et cetera, adds the given weight to links.  Valid symbols are
-defined in the variable `modus-themes-weights'.  The absence of a
-weight means that the one of the underlying text will be used.
-
-Combinations of any of those properties are expressed as a list,
-like in these examples:
-
-    (bold italic)
-    (italic semibold)
-
-The order in which the properties are set is not significant.
-
-In user configuration files the form may look like this:
-
-    (setq modus-themes-prompts (quote (extrabold italic)))"
-  :group 'modus-themes
-  :package-version '(modus-themes . "4.0.0")
-  :version "30.1"
-  :type `(set :tag "Properties" :greedy t
-              (const :tag "Italic font slant" italic)
-              ,modus-themes--weight-widget)
-  :link '(info-link "(modus-themes) Command prompts"))
-
+(make-obsolete-variable
+ 'modus-themes-prompts
+ "Prompts are now bold if `modus-themes-bold-constructs' is non-nil"
+ "5.3.0")
 
 (defcustom modus-themes-common-palette-user nil
   "Common user-defined colors to extend all the themes' palettes.
@@ -3741,17 +3652,30 @@ Info node `(modus-themes) Option for palette overrides'.")
 
 ;;;; Helper functions for theme setup
 
-(defun modus-themes--hex-to-rgb (hex-color)
-  "Convert HEX-COLOR to a list of normalized RGB values.
-Use `color-values-from-color-spec' (a C built-in since Emacs 28.1)
-instead of `color-name-to-rgb' to avoid dependence on a display
-connection.  This matters when loading a theme during early init on
-GUI Emacs, where `color-values' returns nil before the display is
-ready (per <https://github.com/protesilaos/modus-themes/issues/198>)."
-  (mapcar
-   (lambda (x)
-     (/ x 65535.0))
-   (color-values-from-color-spec hex-color)))
+(defvar modus-themes--hex-regexp
+  (concat
+   "\\`#"
+   "\\(?:[[:xdigit:]]\\{3\\}"
+   "\\|"
+   "[[:xdigit:]]\\{6\\}\\)"
+   "\\'")
+  "Regular expression to match a color in hexadecimal RGB notation.")
+
+(defun modus-themes--color-hex-p (color)
+  "Return non-nil if COLOR is hexadecimal RGB."
+  (and (stringp color) (string-match-p modus-themes--hex-regexp color)))
+
+(defun modus-themes--hex-or-name-to-rgb (color)
+  "Convert COLOR to a list of normalized RGB values.
+COLOR can be a hexadecimal RGB value like #123456 or a named color
+like those produced by `list-colors-display'."
+  (cond
+   ((modus-themes--color-hex-p color)
+    (when-let* ((spec (color-values-from-color-spec color)))
+      (mapcar (lambda (x) (/ x 65535.0)) spec)))
+   ((color-name-to-rgb color))
+   (t
+    (error "The color `%s' cannot be resolved" color))))
 
 ;; This is the WCAG formula: https://www.w3.org/TR/WCAG20-TECHS/G18.html
 (defun modus-themes--wcag-contribution (channel weight)
@@ -3761,10 +3685,11 @@ ready (per <https://github.com/protesilaos/modus-themes/issues/198>)."
          (/ channel 12.92)
        (expt (/ (+ channel 0.055) 1.055) 2.4))))
 
-(defun modus-themes-wcag-formula (hex-color)
-  "Get WCAG value of color value HEX-COLOR.
-The value is defined in hexadecimal RGB notation, such #123456."
-  (when-let* ((channels (modus-themes--hex-to-rgb hex-color)))
+(defun modus-themes-wcag-formula (color)
+  "Get WCAG value of color value COLOR.
+The value is defined in hexadecimal RGB notation, such #123456, or
+as a named color like those of `list-colors-display'."
+  (when-let* ((channels (modus-themes--hex-or-name-to-rgb color)))
     (let ((weights '(0.2126 0.7152 0.0722))
           (contribution nil))
       (while channels
@@ -3772,38 +3697,38 @@ The value is defined in hexadecimal RGB notation, such #123456."
       (apply #'+ contribution))))
 
 ;;;###autoload
-(defun modus-themes-contrast (hex-color-1 hex-color-2)
-  "Measure WCAG contrast ratio between HEX-COLOR-1 and HEX-COLOR-2.
-HEX-COLOR-1 and HEX-COLOR-2 are color values written in hexadecimal RGB."
-  (if-let* ((hex1-weight (modus-themes-wcag-formula hex-color-1))
-            (hex2-weight (modus-themes-wcag-formula hex-color-2)))
+(defun modus-themes-contrast (color-1 color-2)
+  "Measure WCAG contrast ratio between COLOR-1 and COLOR-2.
+Color values are of the form accepted by `modus-themes-wcag-formula'."
+  (if-let* ((hex1-weight (modus-themes-wcag-formula color-1))
+            (hex2-weight (modus-themes-wcag-formula color-2)))
       (let ((contrast (/ (+ hex1-weight 0.05) (+ hex2-weight 0.05))))
         (max contrast (/ contrast)))
-    (error "Both `%s' and `%s' must be valid hexadecimal RGB colors" hex-color-1 hex-color-2)))
+    (error "Both `%s' and `%s' must be valid hexadecimal RGB or named colors" color-1 color-2)))
 
 (defun modus-themes--color-eight-to-six-digits (hex-color)
   "Reduce representation of hexadecimal RGB HEX-COLOR from eight to six digits.
 If HEX-COLOR is three or six digits, then return it as is."
-  (let ((color-no-hash (substring hex-color 1)))
-    (if (memq (length color-no-hash) '(3 6))
-        hex-color
-      (let* ((triplets (seq-split color-no-hash 4))
-             (triplets-shortened (mapcar
-                                  (lambda (string)
-                                    (substring string 0 2))
-                                  triplets)))
-        (concat "#" (string-join triplets-shortened))))))
+  (if (modus-themes--color-hex-p hex-color)
+      hex-color
+    (let* ((color-no-hash (substring hex-color 1))
+           (triplets (seq-split color-no-hash 4))
+           (triplets-shortened (mapcar
+                                (lambda (string)
+                                  (substring string 0 2))
+                                triplets)))
+      (concat "#" (string-join triplets-shortened)))))
 
-(defun modus-themes-adjust-value (hex-rgb percentage)
-  "Adjust value of HEX-RGB colour by PERCENTAGE."
-  (if-let* ((rgb (modus-themes--hex-to-rgb hex-rgb)))
-      (pcase-let* ((`(,r ,g ,b) rgb)
-                   (fn (if (color-dark-p (list r g b))
-                           #'color-lighten-name
-                         #'color-darken-name))
-                   (value (funcall fn hex-rgb percentage)))
-        (modus-themes--color-eight-to-six-digits value))
-    (error "The `%s' has to be a valid hexadecimal RGB color" hex-rgb)))
+(defun modus-themes-adjust-value (color percentage)
+  "Adjust value of COLOR by PERCENTAGE.
+COLOR is either a hexadecimal RGB string or a named color."
+  (when-let* ((rgb (modus-themes--hex-or-name-to-rgb color)))
+    (pcase-let* ((`(,r ,g ,b) rgb)
+                 (`(,h ,s ,l) (color-rgb-to-hsl r g b))
+                 (adjusted (color-lighten-hsl h s l percentage))
+                 (adjusted-rgb (apply #'color-hsl-to-rgb adjusted))
+                 (value (apply #'color-rgb-to-hex adjusted-rgb)))
+      (modus-themes--color-eight-to-six-digits value))))
 
 (defvar modus-themes-registered-items nil
   "List of defined themes.
@@ -3930,11 +3855,25 @@ If THEME does not have at least a `:modus-core-palette' among its
 
 Else return (append OVERRIDES USER CORE)."
   (when-let* ((properties (get theme 'theme-properties))
-              (core-palette (symbol-value (plist-get properties :modus-core-palette))))
-    (let* ((user-palette (when with-user-palette (symbol-value (plist-get properties :modus-user-palette))))
-           (overrides-palette (when with-overrides (symbol-value (plist-get properties :modus-overrides-palette))))
-           (all-overrides (when with-overrides (append overrides-palette modus-themes-common-palette-overrides))))
-      (append all-overrides user-palette core-palette))))
+              (core-palette-name (plist-get properties :modus-core-palette)))
+    ;; If the palette variable hasn't been loaded into memory yet, load the theme silently
+    (unless (boundp core-palette-name)
+      (load-theme theme t t))
+    (when (boundp core-palette-name)
+      (let* ((core-palette (symbol-value core-palette-name))
+             (user-palette-name (plist-get properties :modus-user-palette))
+             (user-palette (when (and with-user-palette
+                                      user-palette-name
+                                      (boundp user-palette-name))
+                             (symbol-value user-palette-name)))
+             (overrides-palette-name (plist-get properties :modus-overrides-palette))
+             (overrides-palette (when (and with-overrides
+                                           overrides-palette-name
+                                           (boundp overrides-palette-name))
+                                  (symbol-value overrides-palette-name)))
+             (all-overrides (when with-overrides
+                              (append overrides-palette modus-themes-common-palette-overrides))))
+        (append all-overrides user-palette core-palette)))))
 
 (defun modus-themes-get-theme-palette (&optional theme with-overrides with-user-palette)
   "Return palette value of active `modus-themes-get-themes' THEME.
@@ -4248,15 +4187,15 @@ Run `modus-themes-after-load-theme-hook' after loading a theme."
 
 ;;;;; Preview a theme palette
 
-(defun modus-themes-color-dark-p (hex-color)
-  "Return non-nil if hexadecimal RGB HEX-COLOR is dark.
-Test that HEX-COLOR has more contrast against white than black."
-  (> (modus-themes-contrast hex-color "#ffffff")
-     (modus-themes-contrast hex-color "#000000")))
+(defun modus-themes-color-dark-p (color)
+  "Return non-nil if hexadecimal RGB COLOR is dark.
+Test that COLOR has more contrast against white than black."
+  (> (modus-themes-contrast color "#ffffff")
+     (modus-themes-contrast color "#000000")))
 
-(defun modus-themes-get-readable-foreground (hex-color)
-  "Get readable foreground for background hexadecimal RGB HEX-COLOR."
-  (if (modus-themes-color-dark-p hex-color)
+(defun modus-themes-get-readable-foreground (color)
+  "Get readable foreground for background hexadecimal RGB COLOR."
+  (if (modus-themes-color-dark-p color)
       "#ffffff"
     "#000000"))
 
@@ -4498,32 +4437,6 @@ list given LIST-PRED, using DEFAULT as a fallback."
   (when modus-themes-variable-pitch-ui
     (list :inherit 'variable-pitch)))
 
-(defun modus-themes--prompt (fg bg)
-  "Conditional use of colors for text prompt faces.
-FG is the prompt's standard foreground.  BG is a background
-color that is combined with FG-FOR-BG."
-  (let* ((properties (modus-themes--list-or-warn 'modus-themes-prompts))
-         (weight (modus-themes--weight properties)))
-    (list :inherit
-          (cond
-           ((and (memq 'bold properties)
-                 (memq 'italic properties))
-            'bold-italic)
-           ((memq 'italic properties)
-            'italic)
-           ((memq 'bold properties)
-            'bold)
-           ('unspecified))
-          :background bg
-          :foreground fg
-          :weight
-          ;; If we have `bold' specifically, we inherit the face of
-          ;; the same name.  This allows the user to customise that
-          ;; face, such as to change its font family.
-          (if (and weight (not (eq weight 'bold)))
-              weight
-            'unspecified))))
-
 (defconst modus-themes-weights
   '( thin ultralight extralight light semilight regular medium
      semibold bold heavy extrabold ultrabold)
@@ -4563,53 +4476,6 @@ Optional OL is the color of an overline."
                       (modus-themes--property-lookup properties 'height #'floatp 'unspecified)
                     'unspecified)
           :weight (or weight 'unspecified))))
-
-(defun modus-themes--completion-line (bg)
-  "Styles for `modus-themes-completions' with BG as the background."
-  (let* ((var (modus-themes--list-or-warn 'modus-themes-completions))
-         (properties (or (alist-get 'selection var) (alist-get t var)))
-         (italic (memq 'italic properties))
-         (weight (modus-themes--weight properties))
-         (bold (when (and weight (eq weight 'bold)) 'bold)))
-    (list
-     :inherit
-     (cond
-      ((and italic weight (not (eq weight 'bold)))
-       'italic)
-      ((and weight (not (eq weight 'bold)))
-       'unspecified)
-      (italic 'bold-italic)
-      ('bold))
-     :background bg
-     :foreground 'unspecified
-     :underline
-     (if (memq 'underline properties) t 'unspecified)
-     :weight
-     (if (and weight (null bold)) weight 'unspecified))))
-
-(defun modus-themes--completion-match (fg bg)
-  "Styles for `modus-themes-completions'.
-FG and BG are the main colors."
-  (let* ((var (modus-themes--list-or-warn 'modus-themes-completions))
-         (properties (or (alist-get 'matches var) (alist-get t var)))
-         (italic (memq 'italic properties))
-         (weight (modus-themes--weight properties))
-         (bold (when (and weight (eq weight 'bold)) 'bold)))
-    (list
-     :inherit
-     (cond
-      ((and italic weight (not (eq weight 'bold)))
-       'italic)
-      ((and weight (not (eq weight 'bold)))
-       'unspecified)
-      (italic 'bold-italic)
-      ('bold))
-     :background bg
-     :foreground fg
-     :underline
-     (if (memq 'underline properties) t 'unspecified)
-     :weight
-     (if (and weight (null bold)) weight 'unspecified))))
 
 
 ;; NOTE 2025-11-23: In theory we need the `modus-themes--box'
@@ -4658,12 +4524,6 @@ If COLOR is unspecified, then return :box unspecified."
     `(modus-themes-heading-6 ((,c ,@(modus-themes--heading 6 fg-heading-6 bg-heading-6 overline-heading-6))))
     `(modus-themes-heading-7 ((,c ,@(modus-themes--heading 7 fg-heading-7 bg-heading-7 overline-heading-7))))
     `(modus-themes-heading-8 ((,c ,@(modus-themes--heading 8 fg-heading-8 bg-heading-8 overline-heading-8))))
-;;;;; completion frameworks
-    `(modus-themes-completion-match-0 ((,c ,@(modus-themes--completion-match fg-completion-match-0 bg-completion-match-0))))
-    `(modus-themes-completion-match-1 ((,c ,@(modus-themes--completion-match fg-completion-match-1 bg-completion-match-1))))
-    `(modus-themes-completion-match-2 ((,c ,@(modus-themes--completion-match fg-completion-match-2 bg-completion-match-2))))
-    `(modus-themes-completion-match-3 ((,c ,@(modus-themes--completion-match fg-completion-match-3 bg-completion-match-3))))
-    `(modus-themes-completion-selected ((,c ,@(modus-themes--completion-line bg-completion))))
 ;;;;; typography
     `(modus-themes-bold ((,c ,@(modus-themes--bold-weight))))
     `(modus-themes-fixed-pitch ((,c ,@(modus-themes--fixed-pitch))))
@@ -4675,10 +4535,26 @@ If COLOR is unspecified, then return :box unspecified."
        (((supports :box t))
         ,@(modus-themes--box border 1 'released-button))
        (t :underline ,border)))
-    `(modus-themes-prompt ((,c ,@(modus-themes--prompt fg-prompt bg-prompt))))
     `(modus-themes-reset-soft ((,c :background ,bg-main :foreground ,fg-main
                                    :weight normal :slant normal :strike-through nil
                                    :box nil :underline nil :overline nil :extend nil)))
+    `(modus-themes-completion-match-0 ((,c :inherit modus-themes-bold :background ,bg-completion-match-0 :foreground ,fg-completion-match-0)))
+    `(modus-themes-completion-match-1 ((,c :inherit modus-themes-bold :background ,bg-completion-match-1 :foreground ,fg-completion-match-1)))
+    `(modus-themes-completion-match-2 ((,c :inherit modus-themes-bold :background ,bg-completion-match-2 :foreground ,fg-completion-match-2)))
+    `(modus-themes-completion-match-3 ((,c :inherit modus-themes-bold :background ,bg-completion-match-3 :foreground ,fg-completion-match-3)))
+    `(modus-themes-completion-selected ((,c :background ,bg-completion)))
+    `(modus-themes-prompt ((,c :inherit modus-themes-bold :background ,bg-prompt :foreground ,fg-prompt)))
+    `(modus-themes-search-current ((,c :background ,bg-search-current :foreground ,fg-search-current)))
+    `(modus-themes-search-lazy ((,c :background ,bg-search-lazy :foreground ,fg-search-lazy)))
+    `(modus-themes-search-replace ((,c :background ,bg-search-replace :foreground ,fg-search-replace)))
+    `(modus-themes-search-static ((,c :background ,bg-search-static :foreground ,fg-search-static)))
+    `(modus-themes-search-rx-group-0 ((,c :background ,bg-search-rx-group-0 :foreground ,fg-search-rx-group-0)))
+    `(modus-themes-search-rx-group-1 ((,c :background ,bg-search-rx-group-1 :foreground ,fg-search-rx-group-1)))
+    `(modus-themes-search-rx-group-2 ((,c :background ,bg-search-rx-group-2 :foreground ,fg-search-rx-group-2)))
+    `(modus-themes-search-rx-group-3 ((,c :background ,bg-search-rx-group-3 :foreground ,fg-search-rx-group-3)))
+    `(modus-themes-mark-other ((,c :inherit bold :background ,bg-mark-other :foreground ,fg-mark-other)))
+    `(modus-themes-mark-delete ((,c :inherit bold :background ,bg-mark-delete :foreground ,fg-mark-delete)))
+    `(modus-themes-mark-select ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
 ;;;; standard faces
 ;;;;; absolute essentials
     `(default ((,c :background ,bg-main :foreground ,fg-main)))
@@ -4688,6 +4564,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(italic ((,c :slant italic)))
     `(cursor ((,c :background ,cursor)))
     `(fringe ((,c :background ,fringe :foreground ,fg-main)))
+    `(margin ((,c :background ,fringe :foreground ,fg-main)))
     `(scroll-bar ((,c :background ,bg-main :foreground ,border)))
     `(tool-bar ((,c :background ,bg-dim :foreground ,fg-main)))
     `(vertical-border ((,c :foreground ,border)))
@@ -4722,7 +4599,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(mm-uu-extract ((,c :foreground ,mail-part)))
     `(next-error ((,c :background ,bg-prominent-err :foreground ,fg-prominent-err)))
     `(pgtk-im-0 ((,c :background ,bg-prominent-note :foreground ,fg-prominent-note)))
-    `(read-multiple-choice-face ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
+    `(read-multiple-choice-face ((,c :inverse-video t)))
     `(rectangle-preview ((,c :background ,bg-active :foreground ,fg-main)))
     `(region ((,c :background ,bg-region :foreground ,fg-region)))
     `(secondary-selection ((,c :background ,bg-hover-secondary :foreground ,fg-main)))
@@ -4826,9 +4703,9 @@ If COLOR is unspecified, then return :box unspecified."
     `(ansi-color-white ((,c :background ,bg-term-white :foreground ,fg-term-white)))
     `(ansi-color-yellow ((,c :background ,bg-term-yellow :foreground ,fg-term-yellow)))
 ;;;;; anzu
-    `(anzu-match-1 ((,c :background ,bg-search-rx-group-0 :foreground ,fg-search-rx-group-0)))
-    `(anzu-match-2 ((,c :background ,bg-search-rx-group-1 :foreground ,fg-search-rx-group-1)))
-    `(anzu-match-3 ((,c :background ,bg-search-rx-group-2 :foreground ,fg-search-rx-group-2)))
+    `(anzu-match-1 ((,c :inherit modus-themes-search-rx-group-0)))
+    `(anzu-match-2 ((,c :inherit modus-themes-search-rx-group-1)))
+    `(anzu-match-3 ((,c :inherit modus-themes-search-rx-group-2)))
     `(anzu-mode-line ((,c modus-themes-bold bold)))
     `(anzu-mode-line-no-match ((,c :inherit modus-themes-bold :foreground ,modeline-err)))
     `(anzu-replace-highlight ((,c :background ,bg-search-replace :foreground ,fg-search-replace)))
@@ -4856,8 +4733,8 @@ If COLOR is unspecified, then return :box unspecified."
     `(TeX-error-description-tex-said ((,c :foreground ,info)))
     `(TeX-error-description-warning ((,c :foreground ,warning)))
 ;;;;; auto-dim-other-buffers
-    `(auto-dim-other-buffers-face ((,c :background ,bg-inactive)))
-    `(auto-dim-other-buffers-hide-face ((,c :foreground ,bg-inactive :background ,bg-inactive)))
+    `(auto-dim-other-buffers ((,c :background ,bg-inactive)))
+    `(auto-dim-other-buffers-hide ((,c :foreground ,bg-inactive :background ,bg-inactive)))
 ;;;;; avy
     `(avy-background-face ((,c :background ,bg-dim :foreground ,fg-dim :extend t)))
     `(avy-goto-char-timer-face ((,c :inherit (bold modus-themes-reset-soft) :background ,bg-search-lazy :foreground ,fg-search-lazy)))
@@ -4873,8 +4750,8 @@ If COLOR is unspecified, then return :box unspecified."
     `(aw-mode-line-face ((,c :inherit modus-themes-bold)))
 ;;;;; binder
     `(binder-sidebar-highlight ((,c :inherit modus-themes-hl-line)))
-    `(binder-sidebar-marked ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
-    `(binder-sidebar-missing ((,c :inherit bold :background ,bg-mark-delete :foreground ,fg-mark-delete)))
+    `(binder-sidebar-marked ((,c :inherit modus-themes-mark-select)))
+    `(binder-sidebar-missing ((,c :inherit modus-themes-mark-delete)))
     `(binder-sidebar-tags ((,c :foreground ,variable)))
 ;;;;; breadcrumb
     `(breadcrumb-face ((,c :foreground ,fg-alt)))
@@ -4886,7 +4763,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(bongo-currently-playing-track ((,c :inherit modus-themes-bold)))
     `(bongo-elapsed-track-part ((,c :background ,bg-inactive :underline t)))
     `(bongo-filled-seek-bar ((,c :background ,bg-hover)))
-    `(bongo-marked-track ((,c :inherit bold :background ,bg-mark-other :foreground ,fg-mark-other)))
+    `(bongo-marked-track ((,c :inherit modus-themes-mark-other)))
     `(bongo-marked-track-line ((,c :background ,bg-dim)))
     `(bongo-played-track ((,c :foreground ,fg-dim :strike-through t)))
     `(bongo-track-length ((,c :foreground ,fg-dim)))
@@ -4934,7 +4811,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(calibredb-search-header-sort-face ((,c :inherit modus-themes-bold :foreground ,accent-1)))
     `(calibredb-search-header-total-face ((,c :inherit modus-themes-bold :foreground ,accent-0)))
     `(calibredb-search-header-filter-face ((,c :inherit modus-themes-bold)))
-    `(calibredb-mark-face ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
+    `(calibredb-mark-face ((,c :inherit modus-themes-mark-select)))
     `(calibredb-size-face (( )))
     `(calibredb-tag-face ((,c :foreground ,fg-alt)))
 ;;;;; centaur-tabs
@@ -4997,8 +4874,6 @@ If COLOR is unspecified, then return :box unspecified."
     `(company-preview ((,c :foreground ,fg-dim)))
     `(company-preview-common ((,c :inherit modus-themes-completion-match-0)))
     `(company-preview-search ((,c :background ,bg-yellow-intense)))
-    `(company-scrollbar-bg ((,c :background ,bg-active)))
-    `(company-scrollbar-fg ((,c :background ,fg-main)))
     `(company-template-field ((,c :background ,bg-active)))
     `(company-tooltip ((,c :inherit modus-themes-fixed-pitch :background ,bg-popup)))
     `(company-tooltip-annotation ((,c :inherit modus-themes-slant :foreground ,docstring)))
@@ -5037,8 +4912,8 @@ If COLOR is unspecified, then return :box unspecified."
 ;;;;; consult
     `(consult-async-split ((,c :foreground ,err)))
     `(consult-file ((,c :inherit modus-themes-bold :foreground ,info)))
-    `(consult-highlight-mark ((,c :background ,bg-search-static :foreground ,fg-search-static)))
-    `(consult-highlight-match ((,c :background ,bg-search-static :foreground ,fg-search-static)))
+    `(consult-highlight-mark ((,c :inherit modus-themes-search-static)))
+    `(consult-highlight-match ((,c :inherit modus-themes-search-static)))
     `(consult-imenu-prefix ((,c :foreground ,fg-dim)))
     `(consult-key ((,c :inherit (bold modus-themes-fixed-pitch) :foreground ,keybind)))
     `(consult-line-number ((,c :foreground ,fg-dim)))
@@ -5052,8 +4927,8 @@ If COLOR is unspecified, then return :box unspecified."
 ;;;;; corfu-candidate-overlay
     `(corfu-candidate-overlay-face ((,c :foreground ,fg-dim)))
 ;;;;; corfu-quick
-    `(corfu-quick1 ((,c :inherit bold :background ,bg-search-current :foreground ,fg-search-current)))
-    `(corfu-quick2 ((,c :inherit bold :background ,bg-search-current :foreground ,fg-search-current)))
+    `(corfu-quick1 ((,c :inherit (bold modus-themes-search-current))))
+    `(corfu-quick2 ((,c :inherit (bold modus-themes-search-current))))
 ;;;;; counsel
     `(counsel-active-mode ((,c :foreground ,keyword)))
     `(counsel-application-name ((,c :foreground ,name)))
@@ -5074,9 +4949,9 @@ If COLOR is unspecified, then return :box unspecified."
 ;;;;; csv-mode
     `(csv-separator-face (( )))
 ;;;;; ctrlf
-    `(ctrlf-highlight-active ((,c :background ,bg-search-current :foreground ,fg-search-current)))
+    `(ctrlf-highlight-active ((,c :inherit modus-themes-search-current)))
     `(ctrlf-highlight-line ((,c :background ,bg-hl-line :extend t)))
-    `(ctrlf-highlight-passive ((,c :background ,bg-search-lazy :foreground ,fg-search-lazy)))
+    `(ctrlf-highlight-passive ((,c :inherit modus-themes-search-lazy)))
 ;;;;; custom (M-x customize)
     `(custom-button ((,c :inherit modus-themes-button)))
     `(custom-button-mouse
@@ -5108,7 +4983,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(dashboard-items-face (( ))) ; use the underlying style of all-the-icons
 ;;;;; deadgrep
     `(deadgrep-filename-face ((,c :inherit modus-themes-bold :foreground ,name)))
-    `(deadgrep-match-face ((,c :background ,bg-search-static :foreground ,fg-search-static)))
+    `(deadgrep-match-face ((,c :inherit modus-themes-search-static)))
     `(deadgrep-meta-face ((,c :foreground ,fg-dim)))
     `(deadgrep-regexp-metachar-face ((,c :inherit modus-themes-bold :foreground ,rx-construct)))
     `(deadgrep-search-term-face ((,c :foreground ,info)))
@@ -5117,8 +4992,8 @@ If COLOR is unspecified, then return :box unspecified."
     `(debbugs-gnu-done ((,c :foreground ,info)))
     `(debbugs-gnu-forwarded ((,c :inherit modus-themes-slant)))
     `(debbugs-gnu-handled (( )))
-    `(debbugs-gnu-marked ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
-    `(debbugs-gnu-marked-stale ((,c :inherit bold :background ,bg-mark-other :foreground ,fg-mark-other)))
+    `(debbugs-gnu-marked ((,c :inherit modus-themes-mark-select)))
+    `(debbugs-gnu-marked-stale ((,c :inherit modus-themes-mark-other)))
     `(debbugs-gnu-new ((,c :inherit modus-themes-bold :foreground ,err)))
     `(debbugs-gnu-pending ((,c :inherit bold-italic :foreground ,warning)))
     `(debbugs-gnu-stale-1 ((,c :foreground ,err)))
@@ -5126,7 +5001,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(debbugs-gnu-stale-3 ((,c :foreground ,info)))
     `(debbugs-gnu-stale-4 ((,c :foreground ,fg-alt)))
     `(debbugs-gnu-stale-5 ((,c :foreground ,fg-dim)))
-    `(debbugs-gnu-tagged ((,c :inherit bold :background ,bg-mark-other :foreground ,fg-mark-other)))
+    `(debbugs-gnu-tagged ((,c :inherit modus-themes-mark-other)))
     `(debbugs-gnu-title ((,c :inherit modus-themes-heading-1)))
 ;;;;; deft
     `(deft-filter-string-face ((,c :foreground ,info)))
@@ -5185,11 +5060,11 @@ If COLOR is unspecified, then return :box unspecified."
 ;;;;; dired
     `(dired-broken-symlink ((,c :foreground ,err :underline t)))
     `(dired-directory ((,c :foreground ,accent-0)))
-    `(dired-flagged ((,c :inherit bold :background ,bg-mark-delete :foreground ,fg-mark-delete)))
+    `(dired-flagged ((,c :inherit modus-themes-mark-delete)))
     `(dired-header ((,c :inherit modus-themes-bold)))
     `(dired-ignored ((,c :foreground ,fg-dim)))
     `(dired-mark ((,c :inherit modus-themes-bold)))
-    `(dired-marked ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
+    `(dired-marked ((,c :inherit modus-themes-mark-select)))
     `(dired-perm-write ((,c :foreground ,fg-dim)))
     `(dired-symlink ((,c :background ,bg-link-symbolic :foreground ,fg-link-symbolic :underline ,underline-link-symbolic)))
     `(dired-warning ((,c :foreground ,warning)))
@@ -5220,8 +5095,8 @@ If COLOR is unspecified, then return :box unspecified."
     `(diredfl-compressed-file-name ((,c :foreground ,warning)))
     `(diredfl-compressed-file-suffix ((,c :foreground ,err)))
     `(diredfl-date-time ((,c :foreground ,date-common)))
-    `(diredfl-deletion ((,c :inherit bold :background ,bg-mark-delete :foreground ,fg-mark-delete)))
-    `(diredfl-deletion-file-name ((,c :inherit bold :background ,bg-mark-delete :foreground ,fg-mark-delete)))
+    `(diredfl-deletion ((,c :inherit modus-themes-mark-delete)))
+    `(diredfl-deletion-file-name ((,c :inherit modus-themes-mark-delete)))
     `(diredfl-dir-heading ((,c :inherit modus-themes-bold)))
     `(diredfl-dir-name ((,c :foreground ,accent-0)))
     `(diredfl-dir-priv ((,c :foreground ,accent-0)))
@@ -5229,8 +5104,8 @@ If COLOR is unspecified, then return :box unspecified."
     `(diredfl-executable-tag ((,c :foreground ,accent-1)))
     `(diredfl-file-name ((,c :foreground ,fg-main)))
     `(diredfl-file-suffix ((,c :foreground ,variable)))
-    `(diredfl-flag-mark ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
-    `(diredfl-flag-mark-line ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
+    `(diredfl-flag-mark ((,c :inherit modus-themes-mark-select)))
+    `(diredfl-flag-mark-line ((,c :inherit modus-themes-mark-select)))
     `(diredfl-ignored-file-name ((,c :foreground ,fg-dim)))
     `(diredfl-link-priv ((,c :foreground ,fg-link)))
     `(diredfl-no-priv ((,c :foreground ,fg-dim)))
@@ -5248,7 +5123,11 @@ If COLOR is unspecified, then return :box unspecified."
     `(disk-usage-symlink ((,c :background ,bg-link-symbolic :foreground ,fg-link-symbolic :underline ,underline-link-symbolic)))
     `(disk-usage-symlink-directory ((,c :background ,bg-link-symbolic :foreground ,fg-link-symbolic :underline ,underline-link-symbolic)))
 ;;;;; display-fill-column-indicator-mode
-    `(fill-column-indicator ((,c :height 1 :background ,bg-active :foreground ,bg-active)))
+    `(fill-column-indicator
+      ((((type tty))
+        :height 1.0 :background unspecified :foreground ,bg-active)
+       (,c
+        :height 1 :background ,bg-active :foreground ,bg-active)))
 ;;;;; doom-modeline
     `(doom-modeline-bar ((,c :background ,blue))) ; special case like `centaur-tabs-active-bar-face'
     `(doom-modeline-bar-inactive ((,c :background ,border)))
@@ -5314,9 +5193,9 @@ If COLOR is unspecified, then return :box unspecified."
     `(eglot-diagnostic-tag-unnecessary-face ((,c :underline (:style wave :color ,underline-note))))
 ;;;;; el-search
     `(el-search-highlight-in-prompt-face ((,c :inherit modus-themes-slant)))
-    `(el-search-match ((,c :background ,bg-search-current :foreground ,fg-search-current)))
-    `(el-search-other-match ((,c :background ,bg-search-lazy :foreground ,fg-search-lazy)))
-    `(el-search-occur-match ((,c :background ,bg-search-static :foreground ,fg-search-static)))
+    `(el-search-match ((,c :inherit modus-themes-search-current)))
+    `(el-search-other-match ((,c :inherit modus-themes-search-lazy)))
+    `(el-search-occur-match ((,c :inherit modus-themes-search-static)))
 ;;;;; eldoc
     ;; NOTE: see https://github.com/purcell/package-lint/issues/187
     (list 'eldoc-highlight-function-argument `((,c :inherit modus-themes-bold :background ,bg-active-argument :foreground ,fg-active-argument)))
@@ -5337,6 +5216,12 @@ If COLOR is unspecified, then return :box unspecified."
     `(elfeed-search-title-face ((,c :foreground ,fg-dim)))
     `(elfeed-search-unread-count-face (( )))
     `(elfeed-search-unread-title-face ((,c :inherit bold :foreground ,fg-main)))
+    `(elfeed-show-header-face ((,c :inherit modus-themes-bold)))
+    `(elfeed-show-title-face ((,c :inherit modus-themes-bold :foreground ,mail-subject)))
+    `(elfeed-show-author-face ((,c :inherit modus-themes-bold :foreground ,mail-recipient)))
+    `(elfeed-show-date-face ((,c :foreground ,date-common)))
+    `(elfeed-show-feed-face ((,c :foreground ,accent-1)))
+    `(elfeed-show-tags-face ((,c :foreground ,accent-0)))
 ;;;;; elfeed-score
     `(elfeed-score-date-face ((,c :foreground ,date-common)))
     `(elfeed-score-debug-level-face ((,c :inherit modus-themes-bold)))
@@ -5399,14 +5284,14 @@ If COLOR is unspecified, then return :box unspecified."
     `(embark-collect-group-title ((,c :inherit modus-themes-bold :foreground ,name)))
     `(embark-keybinding ((,c :inherit (bold modus-themes-fixed-pitch) :foreground ,keybind)))
     `(embark-keybinding-repeat ((,c :inherit modus-themes-bold)))
-    `(embark-selected ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
+    `(embark-selected ((,c :inherit modus-themes-mark-select)))
 ;;;;; ement (ement.el)
     `(ement-room-fully-read-marker ((,c :foreground ,info)))
     `(ement-room-membership ((,c :foreground ,fg-dim)))
     `(ement-room-mention ((,c :background ,bg-hover :foreground ,fg-main)))
     `(ement-room-name ((,c :inherit modus-themes-bold)))
     `(ement-room-reactions ((,c :foreground ,fg-dim)))
-    `(ement-room-read-receipt-marker ((,c :background ,bg-search-static :foreground ,fg-search-static)))
+    `(ement-room-read-receipt-marker ((,c :inherit modus-themes-search-static)))
     `(ement-room-self ((,c :inherit modus-themes-bold :foreground ,accent-1)))
     `(ement-room-self-message ((,c :foreground ,fg-alt)))
     `(ement-room-timestamp ((,c :foreground ,fg-dim)))
@@ -5437,7 +5322,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(erc-bold-face ((,c :inherit bold)))
     `(erc-button ((,c :background ,bg-link :foreground ,fg-link :underline ,underline-link)))
     `(erc-command-indicator-face ((,c :inherit modus-themes-bold :foreground ,accent-3)))
-    `(erc-current-nick-face ((,c :background ,bg-search-static :foreground ,fg-search-static)))
+    `(erc-current-nick-face ((,c :inherit modus-themes-search-static)))
     `(erc-dangerous-host-face ((,c :foreground ,err)))
     `(erc-direct-msg-face ((,c :foreground ,fg-dim)))
     `(erc-error-face ((,c :foreground ,err)))
@@ -5484,10 +5369,10 @@ If COLOR is unspecified, then return :box unspecified."
 ;;;;; evil-mode
     `(evil-ex-commands ((,c :inherit modus-themes-bold :foreground ,keyword)))
     `(evil-ex-info ((,c :inherit modus-themes-bold :foreground ,type)))
-    `(evil-ex-lazy-highlight ((,c :background ,bg-search-lazy :foreground ,fg-search-lazy)))
-    `(evil-ex-search ((,c :background ,bg-search-current :foreground ,fg-search-current)))
-    `(evil-ex-substitute-matches ((,c :background ,bg-search-replace :foreground ,fg-search-replace)))
-    `(evil-ex-substitute-replacement ((,c :background ,bg-search-current :foreground ,fg-search-current)))
+    `(evil-ex-lazy-highlight ((,c :inherit modus-themes-search-lazy)))
+    `(evil-ex-search ((,c :inherit modus-themes-search-current)))
+    `(evil-ex-substitute-matches ((,c :inherit modus-themes-search-replace)))
+    `(evil-ex-substitute-replacement ((,c :inherit modus-themes-search-current)))
 ;;;;; eww
     `(eww-invalid-certificate ((,c :foreground ,err)))
     `(eww-valid-certificate ((,c :foreground ,info)))
@@ -5500,7 +5385,20 @@ If COLOR is unspecified, then return :box unspecified."
 ;;;;; eyebrowse
     `(eyebrowse-mode-line-active ((,c :inherit italic :foreground ,modeline-info)))
 ;;;;; flycheck
+    `(flycheck-annotate-connector ((,c :foreground ,border)))
+    `(flycheck-annotate-error ((,c :inherit modus-themes-slant :foreground ,err :underline ,border)))
+    `(flycheck-annotate-error-background ((,c :background ,bg-dim :foreground ,err)))
+    `(flycheck-annotate-warning ((,c :inherit modus-themes-slant :foreground ,warning :underline ,border)))
+    `(flycheck-annotate-warning-background ((,c :background ,bg-dim :foreground ,warning)))
+    `(flycheck-annotate-info ((,c :inherit modus-themes-slant :foreground ,info :underline ,border)))
+    `(flycheck-annotate-info-background ((,c :background ,bg-dim :foreground ,info)))
     `(flycheck-error ((,c :underline (:style wave :color ,underline-err))))
+    `(flycheck-error-list-checker-name ((,c :foreground ,name)))
+    `(flycheck-error-list-error-message ((,c :foreground ,fg-alt)))
+    `(flycheck-error-list-filename ((,c :foreground ,name)))
+    `(flycheck-error-list-group-header ((,c :inherit (bold flycheck-error-list-filename))))
+    `(flycheck-error-list-id ((,c :foreground ,identifier)))
+    `(flycheck-error-list-line-number ((,c :foreground ,fg-line-number-inactive)))
     `(flycheck-fringe-error ((,c :background ,bg-prominent-err :foreground ,fg-prominent-err)))
     `(flycheck-fringe-info ((,c :background ,bg-prominent-note :foreground ,fg-prominent-note)))
     `(flycheck-fringe-warning ((,c :background ,bg-prominent-warning :foreground ,fg-prominent-warning)))
@@ -5519,18 +5417,18 @@ If COLOR is unspecified, then return :box unspecified."
     `(flycheck-indicator-success ((,c :foreground ,info)))
     `(flycheck-indicator-warning ((,c :foreground ,warning)))
 ;;;;; flymake
-    `(flymake-end-of-line-diagnostics-face ((,c :inherit modus-themes-slant :height 0.85 :box ,border)))
+    `(flymake-end-of-line-diagnostics-face ((,c :inherit modus-themes-slant :underline ,border)))
     `(flymake-error ((,c :underline (:style wave :color ,underline-err))))
     `(flymake-error-echo ((,c :foreground ,err)))
-    `(flymake-error-echo-at-eol ((,c :inherit modus-themes-slant :foreground ,err :height 0.85 :box ,border)))
+    `(flymake-error-echo-at-eol ((,c :inherit modus-themes-slant :foreground ,err :underline ,border)))
     `(flymake-error-fringe ((,c :background ,bg-prominent-err :foreground ,fg-prominent-err)))
     `(flymake-note ((,c :underline (:style wave :color ,underline-note))))
     `(flymake-note-echo ((,c :foreground ,info)))
-    `(flymake-note-echo-at-eol ((,c :inherit modus-themes-slant :foreground ,info :height 0.85 :box ,border)))
+    `(flymake-note-echo-at-eol ((,c :inherit modus-themes-slant :foreground ,info :underline ,border)))
     `(flymake-note-fringe ((,c :background ,bg-prominent-note :foreground ,fg-prominent-note)))
     `(flymake-warning ((,c :underline (:style wave :color ,underline-warning))))
     `(flymake-warning-echo ((,c :foreground ,warning)))
-    `(flymake-warning-echo-at-eol ((,c :inherit modus-themes-slant :foreground ,warning :height 0.85 :box ,border)))
+    `(flymake-warning-echo-at-eol ((,c :inherit modus-themes-slant :foreground ,warning :height 0.9 :underline ,border)))
     `(flymake-warning-fringe ((,c :background ,bg-prominent-warning :foreground ,fg-prominent-warning)))
 ;;;;; flyspell
     `(flyspell-duplicate ((,c :underline (:style wave :color ,underline-warning))))
@@ -5729,7 +5627,7 @@ If COLOR is unspecified, then return :box unspecified."
 ;;;;; highlight-numbers
     `(highlight-numbers-number ((,c :foreground ,constant)))
 ;;;;; highlight-thing
-    `(highlight-thing ((,c :background ,bg-search-static :foreground ,fg-search-static)))
+    `(highlight-thing ((,c :inherit modus-themes-search-static)))
 ;;;;; hl-fill-column
     `(hl-fill-column-face ((,c :background ,bg-active)))
 ;;;;; hl-todo
@@ -5751,7 +5649,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(howm-reminder-tomorrow-face ((,c :inherit modus-themes-bold :foreground ,date-scheduled)))
     `(howm-simulate-todo-mode-line-face ((,c :inherit modus-themes-bold)))
     `(howm-view-empty-face (( )))
-    `(howm-view-hilit-face ((,c :background ,bg-search-static :foreground ,fg-search-static)))
+    `(howm-view-hilit-face ((,c :inherit modus-themes-search-static)))
     `(howm-view-name-face ((,c :inherit modus-themes-bold)))
     `(iigrep-counts-face1 ((,c :foreground ,rainbow-1)))
     `(iigrep-counts-face2 ((,c :foreground ,rainbow-2)))
@@ -5767,12 +5665,12 @@ If COLOR is unspecified, then return :box unspecified."
 ;;;;; hyperbole
     `(hbut-item-face ((,c :foreground ,info)))
     `(hbut-face ((,c :inherit modus-themes-button)))
-    `(hbut-flash ((,c :background ,bg-search-replace :foreground ,fg-search-replace)))
+    `(hbut-flash ((,c :inherit modus-themes-search-replace)))
     `(ibut-face ((,c :background ,bg-link-symbolic :foreground ,fg-link-symbolic :underline ,underline-link-symbolic)))
 ;;;;; ibuffer
-    `(ibuffer-deletion ((,c :inherit bold :background ,bg-mark-delete :foreground ,fg-mark-delete)))
+    `(ibuffer-deletion ((,c :inherit modus-themes-mark-delete)))
     `(ibuffer-filter-group-name ((,c :inherit bold)))
-    `(ibuffer-marked ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
+    `(ibuffer-marked ((,c :inherit modus-themes-mark-select)))
     `(ibuffer-title ((,c :inherit bold)))
 ;;;;; icomplete
     `(icomplete-first-match ((,c :inherit modus-themes-completion-match-0)))
@@ -5787,16 +5685,16 @@ If COLOR is unspecified, then return :box unspecified."
     `(ido-subdir ((,c :foreground ,keyword)))
     `(ido-virtual ((,c :foreground ,warning)))
 ;;;;; iedit
-    `(iedit-occurrence ((,c :background ,bg-search-lazy :foreground ,fg-search-lazy)))
-    `(iedit-read-only-occurrence ((,c :background ,bg-search-current :foreground ,fg-search-current)))
+    `(iedit-occurrence ((,c :inherit modus-themes-search-lazy)))
+    `(iedit-read-only-occurrence ((,c :inherit modus-themes-search-current)))
 ;;;;; iflipb
     `(iflipb-current-buffer-face ((,c :inherit modus-themes-bold :foreground ,name)))
     `(iflipb-other-buffer-face ((,c :foreground ,fg-dim)))
 ;;;;; image-dired
-    `(image-dired-thumb-flagged ((,c :background ,bg-mark-delete :foreground ,fg-mark-delete :box (:line-width -3))))
+    `(image-dired-thumb-flagged ((,c :inherit modus-themes-mark-delete :box (:line-width -3))))
     `(image-dired-thumb-header-file-name ((,c :inherit modus-themes-bold)))
     `(image-dired-thumb-header-file-size ((,c :foreground ,constant)))
-    `(image-dired-thumb-mark ((,c :background ,bg-mark-select :foreground ,fg-mark-select :box (:line-width -3))))
+    `(image-dired-thumb-mark ((,c :inherit modus-themes-mark-select :box (:line-width -3))))
 ;;;;; imenu-list
     `(imenu-list-entry-face-0 ((,c :foreground ,fg-heading-1)))
     `(imenu-list-entry-face-1 ((,c :foreground ,fg-heading-2)))
@@ -5810,7 +5708,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(Info-quoted ((,c :inherit modus-themes-fixed-pitch :background ,bg-prose-verbatim :foreground ,fg-prose-verbatim))) ; the capitalization is canonical
     `(info-header-node ((,c :inherit modus-themes-bold :foreground ,fg-dim)))
     `(info-header-xref ((,c :foreground ,fg-link)))
-    `(info-index-match ((,c :background ,bg-search-static :foreground ,fg-search-static)))
+    `(info-index-match ((,c :inherit modus-themes-search-static)))
     `(info-menu-header ((,c :inherit modus-themes-heading-5)))
     `(info-menu-star ((,c :foreground ,err)))
     `(info-node ((,c :inherit modus-themes-bold)))
@@ -5856,20 +5754,20 @@ If COLOR is unspecified, then return :box unspecified."
 ;;;;; ioccur
     `(ioccur-cursor ((,c :foreground ,fg-main)))
     `(ioccur-invalid-regexp ((,c :foreground ,err)))
-    `(ioccur-match-face ((,c :background ,bg-search-static :foreground ,fg-search-static)))
+    `(ioccur-match-face ((,c :inherit modus-themes-search-static)))
     `(ioccur-match-overlay-face ((,c :background ,bg-inactive :extend t)))
     `(ioccur-num-line-face ((,c :foreground ,fg-dim)))
     `(ioccur-overlay-face ((,c :background ,bg-hl-line :extend t)))
-    `(ioccur-regexp-face ((,c :background ,bg-search-current :foreground ,fg-search-current)))
+    `(ioccur-regexp-face ((,c :inherit modus-themes-search-current)))
     `(ioccur-title-face ((,c :inherit modus-themes-bold :foreground ,name)))
 ;;;;; isearch, occur, and the like
-    `(isearch ((,c :background ,bg-search-current :foreground ,fg-search-current)))
+    `(isearch ((,c :inherit modus-themes-search-current)))
     `(isearch-fail ((,c :background ,bg-prominent-err :foreground ,fg-prominent-err)))
-    `(isearch-group-1 ((,c :background ,bg-search-rx-group-0 :foreground ,fg-search-rx-group-0)))
-    `(isearch-group-2 ((,c :background ,bg-search-rx-group-1 :foreground ,fg-search-rx-group-1)))
-    `(lazy-highlight ((,c :background ,bg-search-lazy :foreground ,fg-search-lazy)))
-    `(match ((,c :background ,bg-search-static :foreground ,fg-search-static)))
-    `(query-replace ((,c :background ,bg-search-replace :foreground ,fg-search-replace)))
+    `(isearch-group-1 ((,c :inherit modus-themes-search-rx-group-0)))
+    `(isearch-group-2 ((,c :inherit modus-themes-search-rx-group-1)))
+    `(lazy-highlight ((,c :inherit modus-themes-search-lazy)))
+    `(match ((,c :inherit modus-themes-search-static)))
+    `(query-replace ((,c :inherit modus-themes-search-replace)))
 ;;;;; ivy
     `(ivy-action ((,c :inherit (bold modus-themes-fixed-pitch) :foreground ,keybind)))
     `(ivy-confirm-face ((,c :foreground ,info)))
@@ -5956,8 +5854,8 @@ If COLOR is unspecified, then return :box unspecified."
 ;;;;; kmacro-menu
     ;; Use `list' here to avoid a spurious warning about `kmacro-menu-mark'.
     (list 'kmacro-menu-mark `((,c :inherit modus-themes-bold)))
-    `(kmacro-menu-marked ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
-    `(kmacro-menu-flagged ((,c :inherit bold :background ,bg-mark-delete :foreground ,fg-mark-delete)))
+    `(kmacro-menu-marked ((,c :inherit modus-themes-mark-select)))
+    `(kmacro-menu-flagged ((,c :inherit modus-themes-mark-delete)))
 ;;;;; ledger-mode
     `(ledger-font-auto-xact-face ((,c :inherit modus-themes-bold :foreground ,builtin)))
     `(ledger-font-account-name-face ((,c :foreground ,name)))
@@ -6000,7 +5898,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(line-number-minor-tick ((,c :inherit ,(if modus-themes-mixed-fonts '(fixed-pitch default) 'default) :background ,bg-line-number-inactive :foreground ,accent-1)))
 ;;;;; lsp
     `(lsp-details-face ((,c :height 0.9 :foreground ,fg-dim)))
-    `(lsp-face-rename ((,c :background ,bg-search-replace :foreground ,fg-search-replace)))
+    `(lsp-face-rename ((,c :inherit modus-themes-search-replace)))
     `(lsp-headerline-breadcrumb-separator-face ((,c :foreground ,fg-dim)))
     `(lsp-headerline-breadcrumb-path-face ((,c :foreground ,string)))
     `(lsp-headerline-breadcrumb-path-error-face ((,c :underline (:style wave :color ,underline-err))))
@@ -6053,8 +5951,10 @@ If COLOR is unspecified, then return :box unspecified."
     `(magit-cherry-unmatched ((,c :foreground ,err)))
     `(magit-diff-added ((,c :background ,bg-added-faint :foreground ,fg-added)))
     `(magit-diff-added-highlight ((,c :background ,bg-added :foreground ,fg-added)))
+    `(magit-diff-added-indicator ((,c :background ,bg-added-refine :foreground ,fg-added)))
     `(magit-diff-base ((,c :background ,bg-changed-faint :foreground ,fg-changed)))
     `(magit-diff-base-highlight ((,c :background ,bg-changed :foreground ,fg-changed)))
+    `(magit-diff-base-indicator ((,c :background ,bg-changed-refine :foreground ,fg-changed)))
     `(magit-diff-context ((,c :foreground ,fg-dim)))
     `(magit-diff-context-highlight ((,c :background ,bg-diff-context)))
     `(magit-diff-file-heading ((,c :inherit modus-themes-bold :foreground ,accent-0)))
@@ -6068,6 +5968,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(magit-diff-lines-heading ((,c :background ,fg-dim :foreground ,bg-main)))
     `(magit-diff-removed ((,c :background ,bg-removed-faint :foreground ,fg-removed)))
     `(magit-diff-removed-highlight ((,c :background ,bg-removed :foreground ,fg-removed)))
+    `(magit-diff-removed-indicator ((,c :background ,bg-removed-refine :foreground ,fg-removed)))
     `(magit-diffstat-added ((,c :foreground ,fg-added-intense)))
     `(magit-diffstat-removed ((,c :foreground ,fg-removed-intense)))
     `(magit-dimmed ((,c :foreground ,fg-dim)))
@@ -6179,7 +6080,36 @@ If COLOR is unspecified, then return :box unspecified."
     `(markdown-missing-link-face ((,c :foreground ,warning)))
     `(markdown-pre-face ((,c :inherit modus-themes-fixed-pitch :background ,bg-prose-block-contents :extend t)))
     `(markdown-table-face ((,c :inherit modus-themes-fixed-pitch :foreground ,prose-table)))
-    `(markdown-url-face ((,c :foreground ,fg-alt)))
+    `(markdown-url-face ((,c :background ,bg-link :foreground ,fg-link)))
+;;;;; markdown-ts-mode
+    `(markdown-ts-block-quote ((,c :inherit modus-themes-slant :foreground ,docstring)))
+    `(markdown-ts-bold ((,c :inherit bold)))
+    `(markdown-ts-code-block ((,c :inherit modus-themes-fixed-pitch :background ,bg-prose-block-contents :extend t)))
+    `(markdown-ts-code-block-markup-hidden ((,c :inherit modus-themes-fixed-pitch :background ,bg-prose-block-contents :extend t)))
+    `(markdown-ts-code-span ((,c :inherit modus-themes-fixed-pitch :background ,bg-prose-code :foreground ,fg-prose-code)))
+    `(markdown-ts-delimiter ((,c :foreground ,fg-dim)))
+    `(markdown-ts-emphasis ((,c :inherit italic)))
+    `(markdown-ts-entity-reference ((,c :inherit modus-themes-fixed-pitch :background ,bg-prose-verbatim :foreground ,fg-prose-verbatim)))
+    `(markdown-ts-hard-line-break-backslash ((,c :foreground ,rx-backslash)))
+    `(markdown-ts-hard-line-break-backslash-hidden ((,c :foreground ,rx-backslash)))
+    `(markdown-ts-hard-line-break-space ((,c :foreground ,err :underline t)))
+    `(markdown-ts-hard-line-break-space-hidden ((,c :foreground ,err :underline t)))
+    `(markdown-ts-heading-1 ((,c :inherit modus-themes-heading-1)))
+    `(markdown-ts-heading-2 ((,c :inherit modus-themes-heading-2)))
+    `(markdown-ts-heading-3 ((,c :inherit modus-themes-heading-3)))
+    `(markdown-ts-heading-4 ((,c :inherit modus-themes-heading-4)))
+    `(markdown-ts-heading-5 ((,c :inherit modus-themes-heading-5)))
+    `(markdown-ts-heading-6 ((,c :inherit modus-themes-heading-6)))
+    `(markdown-ts-html-block ((,c :inherit modus-themes-fixed-pitch :background ,bg-prose-block-contents :extend t)))
+    `(markdown-ts-html-tag ((,c :foreground ,fg-dim)))
+    `(markdown-ts-indented-code-block ((,c :inherit modus-themes-fixed-pitch :background ,bg-prose-block-contents :extend t)))
+    `(markdown-ts-language-keyword ((,c :inherit modus-themes-fixed-pitch :background ,bg-prose-block-delimiter :foreground ,fg-prose-block-delimiter)))
+    `(markdown-ts-latex ((,c :foreground ,type)))
+    `(markdown-ts-numeric-character-reference ((,c :foreground ,number)))
+    `(markdown-ts-table ((,c :inherit modus-themes-fixed-pitch :foreground ,prose-table)))
+    `(markdown-ts-table-cell ((,c :inherit modus-themes-fixed-pitch :foreground ,prose-table)))
+    `(markdown-ts-table-delimiter-cell ((,c :inherit modus-themes-fixed-pitch :foreground ,prose-table)))
+    `(markdown-ts-table-header ((,c :inherit (modus-themes-bold modus-themes-fixed-pitch) :foreground ,prose-table)))
 ;;;;; markup-faces (`adoc-mode')
     `(markup-attribute-face ((,c :inherit modus-themes-fixed-pitch :foreground ,fg-dim)))
     `(markup-bold-face ((,c :inherit bold)))
@@ -6593,8 +6523,8 @@ If COLOR is unspecified, then return :box unspecified."
 ;;;;; package (M-x list-packages)
     `(package-description ((,c :foreground ,docstring)))
     `(package-help-section-name ((,c :inherit modus-themes-bold)))
-    `(package-mark-delete-line ((,c :inherit bold :background ,bg-mark-delete :foreground ,fg-mark-delete)))
-    `(package-mark-install-line ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
+    `(package-mark-delete-line ((,c :inherit modus-themes-mark-delete)))
+    `(package-mark-install-line ((,c :inherit modus-themes-mark-select)))
     `(package-name ((,c :background ,bg-link :foreground ,fg-link :underline ,underline-link)))
     `(package-status-available ((,c :foreground ,date-common)))
     `(package-status-avail-obso ((,c :foreground ,err)))
@@ -6651,7 +6581,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(proced-user (( )))
 ;;;;; popup
     `(popup-face ((,c :background ,bg-popup :foreground ,fg-main)))
-    `(popup-isearch-match ((,c :background ,bg-search-current :foreground ,fg-search-current)))
+    `(popup-isearch-match ((,c :inherit modus-themes-search-current)))
     `(popup-menu-mouse-face ((,c :background ,bg-hover :foreground ,fg-main)))
     `(popup-menu-selection-face ((,c :inherit modus-themes-completion-selected)))
     `(popup-scroll-bar-background-face ((,c :background ,bg-active)))
@@ -6697,7 +6627,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(prescient-secondary-highlight ((,c :inherit modus-themes-completion-match-1)))
 ;;;;; proced
     `(proced-mark ((,c :inherit modus-themes-bold)))
-    `(proced-marked ((,c :inherit bold :background ,bg-mark-other :foreground ,fg-mark-other)))
+    `(proced-marked ((,c :inherit modus-themes-mark-other)))
     `(proced-sort-header ((,c :inherit modus-themes-bold :underline t)))
 ;;;;; prodigy
     `(prodigy-green-face ((,c :foreground ,info)))
@@ -6752,10 +6682,10 @@ If COLOR is unspecified, then return :box unspecified."
     `(recursion-indicator-general ((,c :foreground ,modeline-err)))
     `(recursion-indicator-minibuffer ((,c :foreground ,modeline-info)))
 ;;;;; regexp-builder (re-builder)
-    `(reb-match-0 ((,c :background ,bg-search-rx-group-0 :foreground ,fg-search-rx-group-0)))
-    `(reb-match-1 ((,c :background ,bg-search-rx-group-1 :foreground ,fg-search-rx-group-1)))
-    `(reb-match-2 ((,c :background ,bg-search-rx-group-2 :foreground ,fg-search-rx-group-2)))
-    `(reb-match-3 ((,c :background ,bg-search-rx-group-3 :foreground ,fg-search-rx-group-3)))
+    `(reb-match-0 ((,c :inherit modus-themes-search-rx-group-0)))
+    `(reb-match-1 ((,c :inherit modus-themes-search-rx-group-1)))
+    `(reb-match-2 ((,c :inherit modus-themes-search-rx-group-2)))
+    `(reb-match-3 ((,c :inherit modus-themes-search-rx-group-3)))
     `(reb-regexp-grouping-backslash ((,c :inherit modus-themes-bold :foreground ,rx-backslash)))
     `(reb-regexp-grouping-construct ((,c :inherit modus-themes-bold :foreground ,rx-construct)))
 ;;;;; rg (rg.el)
@@ -6766,7 +6696,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(rg-filename-face ((,c :inherit modus-themes-bold :foreground ,name)))
     `(rg-line-number-face ((,c :foreground ,fg-dim)))
     `(rg-literal-face ((,c :foreground ,constant)))
-    `(rg-match-face ((,c :background ,bg-search-static :foreground ,fg-search-static)))
+    `(rg-match-face ((,c :inherit modus-themes-search-static)))
     `(rg-regexp-face ((,c :foreground ,name)))
     `(rg-toggle-off-face ((,c :inherit modus-themes-bold :foreground ,fg-dim)))
     `(rg-toggle-on-face ((,c :foreground ,info)))
@@ -6775,7 +6705,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(ripgrep-context-face ((,c :foreground ,fg-dim)))
     `(ripgrep-error-face ((,c :foreground ,err)))
     `(ripgrep-hit-face ((,c :foreground ,info)))
-    `(ripgrep-match-face ((,c :background ,bg-search-static :foreground ,fg-search-static)))
+    `(ripgrep-match-face ((,c :inherit modus-themes-search-static)))
 ;;;;; rmail
     `(rmail-header-name ((,c :inherit bold)))
     `(rmail-highlight ((,c :inherit bold :foreground ,mail-other)))
@@ -6827,8 +6757,8 @@ If COLOR is unspecified, then return :box unspecified."
     `(shr-h4 ((,c :inherit modus-themes-heading-4)))
     `(shr-h5 ((,c :inherit modus-themes-heading-5)))
     `(shr-h6 ((,c :inherit modus-themes-heading-6)))
-    `(shr-mark ((,c :background ,bg-search-static :foreground ,fg-search-static)))
-    `(shr-selected-link ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
+    `(shr-mark ((,c :inherit modus-themes-search-static)))
+    `(shr-selected-link ((,c :inherit modus-themes-mark-select)))
 ;;;;; side-notes
     `(side-notes ((,c :background ,bg-dim :foreground ,fg-dim)))
 ;;;;; sieve-mode
@@ -6908,7 +6838,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(speedbar-directory-face ((,c :inherit modus-themes-bold :foreground ,accent-0)))
     `(speedbar-file-face ((,c :foreground ,fg-main)))
     `(speedbar-highlight-face ((,c :background ,bg-hover :foreground ,fg-main)))
-    `(speedbar-selected-face ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
+    `(speedbar-selected-face ((,c :inherit modus-themes-mark-select)))
     `(speedbar-separator-face ((,c :background ,bg-active :foreground ,fg-main)))
     `(speedbar-tag-face ((,c :foreground ,accent-1)))
 ;;;;; spell-fu
@@ -6940,6 +6870,15 @@ If COLOR is unspecified, then return :box unspecified."
     `(symbol-overlay-face-6 ((,c :background ,bg-green-intense :foreground ,fg-main)))
     `(symbol-overlay-face-7 ((,c :background ,bg-red-subtle :foreground ,fg-main)))
     `(symbol-overlay-face-8 ((,c :background ,bg-cyan-subtle :foreground ,fg-main)))
+;;;;; synaxis
+    `(synaxis-search-date-face ((,c :foreground ,date-common)))
+    `(synaxis-search-feed-face ((,c :foreground ,name))) ; TODO 2026-07-14: maybe make this the same as `elfeed-search-feed-face'
+    `(synaxis-search-marked-face ((,c :inherit modus-themes-mark-select)))
+    `(synaxis-search-read-face (( )))
+    `(synaxis-search-tag-face ((,c :foreground ,identifier))) ; TODO 2026-07-14: maybe make this the same as `elfeed-search-tag-face'
+    `(synaxis-search-unread-face ((,c :inherit bold :foreground ,fg-main))) ; same as `elfeed-search-unread-title-face'
+    `(synaxis-show-meta-face ((,c :inherit modus-themes-heading-2)))
+    `(synaxis-show-title-face ((,c :inherit modus-themes-heading-1)))
 ;;;;; syslog-mode
     `(syslog-debug ((,c :inherit modus-themes-slant)))
     `(syslog-error ((,c :foreground ,err)))
@@ -6960,6 +6899,8 @@ If COLOR is unspecified, then return :box unspecified."
     `(tab-bar-tab-ungrouped ((,c :background ,bg-tab-other ,@(modus-themes--box bg-tab-other -2 nil))))
 ;;;;; tab-line-mode
     `(tab-line ((,c :inherit modus-themes-ui-variable-pitch :background ,bg-tab-bar :height 0.95)))
+    `(tab-line-active ((,c :inherit modus-themes-ui-variable-pitch :background ,bg-tab-bar)))
+    `(tab-line-inactive ((,c :inherit modus-themes-ui-variable-pitch :background ,bg-dim)))
     `(tab-line-close-highlight ((,c :foreground ,err)))
     `(tab-line-highlight ((,c :background ,bg-hover :foreground ,fg-main)))
     `(tab-line-tab (( )))
@@ -7030,8 +6971,8 @@ If COLOR is unspecified, then return :box unspecified."
     ;; Placate the compiler for what is a spurious warning.  We also
     ;; have to do this with `eldoc-highlight-function-argument'.
     (list 'transient-argument `((,c :inherit modus-themes-bold :background ,bg-active-argument :foreground ,fg-active-argument)))
-    `(transient-disabled-suffix ((,c :inherit bold :background ,bg-mark-delete :foreground ,fg-mark-delete)))
-    `(transient-enabled-suffix ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
+    `(transient-disabled-suffix ((,c :inherit modus-themes-mark-delete)))
+    `(transient-enabled-suffix ((,c :inherit modus-themes-mark-select)))
     `(transient-heading ((,c :inherit bold :foreground ,fg-main)))
     `(transient-inactive-argument ((,c :foreground ,fg-dim)))
     `(transient-inactive-value ((,c :foreground ,fg-dim)))
@@ -7052,11 +6993,11 @@ If COLOR is unspecified, then return :box unspecified."
     `(transient-unreachable-key ((,c :inherit modus-themes-fixed-pitch :foreground ,fg-dim)))
     `(transient-value ((,c :inherit modus-themes-bold :background ,bg-active-value :foreground ,fg-active-value)))
 ;;;;; trashed
-    `(trashed-deleted ((,c :inherit bold :background ,bg-mark-delete :foreground ,fg-mark-delete)))
+    `(trashed-deleted ((,c :inherit modus-themes-mark-delete)))
     `(trashed-directory ((,c :foreground ,accent-0)))
     `(trashed-mark ((,c :inherit modus-themes-bold)))
-    `(trashed-marked ((,c :inherit bold :background ,bg-mark-other :foreground ,fg-mark-other)))
-    `(trashed-restored ((,c :inherit bold :background ,bg-mark-select :foreground ,fg-mark-select)))
+    `(trashed-marked ((,c :inherit modus-themes-mark-other)))
+    `(trashed-restored ((,c :inherit modus-themes-mark-select)))
 ;;;;; treemacs
     `(treemacs-async-loading-face ((,c :foreground ,fg-main)))
     `(treemacs-directory-face ((,c :foreground ,accent-0)))
@@ -7075,7 +7016,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(treemacs-help-column-face ((,c :inherit modus-themes-bold :foreground ,keyword)))
     `(treemacs-help-title-face ((,c :foreground ,fg-main)))
     `(treemacs-hl-line-face ((,c :background ,bg-hl-line :extend t)))
-    `(treemacs-marked-file-face ((,c :inherit bold :background ,bg-mark-other :foreground ,fg-mark-other)))
+    `(treemacs-marked-file-face ((,c :inherit modus-themes-mark-other)))
     `(treemacs-nerd-icons-face ((,c :foreground ,accent-0)))
     `(treemacs-on-failure-pulse-face ((,c :foreground ,fg-main)))
     `(treemacs-on-success-pulse-face ((,c :foreground ,fg-main)))
@@ -7090,6 +7031,8 @@ If COLOR is unspecified, then return :box unspecified."
     `(treemacs-window-background-face ((,c :background ,bg-main)))
     `(treemacs-nerd-icons-root-face ((,c :foreground ,accent-0)))
     `(treemacs-nerd-icons-file-face ((,c :foreground ,accent-0)))
+;;;;; trust-manager
+    `(trust-manager-untrusted-indicator ((,c :inherit modus-themes-bold :foreground ,modeline-err)))
 ;;;;; tty-menu
     `(tty-menu-disabled-face ((,c :background ,bg-inactive :foreground ,fg-dim)))
     `(tty-menu-enabled-face ((,c :inherit bold :background ,bg-inactive :foreground ,fg-main)))
@@ -7138,6 +7081,7 @@ If COLOR is unspecified, then return :box unspecified."
     `(vc-dir-file ((,c :foreground ,name)))
     `(vc-dir-header ((,c :inherit modus-themes-bold)))
     `(vc-dir-header-value ((,c :foreground ,string)))
+    `(vc-dir-key-binding-hint-label ((,c :inherit modus-themes-bold)))
     `(vc-dir-mark-indicator (( )))
     `(vc-dir-status-edited ((,c :inherit modus-themes-slant)))
     `(vc-dir-status-ignored ((,c :foreground ,fg-dim)))
@@ -7166,23 +7110,23 @@ If COLOR is unspecified, then return :box unspecified."
     `(vimish-fold-mouse-face ((,c :background ,bg-hover :foreground ,fg-main)))
     `(vimish-fold-overlay ((,c :background ,bg-inactive)))
 ;;;;; viper
-    `(viper-search ((,c :background ,bg-search-current :foreground ,fg-search-current)))
-    `(viper-replace-overlay ((,c :background ,bg-search-replace :foreground ,fg-search-replace)))
+    `(viper-search ((,c :inherit modus-themes-search-current)))
+    `(viper-replace-overlay ((,c :inherit modus-themes-search-replace)))
     `(viper-minibuffer-emacs (( )))
     `(viper-minibuffer-insert (( )))
     `(viper-minibuffer-vi (( )))
 ;;;;; visible-mark
-    `(visible-mark-active ((,c :background ,bg-search-static :foreground ,fg-search-static)))
-    `(visible-mark-face1 ((,c :background ,bg-search-rx-group-0 :foreground ,fg-search-rx-group-0)))
-    `(visible-mark-face2 ((,c :background ,bg-search-rx-group-1 :foreground ,fg-search-rx-group-1)))
-    `(visible-mark-forward-face1 ((,c :background ,bg-search-rx-group-2 :foreground ,fg-search-rx-group-2)))
-    `(visible-mark-forward-face2 ((,c :background ,bg-search-rx-group-3 :foreground ,fg-search-rx-group-3)))
+    `(visible-mark-active ((,c :inherit modus-themes-search-static)))
+    `(visible-mark-face1 ((,c :inherit modus-themes-search-rx-group-0)))
+    `(visible-mark-face2 ((,c :inherit modus-themes-search-rx-group-1)))
+    `(visible-mark-forward-face1 ((,c :inherit modus-themes-search-rx-group-2)))
+    `(visible-mark-forward-face2 ((,c :inherit modus-themes-search-rx-group-3)))
 ;;;;; visual-regexp
-    `(vr/group-0 ((,c :background ,bg-search-rx-group-0 :foreground ,fg-search-rx-group-0)))
-    `(vr/group-1 ((,c :background ,bg-search-rx-group-1 :foreground ,fg-search-rx-group-1)))
-    `(vr/group-2 ((,c :background ,bg-search-rx-group-2 :foreground ,fg-search-rx-group-2)))
-    `(vr/match-0 ((,c :background ,bg-search-current :foreground ,fg-search-current)))
-    `(vr/match-1 ((,c :background ,bg-search-lazy :foreground ,fg-search-lazy)))
+    `(vr/group-0 ((,c :inherit modus-themes-search-rx-group-0)))
+    `(vr/group-1 ((,c :inherit modus-themes-search-rx-group-1)))
+    `(vr/group-2 ((,c :inherit modus-themes-search-rx-group-2)))
+    `(vr/match-0 ((,c :inherit modus-themes-search-current)))
+    `(vr/match-1 ((,c :inherit modus-themes-search-lazy)))
     `(vr/match-separator-face ((,c :inherit bold :background ,bg-active)))
 ;;;;; vterm
     `(vterm-color-black ((,c :background ,bg-term-black :foreground ,fg-term-black)))
@@ -7659,13 +7603,15 @@ For instance:
       (push (+ (* (nth i a) alpha) (* (nth i b) (- 1 alpha))) blend))
     (nreverse blend)))
 
-(defun modus-themes-generate-color-blend (hex-color blended-with-hex alpha)
-  "Return hexadecimal RGB of HEX-COLOR with BLENDED-WITH-HEX given ALPHA.
+(defun modus-themes-generate-color-blend (color blended-with-hex alpha)
+  "Return hexadecimal RGB of COLOR with BLENDED-WITH-HEX given ALPHA.
 BLENDED-WITH-HEX is commensurate with COLOR.  ALPHA is between 0.0 and 1.0,
-inclusive."
+inclusive.
+
+Color values are of the form accepted by `modus-themes-wcag-formula'."
   (let* ((blend-rgb (modus-themes-blend
-                     (modus-themes--hex-to-rgb hex-color)
-                     (modus-themes--hex-to-rgb blended-with-hex)
+                     (modus-themes--hex-or-name-to-rgb color)
+                     (modus-themes--hex-or-name-to-rgb blended-with-hex)
                      alpha))
          (blend-hex (apply #'color-rgb-to-hex blend-rgb)))
     (modus-themes--color-eight-to-six-digits blend-hex)))
@@ -7678,16 +7624,16 @@ inclusive."
   "Return cooler COLOR by ALPHA, per `modus-themes-generate-color-blend'."
   (modus-themes-generate-color-blend color "#0000ff" alpha))
 
-(defun modus-themes-generate-gradient (color percent)
-  "Adjust value of COLOR by PERCENT."
-  (let ((gradient (color-lighten-name color percent)))
-    (modus-themes--color-eight-to-six-digits gradient)))
+(define-obsolete-function-alias
+  'modus-themes-generate-gradient
+  'modus-themes-adjust-value
+  "5.3.0")
 
 (defun modus-themes-color-warm-p (color)
   "Return non-nil if COLOR is warm.
 A warm color has more contribution from the red channel of light than
 the blue one."
-  (pcase-let ((`(,r ,_ ,b) (modus-themes--hex-to-rgb color)))
+  (pcase-let ((`(,r ,_ ,b) (modus-themes--hex-or-name-to-rgb color)))
     (> r b)))
 
 (defun modus-themes-color-is-warm-or-cool-p (color)
@@ -7782,24 +7728,24 @@ rest come from CORE-PALETTE."
                               (unless (assq name mappings)
                                 (push (list name value) derived-mappings)))))
       ;; Base entries
-      (funcall push-derived-value-fn 'bg-dim (modus-themes-generate-gradient bg-main (if bg-main-dark-p 5 -5)))
-      (funcall push-derived-value-fn 'bg-active (modus-themes-generate-gradient bg-main (if bg-main-dark-p 10 -10)))
-      (funcall push-derived-value-fn 'bg-inactive (modus-themes-generate-gradient bg-main (if bg-main-dark-p 8 -8)))
-      (funcall push-derived-value-fn 'border (modus-themes-generate-gradient bg-main (if bg-main-dark-p 20 -20)))
-      (funcall push-derived-value-fn 'fg-dim (modus-themes-generate-gradient fg-main (if bg-main-dark-p -20 20)))
-      (funcall push-derived-value-fn 'fg-alt (modus-themes-generate-color-warmer-or-cooler (modus-themes-generate-gradient fg-main (if bg-main-dark-p -10 10)) 0.8 prefers-cool-p))
+      (funcall push-derived-value-fn 'bg-dim (modus-themes-adjust-value bg-main (if bg-main-dark-p 5 -5)))
+      (funcall push-derived-value-fn 'bg-active (modus-themes-adjust-value bg-main (if bg-main-dark-p 10 -10)))
+      (funcall push-derived-value-fn 'bg-inactive (modus-themes-adjust-value bg-main (if bg-main-dark-p 8 -8)))
+      (funcall push-derived-value-fn 'border (modus-themes-adjust-value bg-main (if bg-main-dark-p 20 -20)))
+      (funcall push-derived-value-fn 'fg-dim (modus-themes-adjust-value fg-main (if bg-main-dark-p -20 20)))
+      (funcall push-derived-value-fn 'fg-alt (modus-themes-generate-color-warmer-or-cooler (modus-themes-adjust-value fg-main (if bg-main-dark-p -10 10)) 0.8 prefers-cool-p))
       ;; Primary and secondary colors
       (pcase-dolist (`(,name ,value) six-colors)
-        (funcall push-derived-value-fn (intern (format "%s-warmer" name)) (modus-themes-generate-gradient (modus-themes-generate-color-warmer value 0.9) (if bg-main-dark-p 20 -20)))
-        (funcall push-derived-value-fn (intern (format "%s-cooler" name)) (modus-themes-generate-gradient (modus-themes-generate-color-cooler value 0.9) (if bg-main-dark-p 20 -20)))
-        (funcall push-derived-value-fn (intern (format "%s-faint" name)) (modus-themes-generate-gradient value (if bg-main-dark-p 10 -10)))
-        (funcall push-derived-value-fn (intern (format "%s-intense" name)) (modus-themes-generate-gradient value (if bg-main-dark-p -5 5)))
+        (funcall push-derived-value-fn (intern (format "%s-warmer" name)) (modus-themes-adjust-value (modus-themes-generate-color-warmer value 0.9) (if bg-main-dark-p 20 -20)))
+        (funcall push-derived-value-fn (intern (format "%s-cooler" name)) (modus-themes-adjust-value (modus-themes-generate-color-cooler value 0.9) (if bg-main-dark-p 20 -20)))
+        (funcall push-derived-value-fn (intern (format "%s-faint" name)) (modus-themes-adjust-value value (if bg-main-dark-p 10 -10)))
+        (funcall push-derived-value-fn (intern (format "%s-intense" name)) (modus-themes-adjust-value value (if bg-main-dark-p -5 5)))
         ;; TODO 2025-12-06: We should have a function here that adjusts the value also up to a
         ;; maximum distance from bg-main.  Basically, we want to avoid the scenario where a given
         ;; base value produces something that is virtually indistinguishable from bg-main.
-        (funcall push-derived-value-fn (intern (format "bg-%s-intense" name)) (modus-themes-generate-gradient value (if bg-main-dark-p -40 40)))
-        (funcall push-derived-value-fn (intern (format "bg-%s-subtle" name)) (modus-themes-generate-gradient value (if bg-main-dark-p -60 60)))
-        (funcall push-derived-value-fn (intern (format "bg-%s-nuanced" name)) (modus-themes-generate-gradient value (if bg-main-dark-p -80 80))))
+        (funcall push-derived-value-fn (intern (format "bg-%s-intense" name)) (modus-themes-adjust-value value (if bg-main-dark-p -40 40)))
+        (funcall push-derived-value-fn (intern (format "bg-%s-subtle" name)) (modus-themes-adjust-value value (if bg-main-dark-p -60 60)))
+        (funcall push-derived-value-fn (intern (format "bg-%s-nuanced" name)) (modus-themes-adjust-value value (if bg-main-dark-p -80 80))))
       ;; Mappings
       (funcall push-mapping-fn 'bg-completion (if prefers-cool-p 'bg-cyan-subtle 'bg-yellow-subtle))
       (funcall push-mapping-fn 'bg-hover (if prefers-cool-p 'bg-green-intense 'bg-magenta-intense))
@@ -7807,6 +7753,7 @@ rest come from CORE-PALETTE."
       (funcall push-mapping-fn 'bg-hl-line (if prefers-cool-p 'bg-cyan-nuanced 'bg-yellow-nuanced))
       (funcall push-mapping-fn 'bg-paren-match (if prefers-cool-p 'bg-green-intense 'bg-yellow-subtle))
       (funcall push-mapping-fn 'bg-paren-expression (if prefers-cool-p 'bg-green-nuanced 'bg-yellow-nuanced))
+      (funcall push-mapping-fn 'bg-popup 'bg-dim)
       (funcall push-mapping-fn 'bg-region 'bg-active)
       (funcall push-mapping-fn 'fg-region 'fg-main)
 
@@ -7853,21 +7800,26 @@ rest come from CORE-PALETTE."
       (funcall push-mapping-fn 'bg-tab-current 'bg-main)
       (funcall push-mapping-fn 'bg-tab-other 'bg-inactive)
 
+      (funcall push-mapping-fn 'bg-diff-context 'bg-dim)
+
       (funcall push-mapping-fn 'bg-added 'bg-green-subtle)
       (funcall push-mapping-fn 'bg-added-faint 'bg-green-nuanced)
       (funcall push-mapping-fn 'bg-added-refine 'bg-green-intense)
+      (funcall push-mapping-fn 'bg-added-fringe 'green)
       (funcall push-mapping-fn 'fg-added 'green-faint)
       (funcall push-mapping-fn 'fg-added-intense 'green-intense)
 
       (funcall push-mapping-fn 'bg-changed 'bg-yellow-subtle)
       (funcall push-mapping-fn 'bg-changed-faint 'bg-yellow-nuanced)
       (funcall push-mapping-fn 'bg-changed-refine 'bg-yellow-intense)
+      (funcall push-mapping-fn 'bg-changed-fringe 'yellow)
       (funcall push-mapping-fn 'fg-changed 'yellow-faint)
       (funcall push-mapping-fn 'fg-changed-intense 'yellow-intense)
 
       (funcall push-mapping-fn 'bg-removed 'bg-red-subtle)
       (funcall push-mapping-fn 'bg-removed-faint 'bg-red-nuanced)
       (funcall push-mapping-fn 'bg-removed-refine 'bg-red-intense)
+      (funcall push-mapping-fn 'bg-removed-fringe 'red)
       (funcall push-mapping-fn 'fg-removed 'red-faint)
       (funcall push-mapping-fn 'fg-removed-intense 'red-intense)
 
@@ -7890,6 +7842,36 @@ rest come from CORE-PALETTE."
       (funcall push-mapping-fn 'bg-term-white-bright (if bg-main-dark-p 'fg-main 'bg-main))
       (funcall push-mapping-fn 'fg-term-white (if bg-main-dark-p 'fg-dim 'bg-active))
       (funcall push-mapping-fn 'fg-term-white-bright (if bg-main-dark-p 'fg-main 'bg-main))
+
+      (funcall push-mapping-fn 'rust 'red-faint)
+      (funcall push-mapping-fn 'gold 'yellow-faint)
+      (funcall push-mapping-fn 'olive 'green-faint)
+      (funcall push-mapping-fn 'slate 'cyan-faint)
+      (funcall push-mapping-fn 'indigo 'blue-warmer)
+      (funcall push-mapping-fn 'maroon 'magenta-warmer)
+      (funcall push-mapping-fn 'pink 'magenta-faint)
+
+      (funcall push-mapping-fn 'bg-clay 'bg-red-nuanced)
+      (funcall push-mapping-fn 'fg-clay 'red-cooler)
+      (funcall push-mapping-fn 'bg-ochre 'bg-yellow-nuanced)
+      (funcall push-mapping-fn 'fg-ochre 'yellow-cooler)
+      (funcall push-mapping-fn 'bg-lavender 'bg-magenta-nuanced)
+      (funcall push-mapping-fn 'fg-lavender 'magenta-cooler)
+      (funcall push-mapping-fn 'bg-sage 'bg-green-nuanced)
+      (funcall push-mapping-fn 'fg-sage 'green-cooler)
+
+      (funcall push-mapping-fn 'bg-graph-red-0 (if bg-main-dark-p 'bg-red-intense 'bg-red-subtle))
+      (funcall push-mapping-fn 'bg-graph-red-1 (if bg-main-dark-p 'bg-red-subtle 'bg-red-intense))
+      (funcall push-mapping-fn 'bg-graph-green-0 (if bg-main-dark-p 'bg-green-intense 'bg-green-subtle))
+      (funcall push-mapping-fn 'bg-graph-green-1 (if bg-main-dark-p 'bg-green-subtle 'bg-green-intense))
+      (funcall push-mapping-fn 'bg-graph-yellow-0 (if bg-main-dark-p 'bg-yellow-intense 'bg-yellow-subtle))
+      (funcall push-mapping-fn 'bg-graph-yellow-1 (if bg-main-dark-p 'bg-yellow-subtle 'bg-yellow-intense))
+      (funcall push-mapping-fn 'bg-graph-blue-0 (if bg-main-dark-p 'bg-blue-intense 'bg-blue-subtle))
+      (funcall push-mapping-fn 'bg-graph-blue-1 (if bg-main-dark-p 'bg-blue-subtle 'bg-blue-intense))
+      (funcall push-mapping-fn 'bg-graph-magenta-0 (if bg-main-dark-p 'bg-magenta-intense 'bg-magenta-subtle))
+      (funcall push-mapping-fn 'bg-graph-magenta-1 (if bg-main-dark-p 'bg-magenta-subtle 'bg-magenta-intense))
+      (funcall push-mapping-fn 'bg-graph-cyan-0 (if bg-main-dark-p 'bg-cyan-intense 'bg-cyan-subtle))
+      (funcall push-mapping-fn 'bg-graph-cyan-1 (if bg-main-dark-p 'bg-cyan-subtle 'bg-cyan-intense))
 
       (let* ((new-colors (append base-colors derived-colors))
              (new-mappings (append mappings derived-mappings))

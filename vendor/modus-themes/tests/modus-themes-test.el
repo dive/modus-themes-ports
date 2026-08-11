@@ -2,9 +2,9 @@
 
 ;; Copyright (C) 2025-2026  Free Software Foundation, Inc.
 
-;; Author: Protesilaos Stavrou <info@protesilaos.com>,
+;; Author: Protesilaos <info@protesilaos.com>,
 ;;         Rudolf Adamkovič <rudolf@adamkovic.org>
-;; Maintainer: Protesilaos Stavrou <info@protesilaos.com>
+;; Maintainer: Protesilaos <info@protesilaos.com>
 ;; URL: https://github.com/protesilaos/modus-themes
 
 ;; This file is NOT part of GNU Emacs.
@@ -50,39 +50,52 @@ Else provide a generic snippet of text."
        ,docstring
        ,@body)))
 
-(mtt-define-test modus-themes--hex-to-rgb
-  (should (equal (modus-themes--hex-to-rgb "#fff") (list 1.0 1.0 1.0)))
-  (should (equal (modus-themes--hex-to-rgb "#000") (list 0.0 0.0 0.0)))
-  (should (equal (modus-themes--hex-to-rgb "#f00") (list 1.0 0.0 0.0)))
-  (should (equal (modus-themes--hex-to-rgb "#0f0") (list 0.0 1.0 0.0)))
-  (should (equal (modus-themes--hex-to-rgb "#00f") (list 0.0 0.0 1.0)))
-  (should (equal (modus-themes--hex-to-rgb "#ffffff") (list 1.0 1.0 1.0)))
-  (should (equal (modus-themes--hex-to-rgb "#000000") (list 0.0 0.0 0.0)))
-  (should (equal (modus-themes--hex-to-rgb "#ff0000") (list 1.0 0.0 0.0)))
-  (should (equal (modus-themes--hex-to-rgb "#00ff00") (list 0.0 1.0 0.0)))
+(mtt-define-test modus-themes--color-hex-p
+  (should (modus-themes--color-hex-p "#123"))
+  (should (modus-themes--color-hex-p "#123456"))
+  (should (modus-themes--color-hex-p "#abc"))
+  (should (modus-themes--color-hex-p "#ABCDEF"))
+  (should-not (modus-themes--color-hex-p "abc"))
+  (should-not (modus-themes--color-hex-p "#abcd"))
+  (should-not (modus-themes--color-hex-p "#12345"))
+  (should-not (modus-themes--color-hex-p "#1234567"))
+  (should-not (modus-themes--color-hex-p "#zzz"))
+  (should-not (modus-themes--color-hex-p "#zzz"))
+  (should-not (modus-themes--color-hex-p "#12g456")))
+
+(mtt-define-test modus-themes--hex-or-name-to-rgb
+  (should (equal (modus-themes--hex-or-name-to-rgb "#fff") (list 1.0 1.0 1.0)))
+  (should (equal (modus-themes--hex-or-name-to-rgb "#000") (list 0.0 0.0 0.0)))
+  (should (equal (modus-themes--hex-or-name-to-rgb "#f00") (list 1.0 0.0 0.0)))
+  (should (equal (modus-themes--hex-or-name-to-rgb "#0f0") (list 0.0 1.0 0.0)))
+  (should (equal (modus-themes--hex-or-name-to-rgb "#00f") (list 0.0 0.0 1.0)))
+  (should (equal (modus-themes--hex-or-name-to-rgb "#ffffff") (list 1.0 1.0 1.0)))
+  (should (equal (modus-themes--hex-or-name-to-rgb "#000000") (list 0.0 0.0 0.0)))
+  (should (equal (modus-themes--hex-or-name-to-rgb "#ff0000") (list 1.0 0.0 0.0)))
+  (should (equal (modus-themes--hex-or-name-to-rgb "#00ff00") (list 0.0 1.0 0.0)))
   ;; NOTE 2026-04-12: I do not need it to be precise here, hence the `format'.
   (let ((rgb-rounded-fn
          (lambda (hex)
-           (let ((rgb (modus-themes--hex-to-rgb hex)))
+           (let ((rgb (modus-themes--hex-or-name-to-rgb hex)))
              (mapcar (lambda (float) (string-to-number (format "%.2f" float))) rgb)))))
     (should (equal (funcall rgb-rounded-fn "#800000") (list 0.5 0.0 0.0)))
     (should (equal (funcall rgb-rounded-fn "#008000") (list 0.0 0.5 0.0)))
     (should (equal (funcall rgb-rounded-fn "#000080") (list 0.0 0.0 0.5))))
-  (should-not (modus-themes--hex-to-rgb ""))
-  (should-not (modus-themes--hex-to-rgb "#"))
-  (should-not (modus-themes--hex-to-rgb "#1"))
-  (should-not (modus-themes--hex-to-rgb "#12"))
-  (should-not (modus-themes--hex-to-rgb "#1234"))
-  (should-not (modus-themes--hex-to-rgb "#12345"))
-  (should-not (modus-themes--hex-to-rgb "#gggggg"))
-  (should-error (modus-themes--hex-to-rgb (list 1.0 1.0 1.0))))
+  (should-error (modus-themes--hex-or-name-to-rgb ""))
+  (should-error (modus-themes--hex-or-name-to-rgb "#"))
+  (should-error (modus-themes--hex-or-name-to-rgb "#1"))
+  (should-error (modus-themes--hex-or-name-to-rgb "#12"))
+  (should-error (modus-themes--hex-or-name-to-rgb "#1234"))
+  (should-error (modus-themes--hex-or-name-to-rgb "#12345"))
+  (should-error (modus-themes--hex-or-name-to-rgb "#gggggg"))
+  (should-error (modus-themes--hex-or-name-to-rgb (list 1.0 1.0 1.0))))
 
 (mtt-define-test modus-themes-wcag-formula
   "Test that `modus-themes-wcag-formula' does the right thing.
 Also see `modus-themes-test--modus-themes--hex-to-rgb'."
   (should (= (modus-themes-wcag-formula "#ffffff") 1.0))
   (should (= (modus-themes-wcag-formula "#000000") 0.0))
-  (should-not (modus-themes-wcag-formula "#00000")))
+  (should-error (modus-themes-wcag-formula "#00000")))
 
 (mtt-define-test modus-themes-contrast
   "Test that `modus-themes-contrast' works as intended.
@@ -274,6 +287,82 @@ Also see `modus-themes-test--modus-themes--hex-to-rgb'."
              (lambda (value)
                (string= value "#000000"))
              (mapcar #'modus-themes-get-readable-foreground modus-vivendi-sample-foregrounds)))))
+
+(mtt-define-test complete-palette-mappings
+  "Ensure all built-in palettes contain entries for all palette mappings.
+This computes a complete list of mapping names from the built-in palettes
+and then cross-checks the palettes against the list. This should help ensure
+consistency and completeness where adding a new mapping in one palette will
+fail this test until it is added in all palettes."
+  (let* ((operandi-names (seq-uniq (mapcar #'car modus-themes-operandi-palette)))
+         (operandi-tinted-names (seq-uniq (mapcar #'car modus-themes-operandi-tinted-palette)))
+         (operandi-deuteranopia-names (seq-uniq (mapcar #'car modus-themes-operandi-deuteranopia-palette)))
+         (operandi-tritanopia-names (seq-uniq (mapcar #'car modus-themes-operandi-tritanopia-palette)))
+         (vivendi-names (seq-uniq (mapcar #'car modus-themes-vivendi-palette)))
+         (vivendi-tinted-names (seq-uniq (mapcar #'car modus-themes-vivendi-tinted-palette)))
+         (vivendi-deuteranopia-names (seq-uniq (mapcar #'car modus-themes-vivendi-deuteranopia-palette)))
+         (vivendi-tritanopia-names (seq-uniq (mapcar #'car modus-themes-vivendi-tritanopia-palette)))
+         (all-names (seq-uniq (append operandi-names
+                                      operandi-tinted-names
+                                      operandi-deuteranopia-names
+                                      operandi-tritanopia-names
+                                      vivendi-names
+                                      vivendi-tinted-names
+                                      vivendi-deuteranopia-names
+                                      vivendi-tritanopia-names))))
+    (should (seq-empty-p (seq-difference all-names operandi-names)))
+    (should (seq-empty-p (seq-difference all-names operandi-tinted-names)))
+    (should (seq-empty-p (seq-difference all-names operandi-deuteranopia-names)))
+    (should (seq-empty-p (seq-difference all-names operandi-tritanopia-names)))
+    (should (seq-empty-p (seq-difference all-names vivendi-names)))
+    (should (seq-empty-p (seq-difference all-names vivendi-tinted-names)))
+    (should (seq-empty-p (seq-difference all-names vivendi-deuteranopia-names)))
+    (should (seq-empty-p (seq-difference all-names vivendi-tritanopia-names)))))
+
+(mtt-define-test modus-themes-generate-palette
+  "Ensure `modus-themes-generate-palette' provides enough mapping coverage
+such that the generated palette does not inherit explicit color values
+from a parent core palette."
+  (let* ((generated-palette (modus-themes-generate-palette
+                             '((fg-main "#ffffff")
+                               (bg-main "#000000")
+                               (red "#ff0000")
+                               (green "#00ff00")
+                               (yellow "#ffff00")
+                               (blue "#0000ff")
+                               (magenta "#ff00ff")
+                               (cyan "#00ffff"))))
+         ;; These are colors we expect to have an explicit hex value,
+         ;; either because they were provided explicitly in the call to
+         ;; `modus-themes-generate-palette' above, or because we expect
+         ;; `modus-themes-generate-palette' to generate the color.
+         (explicit-colors '( fg-main bg-main
+                             fg-alt fg-dim bg-inactive bg-active bg-dim border
+                             ;; cyan
+                             cyan bg-cyan-nuanced bg-cyan-subtle bg-cyan-intense
+                             cyan-intense cyan-faint cyan-cooler cyan-warmer
+                             ;; magenta
+                             magenta bg-magenta-nuanced bg-magenta-subtle bg-magenta-intense
+                             magenta-intense magenta-faint magenta-cooler magenta-warmer
+                             ;; blue
+                             blue bg-blue-nuanced bg-blue-subtle bg-blue-intense
+                             blue-intense blue-faint blue-cooler blue-warmer
+                             ;; yellow
+                             yellow bg-yellow-nuanced bg-yellow-subtle bg-yellow-intense
+                             yellow-intense yellow-faint yellow-cooler yellow-warmer
+                             ;; green
+                             green bg-green-nuanced bg-green-subtle bg-green-intense
+                             green-intense green-faint green-cooler green-warmer
+                             ;; red
+                             red bg-red-nuanced bg-red-subtle bg-red-intense
+                             red-intense red-faint red-cooler red-warmer)))
+    ;; Ensure all other colors in the palette map to a color name and not an
+    ;; explicit hex value. If this check fails, the offending color should
+    ;; be mapped to an appropriate color name in `modus-themes-generate-palette'.
+    (should (seq-empty-p (seq-remove (lambda (elem)
+                                       (or (member (car elem) explicit-colors)
+                                           (symbolp (cadr elem))))
+                                     generated-palette)))))
 
 (provide 'modus-themes-test)
 ;;; modus-themes-test.el ends here
