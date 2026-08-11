@@ -21,14 +21,12 @@ python3 scripts/modus.py install --tool mytool --link
 
 ## Requirements
 - `python3`
-- `git` with `git subtree`
-- `emacs` (system) or `python3 scripts/modus.py fetch-emacs` (macOS)
+- `git`
+- `emacs` only for upstream synchronization (system or `python3 scripts/modus.py fetch-emacs` on macOS)
 
 ## Core Commands
-- Update subtree + regenerate palettes + render themes:
-  - `python3 scripts/modus.py update-subtree`
-- Extract palettes only:
-  - `python3 scripts/modus.py extract-palettes`
+- Synchronize upstream + regenerate palettes + render themes:
+  - `python3 scripts/modus.py sync-upstream`
   - Rendering applies the project-owned profile in `mappings/palette/default.json`; extracted palettes remain unmodified CC0 data.
   - Regenerate hue previews with `python3 scripts/render-hue-previews.py`.
 - Render themes:

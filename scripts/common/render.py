@@ -42,7 +42,7 @@ def render_all(
 
     palette_files = sorted(palettes_dir.glob("*.json"))
     if not palette_files:
-        raise FileNotFoundError("No palettes found. Run extract-palettes first.")
+        raise FileNotFoundError("No palettes found. Run sync-upstream first.")
 
     outputs: list[Path] = []
     for palette_path in palette_files:

@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import urllib.request
 from pathlib import Path
 from typing import Any
@@ -19,7 +20,6 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from scripts.common import contrast as contrast_utils
-from scripts.common import git as git_utils
 from scripts.common import io
 from scripts.common import paths
 from scripts.common import registry as registry_utils
@@ -270,7 +270,7 @@ def cmd_render(args: argparse.Namespace) -> None:
 
         palette_files = sorted(palettes_dir().glob("*.json"))
         if not palette_files:
-            raise SystemExit("Error: no palettes found. Run extract-palettes first.")
+            raise SystemExit("Error: no palettes found. Run sync-upstream first.")
 
         out_dir.mkdir(parents=True, exist_ok=True)
         for palette_path in palette_files:
@@ -553,19 +553,11 @@ def emacs_bin() -> Path:
     raise FileNotFoundError("Emacs not found. Run: python3 scripts/modus.py fetch-emacs")
 
 
-def cmd_extract_palettes(_args: argparse.Namespace | None) -> None:
-    vendor_dir = REPO_ROOT / "vendor" / "modus-themes"
-    out_dir = REPO_ROOT / "palettes"
-    if not vendor_dir.is_dir():
-        raise SystemExit(f"Error: missing subtree at {vendor_dir}")
-
-    try:
-        emacs = emacs_bin()
-    except FileNotFoundError as exc:
-        raise SystemExit(f"Error: {exc}") from exc
+def extract_palettes(source_dir: Path, out_dir: Path) -> None:
+    emacs = emacs_bin()
     out_dir.mkdir(parents=True, exist_ok=True)
     elisp = REPO_ROOT / "scripts" / "core" / "extract-palettes.el"
-    expr = f'(modus-themes-export-palettes "{vendor_dir}" "{out_dir}")'
+    expr = f'(modus-themes-export-palettes "{source_dir}" "{out_dir}")'
 
     subprocess.run(
         [str(emacs), "-Q", "--batch", "-l", str(elisp), "--eval", expr],
@@ -621,64 +613,100 @@ def cmd_fetch_emacs(_args: argparse.Namespace) -> None:
         subprocess.run(["hdiutil", "detach", mount_point, "-quiet"], check=False)
 
 
-def vendored_modus_version() -> str:
-    source = REPO_ROOT / "vendor" / "modus-themes" / "modus-themes.el"
+def load_upstream_lock() -> dict[str, str]:
+    lock_path = REPO_ROOT / "upstream.lock.json"
+    data = json.loads(lock_path.read_text(encoding="utf-8"))
+    required = (
+        "repository",
+        "ref",
+        "revision",
+        "version",
+        "palette_license",
+        "palette_source",
+    )
+    if not isinstance(data, dict) or any(
+        not isinstance(data.get(key), str) or not data[key] for key in required
+    ):
+        raise ValueError("upstream.lock.json is missing required string fields")
+    return {key: data[key] for key in required}
+
+
+def modus_version(source_dir: Path) -> str:
+    source = source_dir / "modus-themes.el"
     match = re.search(
         r"^;; Version:\s+(\S+)", source.read_text(encoding="utf-8"), re.MULTILINE
     )
     if not match:
-        raise ValueError("Could not determine vendored Modus version")
+        raise ValueError("Could not determine Modus version")
     return match.group(1)
 
 
-def vendored_modus_revision() -> str:
-    result = subprocess.run(
-        [
-            "git",
-            "log",
-            "--all",
-            "--format=%B",
-            "--grep=git-subtree-dir: vendor/modus-themes",
-            "-n",
-            "1",
-        ],
-        cwd=REPO_ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    match = re.search(r"git-subtree-split:\s*([0-9a-f]{40})", result.stdout)
-    if not match:
-        raise ValueError("Could not determine vendored Modus upstream revision")
-    return match.group(1)
-
-
-def update_notice_provenance() -> None:
+def update_notice_provenance(lock: dict[str, str]) -> None:
     notice_path = REPO_ROOT / "NOTICE"
     notice = notice_path.read_text(encoding="utf-8")
     replacement = (
-        f"The current vendored source is Modus Themes {vendored_modus_version()} "
-        f"at upstream commit\n{vendored_modus_revision()}"
+        f"The current palette snapshot was extracted from Modus Themes "
+        f"{lock['version']} at upstream commit\n{lock['revision']}"
     )
     updated, replacements = re.subn(
-        r"The current vendored source is Modus Themes \S+ at upstream commit\n"
+        r"The current palette snapshot was extracted from Modus Themes \S+ "
+        r"at upstream commit\n"
         r"[0-9a-f]{40}",
         replacement,
         notice,
     )
     if replacements != 1:
-        raise ValueError("Could not update vendored provenance in NOTICE")
+        raise ValueError("Could not update palette provenance in NOTICE")
     if updated != notice:
         notice_path.write_text(updated, encoding="utf-8")
         print(f"Updated {notice_path}")
 
 
-def cmd_update_subtree(_args: argparse.Namespace) -> None:
-    remote_url = "https://github.com/protesilaos/modus-themes"
-    prefix = "vendor/modus-themes"
-    git_utils.subtree_update(str(REPO_ROOT), remote_url, prefix)
-    update_notice_provenance()
-    cmd_extract_palettes(None)
+def cmd_sync_upstream(args: argparse.Namespace) -> None:
+    try:
+        lock = load_upstream_lock()
+        emacs_bin()
+    except (FileNotFoundError, json.JSONDecodeError, ValueError) as exc:
+        raise SystemExit(f"Error: {exc}") from exc
+
+    target = args.revision or lock["ref"]
+    with tempfile.TemporaryDirectory(prefix="modus-themes-") as temp_dir:
+        source_dir = Path(temp_dir) / "source"
+        extracted_dir = Path(temp_dir) / "palettes"
+        subprocess.run(["git", "init", "--quiet", str(source_dir)], check=True)
+        subprocess.run(
+            ["git", "-C", str(source_dir), "remote", "add", "origin", lock["repository"]],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(source_dir), "fetch", "--quiet", "--depth=1", "origin", target],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(source_dir), "checkout", "--quiet", "--detach", "FETCH_HEAD"],
+            check=True,
+        )
+        revision = subprocess.run(
+            ["git", "-C", str(source_dir), "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        extract_palettes(source_dir, extracted_dir)
+
+        generated = sorted(extracted_dir.glob("*.json"))
+        if not generated:
+            raise SystemExit("Error: upstream extraction produced no palettes")
+        for existing in palettes_dir().glob("*.json"):
+            existing.unlink()
+        for palette_path in generated:
+            shutil.copy2(palette_path, palettes_dir() / palette_path.name)
+
+        lock.update(revision=revision, version=modus_version(source_dir))
+
+    lock_path = REPO_ROOT / "upstream.lock.json"
+    lock_path.write_text(json.dumps(lock, indent=2) + "\n", encoding="utf-8")
+    update_notice_provenance(lock)
     cmd_render(argparse.Namespace(tool="all", mapping=None, out_dir=None, theme=None))
 
 
@@ -692,13 +720,8 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
     if shutil.which("trash") is None:
         issues.append("trash not found (needed for uninstall)")
 
-    try:
-        emacs_bin()
-    except FileNotFoundError:
-        issues.append("emacs not found (run: python3 scripts/modus.py fetch-emacs)")
-
     if not (REPO_ROOT / "palettes").is_dir():
-        issues.append("palettes directory missing (run: python3 scripts/modus.py extract-palettes)")
+        issues.append("palettes directory missing (run: python3 scripts/modus.py sync-upstream)")
 
     for required_file in (
         REPO_ROOT / "LICENSE",
@@ -708,8 +731,7 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
         REPO_ROOT / "ports" / "NOTICE",
         REPO_ROOT / "ports" / "vscode" / "extension-root" / "LICENSE",
         REPO_ROOT / "ports" / "vscode" / "extension-root" / "NOTICE",
-        REPO_ROOT / "vendor" / "modus-themes" / "COPYING",
-        REPO_ROOT / "vendor" / "modus-themes" / "doc" / "modus-themes.org",
+        REPO_ROOT / "upstream.lock.json",
     ):
         if not required_file.is_file():
             issues.append(f"licensing file missing: {required_file.relative_to(REPO_ROOT)}")
@@ -718,15 +740,22 @@ def cmd_doctor(_args: argparse.Namespace) -> None:
     if notice_path.is_file():
         try:
             notice_text = notice_path.read_text(encoding="utf-8")
-            version = vendored_modus_version()
-            revision = vendored_modus_revision()
-            if f"Modus Themes {version} at upstream commit\n{revision}" not in notice_text:
+            lock = load_upstream_lock()
+            expected = (
+                f"Modus Themes {lock['version']} at upstream commit\n"
+                f"{lock['revision']}"
+            )
+            if expected not in notice_text:
                 issues.append(
-                    "NOTICE vendored provenance is stale "
-                    f"(expected Modus Themes {version} at {revision})"
+                    "NOTICE palette provenance is stale "
+                    f"(expected {lock['version']} at {lock['revision']})"
                 )
-        except (OSError, subprocess.CalledProcessError, ValueError) as exc:
-            issues.append(f"could not validate vendored provenance: {exc}")
+            if lock["palette_license"] != "CC0-1.0":
+                issues.append("upstream lock must declare CC0-1.0 palette data")
+            if lock["palette_source"] != PALETTE_SOURCE:
+                issues.append("upstream lock has the wrong palette source")
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            issues.append(f"could not validate palette provenance: {exc}")
 
     vscode_license = REPO_ROOT / "ports" / "vscode" / "extension-root" / "LICENSE"
     mit_license = REPO_ROOT / "LICENSES" / "MIT.txt"
@@ -909,9 +938,10 @@ def build_parser() -> argparse.ArgumentParser:
     print_cmd.add_argument("--config-dir")
     print_cmd.set_defaults(func=cmd_print_config)
 
-    sub.add_parser("extract-palettes").set_defaults(func=cmd_extract_palettes)
     sub.add_parser("fetch-emacs").set_defaults(func=cmd_fetch_emacs)
-    sub.add_parser("update-subtree").set_defaults(func=cmd_update_subtree)
+    sync_cmd = sub.add_parser("sync-upstream")
+    sync_cmd.add_argument("--revision")
+    sync_cmd.set_defaults(func=cmd_sync_upstream)
     sub.add_parser("doctor").set_defaults(func=cmd_doctor)
 
     return parser

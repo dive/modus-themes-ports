@@ -5,13 +5,13 @@ The palette data is based on the Modus themes designed by Protesilaos Stavrou
 and published under CC0-1.0 at:
 https://protesilaos.com/emacs/modus-themes-colors
 
-The current vendored source is Modus Themes 5.3.0 at upstream commit
+The current palette snapshot was extracted from Modus Themes 5.3.0 at upstream commit
 52d4665bc5d5505e9761fe6068ab5426ad70a52a. Palette data is extracted without
 upstream presets, then the project-owned render profile in
 mappings/palette/default.json is applied to the generated ports.
 
-The vendored Emacs implementation is copyright 2019-2026 Free Software
-Foundation, Inc. and retains its upstream license and notices.
+The GPL-licensed upstream implementation is fetched into a temporary directory
+only while synchronizing palettes and is not distributed in this repository.
 
 This is an independent porting project and is not affiliated with or endorsed
 by the Free Software Foundation, GNU, or Protesilaos Stavrou.

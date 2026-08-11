@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/protesilaos/modus-themes.git",
+  "ref": "main",
+  "revision": "52d4665bc5d5505e9761fe6068ab5426ad70a52a",
+  "version": "5.3.0",
+  "palette_license": "CC0-1.0",
+  "palette_source": "https://protesilaos.com/emacs/modus-themes-colors"
+}
