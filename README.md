@@ -21,6 +21,7 @@ Modus themes are designed by [Protesilaos Stavrou](https://protesilaos.com/about
 | [LS_COLORS](ports/ls-colors/README.md) | Colors for `ls` and compatible tools |
 | [OpenCode](ports/opencode/README.md) | AI coding agent CLI |
 | [Pi](ports/pi/README.md) | AI coding agent CLI |
+| [Shiki](ports/shiki/README.md) | Syntax highlighter theme sources |
 | [tmux](ports/tmux/README.md) | Terminal multiplexer |
 | [Visual Studio Code](ports/vscode/README.md) | Code editor |
 | [Xcode](ports/xcode/README.md) | Apple IDE |

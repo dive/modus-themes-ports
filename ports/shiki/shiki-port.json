@@ -1,0 +1,12 @@
+{
+  "tool": "shiki",
+  "installable": false,
+  "theme_dir_rel": "ports/shiki/themes",
+  "theme_ext": ".json",
+  "output_path_template": "ports/shiki/themes/{theme}.json",
+  "template_path": "ports/shiki/theme.tmpl",
+  "notice_style": "sidecar",
+  "validate_json": true,
+  "theme_format": "shiki-theme",
+  "required_keys": []
+}
